@@ -13,6 +13,9 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// Middleware for handling non-success status codes, including 404
+app.UseStatusCodePagesWithReExecute("/Home/NotFound");
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
