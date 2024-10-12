@@ -34,6 +34,11 @@
 
             <div class="collapse navbar-collapse" id="ftco-nav">
                 <ul class="navbar-nav ms-auto">
+                    <li class="nav-item cta">
+                        <a class="nav-link" asp-area="" asp-controller="Expedientes" asp-action="Expediente" style="background: #FFA500">
+                            <span>Admin</span>
+                        </a>
+                    </li>
                     <li class="nav-item @(ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")">
                         <a class="nav-link" asp-area="" asp-controller="Pages" asp-action="Index">Inicio</a>
                     </li>

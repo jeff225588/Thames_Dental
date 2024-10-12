@@ -110,42 +110,56 @@
                         </a>
                     </li>
 
-                    <!-- Layouts -->
+                    <!-- Expediente del cliente -->
+                    <li class="menu-header small text-uppercase">
+                        <span class="menu-header-text">Expediente del Cliente</span>
+                    </li>
                     <li class="menu-item">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-layout"></i>
-                            <div data-i18n="Layouts">Layouts</div>
+                            <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                            <div data-i18n="Expedientes">Expedientes</div>
                         </a>
-
                         <ul class="menu-sub">
                             <li class="menu-item">
-                                <a href="layouts-without-menu.html" class="menu-link">
-                                    <div data-i18n="Without menu">Without menu</div>
+                                <a class="menu-link" asp-area="" asp-controller="Expedientes" asp-action="Expediente">
+                                    <div data-i18n="Expediente">Expediente</div>
                                 </a>
                             </li>
                             <li class="menu-item">
-                                <a href="layouts-without-navbar.html" class="menu-link">
-                                    <div data-i18n="Without navbar">Without navbar</div>
+                                <a class="menu-link" asp-area="" asp-controller="Expedientes" asp-action="Autorizados">
+                                    <div data-i18n="Autorizados">Autorizados</div>
                                 </a>
                             </li>
                             <li class="menu-item">
-                                <a href="layouts-container.html" class="menu-link">
-                                    <div data-i18n="Container">Container</div>
+                                <a class="menu-link" asp-area="" asp-controller="Expedientes" asp-action="Notas">
+                                    <div data-i18n="Notas">Notas</div>
                                 </a>
                             </li>
                             <li class="menu-item">
-                                <a href="layouts-fluid.html" class="menu-link">
-                                    <div data-i18n="Fluid">Fluid</div>
+                                <a class="menu-link" asp-area="" asp-controller="Expedientes" asp-action="HistoriaClinica">
+                                    <div data-i18n="Historia Clínica">Historia Clínica</div>
                                 </a>
                             </li>
                             <li class="menu-item">
-                                <a href="layouts-blank.html" class="menu-link">
-                                    <div data-i18n="Blank">Blank</div>
+                                <a class="menu-link" asp-area="" asp-controller="Expedientes" asp-action="Odontograma">
+                                    <div data-i18n="Odontograma">Odontograma</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a class="menu-link" asp-area="" asp-controller="Expedientes" asp-action="Recetario">
+                                    <div data-i18n="Recetario">Recetario</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a class="menu-link" asp-area="" asp-controller="Expedientes" asp-action="Laboratorio">
+                                    <div data-i18n="Laboratorio">Laboratorio</div>
                                 </a>
                             </li>
                         </ul>
                     </li>
+                    
 
+                    <!-- Pages -->
                     <li class="menu-header small text-uppercase">
                         <span class="menu-header-text">Pages</span>
                     </li>
