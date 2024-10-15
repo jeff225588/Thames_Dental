@@ -1,4 +1,46 @@
 ﻿@{
+
     Layout = "~/Views/Shared/_Layout_Admin.cshtml";
-    ViewData["Title"] = "Autorizados";
+
+    ViewData["Title"] = "Lista de Autorizados";
+
 }
+<div class="container mt-5 mb-5">
+    <h2 class="text-center mb-4" style="color: #008cba;">Lista de Autorizados</h2>
+    <p class="text-center">Ingrese las cédulas, nombres y número de teléfono de emergencia de hasta 5 autorizados.</p>
+    <form asp-action="SaveAuthorizedList" method="post">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Cédula</th>
+                        <th>Nombre</th>
+                        <th>Teléfono de Emergencia</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td>
+                                <input name="Cedula[@i]" class="form-control" placeholder="Cédula" />
+                            </td>
+                            <td>
+                                <input name="Nombre[@i]" class="form-control" placeholder="Nombre" />
+                            </td>
+                            <td>
+                                <input name="TelefonoEmergencia[@i]" class="form-control" placeholder="Teléfono de Emergencia" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary" style="background-color: #008cba; border-color: #008cba;">Guardar</button>
+        </div>
+    </form>
+</div>

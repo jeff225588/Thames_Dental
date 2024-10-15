@@ -10,5 +10,24 @@ namespace Thames_Dental_Web.Controllers
         {
             return View();
         }
+
+        public IActionResult Expediente()
+        {
+            return View();
+        }
+
+
+        public IActionResult Autorizados()
+        {
+            return View();
+        }
+
+
+        public IActionResult Notas()
+        {
+            return View();
+        }
+
     }
 }
+
