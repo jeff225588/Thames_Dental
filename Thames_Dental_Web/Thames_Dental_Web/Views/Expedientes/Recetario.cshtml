@@ -2,3 +2,172 @@
     Layout = "~/Views/Shared/_Layout_Admin.cshtml";
     ViewData["Title"] = "Recetario";
 }
+
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Gestión de Recetas</h2>
+
+    <!-- Botón para mostrar el formulario de nueva receta -->
+    <button class="btn btn-success mb-3" data-bs-toggle="collapse" data-bs-target="#formNuevaReceta">
+        Agregar Nueva Receta
+    </button>
+
+    <!-- Formulario para Crear/Editar receta -->
+    <div class="collapse" id="formNuevaReceta">
+        <div class="card card-body">
+            <form id="formReceta" method="post" class="needs-validation" novalidate>
+                <input type="hidden" id="recetaId" name="Id" value="0" />
+
+                <div class="mb-3">
+                    <label for="paciente" class="form-label">Paciente</label>
+                    <input type="text" class="form-control" id="paciente" name="Paciente" required />
+                    <div class="invalid-feedback">Por favor ingresa un paciente.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="medicamentos" class="form-label">Medicamentos</label>
+                    <textarea class="form-control" id="medicamentos" name="Medicamentos" rows="3" required></textarea>
+                    <div class="invalid-feedback">Por favor ingresa los medicamentos.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="instrucciones" class="form-label">Instrucciones</label>
+                    <textarea class="form-control" id="instrucciones" name="Instrucciones" rows="5" required></textarea>
+                    <div class="invalid-feedback">Por favor ingresa las instrucciones.</div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <button type="button" class="btn btn-secondary" onclick="limpiarFormulario()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+@*     <!-- Tabla de Recetas -->
+       <table class="table table-striped mt-4">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Ingredientes</th>
+                <th>Instrucciones</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tablaRecetas">
+            @foreach (var receta in Model)
+            {
+                <tr id="fila-@receta.Id">
+                    <td>@receta.Nombre</td>
+                    <td>@receta.Ingredientes</td>
+                    <td>@receta.Instrucciones</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editarReceta(@receta.Id)">Editar</button>
+                        <button class="btn btn-danger btn-sm" onclick="eliminarReceta(@receta.Id)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table> *@ 
+</div>
+
+@section Scripts {
+    <script>
+        // Lista en memoria de recetas
+        let recetas = @Html.Raw(Json.Serialize(Model));
+
+        // Maneja la validación del formulario
+        (() => {
+            'use strict';
+            const form = document.getElementById('formReceta');
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                } else {
+                    event.preventDefault(); // Evita el envío del formulario
+                    guardarReceta();
+                }
+                form.classList.add('was-validated');
+            });
+        })();
+
+        // Guardar receta (crear o actualizar)
+        function guardarReceta() {
+            const id = parseInt(document.getElementById('recetaId').value);
+            const nombre = document.getElementById('nombre').value;
+            const ingredientes = document.getElementById('ingredientes').value;
+            const instrucciones = document.getElementById('instrucciones').value;
+
+            if (id === 0) {
+                // Crear nueva receta
+                const nuevaReceta = {
+                    Id: recetas.length > 0 ? recetas[recetas.length - 1].Id + 1 : 1,
+                    Nombre: nombre,
+                    Ingredientes: ingredientes,
+                    Instrucciones: instrucciones
+                };
+                recetas.push(nuevaReceta);
+                agregarFilaTabla(nuevaReceta);
+            } else {
+                // Actualizar receta existente
+                const receta = recetas.find(r => r.Id === id);
+                receta.Nombre = nombre;
+                receta.Ingredientes = ingredientes;
+                receta.Instrucciones = instrucciones;
+                actualizarFilaTabla(receta);
+            }
+            limpiarFormulario();
+        }
+
+        // Agregar nueva fila a la tabla
+        function agregarFilaTabla(receta) {
+            const fila = `
+                        <tr id="fila-${receta.Id}">
+                            <td>${receta.Nombre}</td>
+                            <td>${receta.Ingredientes}</td>
+                            <td>${receta.Instrucciones}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" onclick="editarReceta(${receta.Id})">Editar</button>
+                                <button class="btn btn-danger btn-sm" onclick="eliminarReceta(${receta.Id})">Eliminar</button>
+                            </td>
+                        </tr>`;
+            document.getElementById('tablaRecetas').insertAdjacentHTML('beforeend', fila);
+        }
+
+        // Actualizar una fila existente en la tabla
+        function actualizarFilaTabla(receta) {
+            const fila = document.getElementById(`fila-${receta.Id}`);
+            fila.innerHTML = `
+                        <td>${receta.Nombre}</td>
+                        <td>${receta.Ingredientes}</td>
+                        <td>${receta.Instrucciones}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="editarReceta(${receta.Id})">Editar</button>
+                            <button class="btn btn-danger btn-sm" onclick="eliminarReceta(${receta.Id})">Eliminar</button>
+                        </td>`;
+        }
+
+        // Cargar datos en el formulario para editar
+        function editarReceta(id) {
+            const receta = recetas.find(r => r.Id === id);
+            document.getElementById('recetaId').value = receta.Id;
+            document.getElementById('nombre').value = receta.Nombre;
+            document.getElementById('ingredientes').value = receta.Ingredientes;
+            document.getElementById('instrucciones').value = receta.Instrucciones;
+            new bootstrap.Collapse(document.getElementById('formNuevaReceta')).show();
+        }
+
+        // Eliminar una receta
+        function eliminarReceta(id) {
+            recetas = recetas.filter(r => r.Id !== id);
+            document.getElementById(`fila-${id}`).remove();
+        }
+
+        // Limpiar formulario
+        function limpiarFormulario() {
+            document.getElementById('recetaId').value = 0;
+            document.getElementById('formReceta').reset();
+            document.getElementById('formReceta').classList.remove('was-validated');
+            new bootstrap.Collapse(document.getElementById('formNuevaReceta')).hide();
+        }
+    </script>
+}

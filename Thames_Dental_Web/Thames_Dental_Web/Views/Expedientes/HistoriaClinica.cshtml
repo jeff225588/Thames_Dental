@@ -2,3 +2,180 @@
     Layout = "~/Views/Shared/_Layout_Admin.cshtml";
     ViewData["Title"] = "Historia Clínica";
 }
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            border-radius: 12px;
+        }
+        .btn-lg {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Expediente Clínico</h4>
+            </div>
+            <div class="card-body">
+                <form id="expedienteForm" method="post">
+                    <!-- Información del Paciente -->
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="nombrePaciente" class="form-label">Nombre del Paciente</label>
+                            <input type="text" id="nombrePaciente" class="form-control"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="tipoSangre" class="form-label">Tipo de Sangre</label>
+                            <select id="tipoSangre" class="form-select">
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-" selected>AB-</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="anotaciones" class="form-label">Anotaciones</label>
+                            <textarea id="anotaciones" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <!-- Cuestionario de Salud -->
+                    <h5>Cuestionario de Salud</h5>
+                    <div class="row g-3">
+                        @foreach (var pregunta in GetPreguntas())
+                        {
+                            <div class="col-md-6">
+                                <label class="form-label">@pregunta</label>
+                                <div class="form-check">
+                                    <input type="radio" id="yes-@pregunta" name="respuesta-@pregunta" class="form-check-input" value="Sí" />
+                                    <label class="form-check-label" for="yes-@pregunta">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" id="no-@pregunta" name="respuesta-@pregunta" class="form-check-input" value="No" checked />
+                                    <label class="form-check-label" for="no-@pregunta">No</label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <!-- Condiciones Médicas -->
+                    <h5>Condiciones Médicas</h5>
+                    <div class="row row-cols-2 row-cols-md-3 g-2">
+                        @foreach (var condicion in GetCondiciones())
+                        {
+                            <div class="col">
+                                <div class="form-check">
+                                    <input type="checkbox" id="@condicion" name="condiciones" class="form-check-input" />
+                                    <label class="form-check-label" for="@condicion">@condicion</label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <!-- Información Adicional -->
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="medicamentos" class="form-label">Medicamentos (últimos 2 meses)</label>
+                            <input type="text" id="medicamentos" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="operaciones" class="form-label">Operaciones</label>
+                            <input type="text" id="operaciones" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="text-end mt-4">
+                        <button type="submit" class="btn btn-success btn-lg">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- jQuery para Validación -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#expedienteForm").on("submit", function (e) {
+                let isValid = true;
+
+                // Validación de las preguntas de salud
+                $("input[type='radio']").each(function () {
+                    const name = $(this).attr("name");
+                    if ($(`input[name='${name}']:checked`).length === 0) {
+                        isValid = false;
+                    }
+                });
+
+                if (!isValid) {
+                    alert("Por favor, responde todas las preguntas.");
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+
+    @functions {
+        // Preguntas del Cuestionario
+        public List<string> GetPreguntas()
+        {
+            return new List<string>
+    {
+    "¿Presenta algún dolor o molestia en este momento?",
+    "¿Se siente nervioso por la idea de recibir tratamiento?",
+    "¿Ha estado bajo atención médica en los últimos 2 años?",
+    "¿Ha ingerido algún medicamento en los últimos 2 años?",
+    "¿Es alérgico a algún medicamento?(Penicilina, aspirina, codeína, etc)",
+    "¿Ha tenido alguna vez sangrado excesivo que haya requerido atención médica?",
+    "¿Ha tenido alguna reacción alérgica con la anestesia?"
+    };
+        }
+
+        // Condiciones Médicas
+        public List<string> GetCondiciones()
+        {
+            return new List<string>
+    {
+    "Falla Cardíaca", "Infarto", "Angina de pecho", "Presión sanguínea alta",
+    "Soplo en el corazón", "Lesiones cardiacas congénitas", "Válvulas cardiacas artificiales",
+    "Marcapasos", "Operacion del corazón", "Transplante", "Herpes Labial", "Anemia", "Derrame Cerebral",
+    "Problemas de riñón", "Úlceras/Gastritis", "Enfisema pulmonar", "Tos frecuente", "VIH positivo",
+    "Enfermedad Venérea", "Asma", "Tuberculosis", "Fiebre reumática", "Sinusitis", "Alergias o urticaria",
+    "Diabetes", "Problemas en la tiroides", "Tratamiento con radioterapia", "Quimioterapia", "Artritis",
+    "Reumatismo", "Está bajo tratamiento psiquiátrico", "Dolor en la unión mandibular", "Hepatitis A, B, C",
+    "Problemas hepáticos", "Transfusión de sangre", "Epilepsia o convulsiones", "Desmayos o desvanecimientos",
+    "Nerviosismo", "Aparacion de Hematomas", "Fiebre escarlatina", "Está Embarazada?", "Puede quedar embarazada?"
+    };
+        }
+    }
+</body>
+</html>
