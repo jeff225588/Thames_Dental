@@ -6,7 +6,14 @@ namespace Thames_Dental_Web.Controllers
 {
     public class AutenticacionController : Controller
     {
+        [HttpGet]
         public IActionResult Registrar()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Registrar(UsuarioModel model)
         {
             return View();
         }

@@ -1,4 +1,6 @@
-﻿@{
+﻿@model UsuarioModel
+
+@{
     ViewData["Title"] = "Registro Admin";
     Layout = "~/Views/Shared/_Layout_None.cshtml";
 }
@@ -18,31 +20,74 @@
                     <!-- /Logo -->
                     <h4 class="mb-2">Crea una cuenta!</h4>
 
-                    <form id="formAuthentication" class="mb-3" action="index.html" method="POST">
+                    @using (Html.BeginForm("Registrar", "Autenticacion"))
+                    {
                         <div class="mb-3">
-                            <label for="username" class="form-label">Usuario</label>
-                            <input type="text"
-                                   class="form-control"
-                                   id="username"
-                                   name="username"
-                                   placeholder="Introduzca su usuario"
-                                   autofocus />
+                            <label for="Identificacion" class="form-label">Identificación</label>
+                            @Html.TextBoxFor(m => m.Identificacion, new { @class = "form-control", @id = "Identificacion", @placeholder = "Introduzca su identificación", @autofocus = "autofocus", @required = "required" })
                         </div>
+
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="text" class="form-control" id="email" name="email" placeholder="Introduzca su email" />
+                            <label for="Email" class="form-label">Correo electrónico</label>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @id = "Email", type = "email", @placeholder = "Introduzca su correo electrónico", @required = "required" })
                         </div>
+
                         <div class="mb-3 form-password-toggle">
-                            <label class="form-label" for="password">Contraseña</label>
+                            <label for="Contrasena" class="form-label">Contraseña</label>
                             <div class="input-group input-group-merge">
-                                <input type="password"
-                                       id="password"
-                                       class="form-control"
-                                       name="password"
-                                       placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                                       aria-describedby="password" />
+                                @Html.TextBoxFor(m => m.Contrasena, new { @class = "form-control", @id = "Contrasena", type = "password", @placeholder = "Introduzca su contraseña", @aria_describedby = "password", @required = "required" })
                                 <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                             </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Nombre" class="form-label">Nombre Completo</label>
+                            @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", @id = "Nombre", @placeholder = "Introduzca su nombre completo", @required = "required" })
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="FechaNacimiento" class="form-label">Fecha de Nacimiento</label>
+                            @Html.TextBoxFor(m => m.FechaNacimiento, new { @class = "form-control", @id = "FechaNacimiento", type = "date", @placeholder = "mm/dd/yyyy", @required = "required" })
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Genero" class="form-label">Género</label>
+                            @Html.TextBoxFor(m => m.Genero, new { @class = "form-control", @id = "Genero", @placeholder = "Seleccione tipo de género", @required = "required" })
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="EstadoCivil" class="form-label">Estado civil</label>
+                            @Html.TextBoxFor(m => m.EstadoCivil, new { @class = "form-control", @id = "EstadoCivil", @placeholder = "Seleccione su estado civil", @required = "required" })
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Profesion" class="form-label">Profesión</label>
+                            @Html.TextBoxFor(m => m.Profesion, new { @class = "form-control", @id = "Profesion", @placeholder = "Seleccione su profesión", @required = "required" })
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Telefono" class="form-label">Número de teléfono</label>
+                            @Html.TextBoxFor(m => m.Telefono, new { @class = "form-control", @id = "Telefono", type = "tel", @placeholder = "Introduzca su número de teléfono", @required = "required" })
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Provincia" class="form-label">Provincia</label>
+                            @Html.TextBoxFor(m => m.Provincia, new { @class = "form-control", @id = "Provincia", @placeholder = "Seleccione la provincia", @required = "required" })
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Canton" class="form-label">Cantón</label>
+                            @Html.TextBoxFor(m => m.Canton, new { @class = "form-control", @id = "Canton", @placeholder = "Seleccione el cantón", @required = "required" })
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Distrito" class="form-label">Distrito</label>
+                            @Html.TextBoxFor(m => m.Distrito, new { @class = "form-control", @id = "Distrito", @placeholder = "Seleccione el distrito", @required = "required" })
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Direccion" class="form-label">Dirección exacta</label>
+                            @Html.TextBoxFor(m => m.Direccion, new { @class = "form-control", @id = "Direccion", @placeholder = "Introduzca su dirección exacta", @required = "required" })
                         </div>
 
                         @*<div class="mb-3">
@@ -54,8 +99,8 @@
                         </label>
                         </div>
                         </div>*@
-                        <button class="btn btn-primary d-grid w-100">Regístrate</button>
-                    </form>
+                        <input type="submit" class="btn btn-primary d-grid w-100" value="Regístrate">
+                    }
 
                     <p class="text-center">
                         <span>¿Ya tienes una cuenta?</span>
