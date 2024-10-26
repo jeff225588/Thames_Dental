@@ -57,21 +57,24 @@
             </div>
             <div class="col-md-6 color-3 p-4">
                 <h3 class="mb-2">Reserva tu cita</h3>
-                <form action="#" class="appointment-form">
+
+                <form asp-action="Agendar" asp-controller="Cita" method="post" class="appointment-form" id="appointment-form">
+
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <div class="select-wrap">
                                     <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                                    <select name="" id="" class="form-control">
+                                    <select name="especialidad" id="especialidad" class="form-control">
                                         <option value="">Especialidades</option>
-                                        <option value="">Consulta General</option>
-                                        <option value="">Peridoncia</option>
-                                        <option value="">Endodoncia</option>
-                                        <option value="">Cirujia Maxilofacial</option>
-                                        <option value="">Odontopediatria</option>
-                                        <option value="">ATM</option>
-                                        
+                                        <option value="Consulta General">Consulta General</option>
+                                        <option value="Peridoncia">Peridoncia</option>
+                                        <option value="Endodoncia">Endodoncia</option>
+                                        <option value="Cirujia Maxilofacial">Cirujia Maxilofacial</option>
+                                        <option value="Odontopediatria">Odontopediatria</option>
+                                        <option value="ATM">ATM</option>
+                                        <option value="Ortodoncia">Ortodoncia</option>
+
                                     </select>
                                 </div>
                             </div>
@@ -81,18 +84,43 @@
                             <div class="form-group">
                                 <div class="select-wrap">
                                     <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                                    <select name="" id="" class="form-control">
+                                    <select name="servicio" id="servicio" class="form-control">
                                         <option value="">Servicios</option>
-                                        <option value="">Limpieza dental</option>
-                                        <option value="">Blanqueamiento</option>
-                                        <option value="">Ortodoncia</option>
-                                        <option value="">Biopsia</option>
-                                        <option value="">Corona</option>
-                                        <option value="">Puente</option>
-                                        <option value="">Implante</option>
-                                        <option value="">Calzas</option>
-                                        <option value="">Cirujia de cordales</option>
-                                        <option value="">Consulta general</option>
+                                        <option value="Limpieza dental">Limpieza dental</option>
+                                        <option value="Blanqueamiento">Blanqueamiento</option>
+                                        <option value="Ortodoncia">Ortodoncia</option>
+                                        <option value="Biopsia">Biopsia</option>
+                                        <option value="Corona">Corona</option>
+                                        <option value="Puente">Puente</option>
+                                        <option value="Implante">Implante</option>
+                                        <option value="Calzas">Calzas</option>
+                                        <option value="Cirujia de cordales">Cirujia de cordales</option>
+                                        <option value="Consulta general">Consulta general</option>
+
+                                        <!-- Grupo de servicios para "Consulta General" -->
+                                        <option value="Consulta General" data-group="Consulta General">Consulta General</option>
+                                        <option value="Limpieza dental" data-group="Consulta General">Limpieza dental</option>
+                                        <option value="Blanqueamiento" data-group="Consulta General">Blanqueamiento</option>
+                                        <option value="Calzas" data-group="Consulta General">Calzas</option>
+                                        <option value="Corona" data-group="Consulta General">Corona</option>
+                                        <option value="Puentes" data-group="Consulta General">Puentes</option>
+                                        <option value="Implante" data-group="Consulta General">Implante</option>
+
+
+                                        <!-- Grupo de servicios para "Ortodoncia" -->
+                                        <option value="Ortodoncia" data-group="Ortodoncia">Ortodoncia</option>
+                                        <option value="Consulta General" data-group="Ortodoncia">Consulta General</option>
+                                        <!-- Grupo de servicios para "Peridoncia" -->
+                                        <option value="Consulta General" data-group="Peridoncia">Consulta General</option>
+                                        <!-- Grupo de servicios para "Endodoncia" -->
+                                        <option value="Consulta General" data-group="Endodoncia">Consulta General</option>
+                                        <!-- Grupo de servicios para "Cirujia Maxilofacial" -->
+                                        <option value="Cirujia de cordales" data-group="Cirujia Maxilofacial">Cirujia de cordales</option>
+                                        <!-- Grupo de servicios para "Odontopediatria" -->
+                                        <option value="Consulta General" data-group="Odontopediatria">Consulta General</option>
+                                        <!-- Grupo de servicios para "ATM" -->
+                                        <option value="Biopsia" data-group="ATM">Biopsia</option>
+
                                     </select>
                                 </div>
                             </div>
@@ -101,13 +129,13 @@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <div class="icon"><span class="icon-user"></span></div>
-                                <input type="text" class="form-control" id="appointment_name" placeholder="Nombre">
+                                <input type="text" class="form-control" name="NombreUsuario" placeholder="Nombre" required>
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <div class="icon"><span class="icon-paper-plane"></span></div>
-                                <input type="text" class="form-control" id="appointment_email" placeholder="Email">
+                                <input type="email" class="form-control" name="Email" placeholder="Email" required>
                             </div>
                         </div>
                     </div>
@@ -115,19 +143,19 @@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <div class="icon"><span class="ion-ios-calendar"></span></div>
-                                <input type="text" class="form-control appointment_date" placeholder="Fecha">
+                                <input type="date" class="form-control" name="Fecha" required>
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <div class="icon"><span class="ion-ios-clock"></span></div>
-                                <input type="text" class="form-control appointment_time" placeholder="Hora">
+                                <input type="time" class="form-control" name="Hora" required>
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <div class="icon"><span class="icon-phone2"></span></div>
-                                <input type="text" class="form-control" id="phone" placeholder="Telefono">
+                                <input type="tel" class="form-control" name="Telefono" placeholder="Teléfono" required>
                             </div>
                         </div>
                     </div>
@@ -135,6 +163,8 @@
                         <input type="submit" value="Reservar" class="btn btn-primary">
                     </div>
                 </form>
+
+
             </div>
         </div>
     </div>

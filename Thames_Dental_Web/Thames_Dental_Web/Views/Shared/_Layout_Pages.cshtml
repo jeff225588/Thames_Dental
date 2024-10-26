@@ -199,6 +199,50 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if (TempData["SweetAlertMessage"] != null)
+    {
+        <script>
+            Swal.fire({
+                title: '@TempData["SweetAlertType"]' === "success" ? "¡Éxito!" : "Error",
+                text: "@TempData["SweetAlertMessage"]",
+                icon: "@TempData["SweetAlertType"]",
+                confirmButtonText: "Aceptar"
+            });
+        </script>
+    }
+
+
+    <!-- Tu formulario aquí -->
+    <form asp-action="Agendar" asp-controller="Cita" method="post" class="appointment-form" id="appointment-form">
+        <!-- Contenido del formulario... -->
+    </form>
+
+    <!-- Script de filtrado -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const especialidadSelect = document.getElementById("especialidad");
+            const servicioSelect = document.getElementById("servicio");
+
+            // Filtrar las opciones de servicios cuando se cambia la especialidad
+            especialidadSelect.addEventListener("change", function () {
+                const selectedEspecialidad = especialidadSelect.value;
+
+                // Mostrar solo las opciones que coinciden con la especialidad seleccionada o están vacías
+                Array.from(servicioSelect.options).forEach(option => {
+                    option.style.display = option.dataset.group === selectedEspecialidad || option.value === "" ? "block" : "none";
+                });
+
+                // Opcional: Restablecer la selección de servicio
+                servicioSelect.value = "";
+            });
+        });
+    </script>
+
+
+
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

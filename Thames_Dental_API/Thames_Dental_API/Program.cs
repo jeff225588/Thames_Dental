@@ -7,6 +7,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Logging.AddConsole();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -15,6 +16,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next.Invoke();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Middleware Exception: {ex.Message} - StackTrace: {ex.StackTrace}");
+        throw;  // Permite que la excepción continúe hacia los controladores
+    }
+});
 
 app.UseHttpsRedirection();
 
