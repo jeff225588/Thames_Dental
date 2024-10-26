@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -39,7 +40,6 @@ namespace Thames_Dental_Web.Controllers
         {
             try
             {
-                // Verificar si el modelo es válido antes de enviarlo
                 if (!ModelState.IsValid)
                 {
                     TempData["SweetAlertMessage"] = "Datos de la cita no válidos.";
@@ -47,10 +47,24 @@ namespace Thames_Dental_Web.Controllers
                     return RedirectToAction("Index", "Pages");
                 }
 
-                // Serializar el modelo de cita
+                // Asigna el especialista basado en la especialidad seleccionada
+                model.Especialista = ObtenerEspecialistaPorEspecialidad(model.Especialidad);
+
+                // Solicitar la duración del procedimiento desde la API
+                var duracionResponse = await _client.GetAsync($"Cita/Duracion?procedimiento={model.Procedimiento}");
+                if (duracionResponse.IsSuccessStatusCode)
+                {
+                    model.Duracion = int.Parse(await duracionResponse.Content.ReadAsStringAsync());
+                }
+                else
+                {
+                    model.Duracion = 60; // Valor predeterminado si no se obtiene duración
+                }
+
+                // Serializar el modelo de cita con la duración y el especialista incluidos
                 var jsonContent = JsonContent.Create(model);
 
-                // Realizar la solicitud POST a la API
+                // Realizar la solicitud POST a la API para agendar la cita
                 var response = await _client.PostAsync("Cita/Agendar", jsonContent);
 
                 // Procesar la respuesta de la API
@@ -81,10 +95,26 @@ namespace Thames_Dental_Web.Controllers
                 TempData["SweetAlertType"] = "error";
             }
 
-            // Redirigir al usuario a la página principal u otra vista apropiada
             return RedirectToAction("Index", "Pages");
         }
 
+
+        private string ObtenerEspecialistaPorEspecialidad(string especialidad)
+        {
+            var especialistas = new Dictionary<string, string>
+    {
+        { "Consulta General", "Dra. Stephanie Thames" },
+        { "Peridoncia", "Dra. Stephanie Thames" },
+        { "Endodoncia", "Dr. Josue Ulate" },
+        { "Cirujia Maxilofacial", "Dr. Pablo Arguello" },
+        { "Odontopediatria", "Dra. Karen Brenes" },
+        { "ATM", "Dr. Pablo Arguello" },
+        { "Ortodoncia", "Dra. Natalia Marenco" }
+    };
+
+            return especialistas.ContainsKey(especialidad) ? especialistas[especialidad] : "Especialista no asignado";
+        }
     }
 }
+
 

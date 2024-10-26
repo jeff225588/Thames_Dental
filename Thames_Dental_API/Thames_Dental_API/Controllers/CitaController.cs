@@ -21,6 +21,41 @@ namespace Thames_Dental_API.Controllers
             _env = env;
         }
 
+
+        private string ObtenerEspecialistaPorEspecialidad(string especialidad)
+        {
+            var especialistas = new Dictionary<string, string>
+        {
+            { "Consulta General", "Dra. Stephanie Thames" },
+            { "Peridoncia", "Dra. Stephanie Thames" },
+            { "Endodoncia", "Dr. Josue Ulate" },
+            { "Cirujia Maxilofacial", "Dr. Pablo Arguello" },
+            { "Odontopediatria", "Dra. Karen Brenes" },
+            { "ATM", "Dr. Pablo Arguello" },
+            { "Ortodoncia", "Dra. Natalia Marenco" }
+        };
+
+            return especialistas.ContainsKey(especialidad) ? especialistas[especialidad] : "Especialista no asignado";
+        }
+
+        [HttpGet("Duracion")]
+        public IActionResult ObtenerDuracionProcedimiento(string procedimiento)
+        {
+            var duraciones = new Dictionary<string, int>
+    {
+        { "Limpieza dental", 60 },
+        { "Blanqueamiento", 90 },
+        { "Ortodoncia", 120 },
+        { "Biopsia", 60 },
+        { "Consulta general", 45 }
+    };
+
+            int duracion = duraciones.ContainsKey(procedimiento) ? duraciones[procedimiento] : 60; // Duración por defecto de 1h
+            return Ok(duracion);
+        }
+
+
+
         [HttpPost("Agendar")]
         public async Task<IActionResult> Agendar(Cita model)
         {
@@ -49,8 +84,8 @@ namespace Thames_Dental_API.Controllers
                     }
 
                     // Agregar la cita
-                    var query = @"INSERT INTO Citas (NombreUsuario, Email, Especialidad, Especialista, Fecha, Hora, Procedimiento) 
-                                  VALUES (@NombreUsuario, @Email, @Especialidad, @Especialista, @Fecha, @Hora, @Procedimiento)";
+                    var query = @"INSERT INTO Citas (NombreUsuario, Email, Especialidad, Especialista, Fecha, Hora, Procedimiento, Duracion) 
+                                  VALUES (@NombreUsuario, @Email, @Especialidad, @Especialista, @Fecha, @Hora, @Procedimiento, @Duracion)";
 
                     await connection.ExecuteAsync(query, model);
 
