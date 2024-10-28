@@ -362,3 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 Thames_Dental_API/Thames_Dental_API/appsettings.json
+Thames_Dental_Web/Thames_Dental_Web/appsettings.json
+Thames_Dental_API/Thames_Dental_API/appsettings.json

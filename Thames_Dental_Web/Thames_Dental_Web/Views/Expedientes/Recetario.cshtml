@@ -1,173 +1,149 @@
-﻿@{
+﻿@model Receta
+
+
+@{
     Layout = "~/Views/Shared/_Layout_Admin.cshtml";
     ViewData["Title"] = "Recetario";
 }
 
 
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Gestión de Recetas</h2>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anotaciones</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        /* Estilos personalizados */
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f2f2f2;
+        }
 
-    <!-- Botón para mostrar el formulario de nueva receta -->
-    <button class="btn btn-success mb-3" data-bs-toggle="collapse" data-bs-target="#formNuevaReceta">
-        Agregar Nueva Receta
-    </button>
+        thead.thead-dark {
+            background-color: #2b6777; /* Color primario */
+            color: white;
+        }
 
-    <!-- Formulario para Crear/Editar receta -->
-    <div class="collapse" id="formNuevaReceta">
-        <div class="card card-body">
-            <form id="formReceta" method="post" class="needs-validation" novalidate>
-                <input type="hidden" id="recetaId" name="Id" value="0" />
+        .btn-primary {
+            background-color: #52ab98; /* Color secundario */
+        }
 
-                <div class="mb-3">
-                    <label for="paciente" class="form-label">Paciente</label>
-                    <input type="text" class="form-control" id="paciente" name="Paciente" required />
-                    <div class="invalid-feedback">Por favor ingresa un paciente.</div>
+        .btn-secondary {
+            background-color: #2b6777;
+        }
+
+        .btn-danger {
+            background-color: #d9534f;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-4">
+        <h2 class="text-primary">Recetas</h2>
+
+        <!-- Formulario para agregar notas -->
+        <form method="post" action="@Url.Action("Recetario", "Expedientes")">
+            <!-- Cambia "TuControlador" por el nombre de tu controlador -->
+            <div class="form-group">
+                <label for="Paciente">Paciente</label>
+                <textarea class="form-control" name="Paciente" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="Medicamento">Medicamentos</label>
+                <textarea class="form-control" name="Medicamento" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="Instrucciones">Instrucciones</label>
+                <input type="text" class="form-control" name="Instrucciones" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Receta</button>
+        </form>
+
+        <table class="table table-striped mt-4">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Id</th>
+                    <th>Paciente</th>
+                    <th>Medicamentos</th>
+                    <th>Instrucciones</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @* Aquí puedes agregar lógica para mostrar las notas si lo deseas, pero está vacío para ti *@
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="notaModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-
-                <div class="mb-3">
-                    <label for="medicamentos" class="form-label">Medicamentos</label>
-                    <textarea class="form-control" id="medicamentos" name="Medicamentos" rows="3" required></textarea>
-                    <div class="invalid-feedback">Por favor ingresa los medicamentos.</div>
+                <div class="modal-body">
+                    <form id="recetaForm">
+                        <div class="form-group">
+                            <label for="Paciente">Paciente</label>
+                            <input type="text" class="form-control" id="Paciente" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="Medicamento">Medicamentos</label>
+                            <textarea class="form-control" id="Medicamento" rows="4" readonly></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="InstruccionesModal">Instrucciones</label>
+                            <input type="text" class="form-control" id="InstruccionesModal" readonly>
+                        </div>
+                    </form>
                 </div>
-
-                <div class="mb-3">
-                    <label for="instrucciones" class="form-label">Instrucciones</label>
-                    <textarea class="form-control" id="instrucciones" name="Instrucciones" rows="5" required></textarea>
-                    <div class="invalid-feedback">Por favor ingresa las instrucciones.</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="editButton" style="display:none;">Guardar Cambios</button>
                 </div>
-
-                <button type="submit" class="btn btn-primary">Guardar</button>
-                <button type="button" class="btn btn-secondary" onclick="limpiarFormulario()">Cancelar</button>
-            </form>
+            </div>
         </div>
     </div>
 
-@*     <!-- Tabla de Recetas -->
-       <table class="table table-striped mt-4">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Ingredientes</th>
-                <th>Instrucciones</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody id="tablaRecetas">
-            @foreach (var receta in Model)
-            {
-                <tr id="fila-@receta.Id">
-                    <td>@receta.Nombre</td>
-                    <td>@receta.Ingredientes</td>
-                    <td>@receta.Instrucciones</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" onclick="editarReceta(@receta.Id)">Editar</button>
-                        <button class="btn btn-danger btn-sm" onclick="eliminarReceta(@receta.Id)">Eliminar</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table> *@ 
-</div>
+    <!-- Scripts necesarios -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
-@section Scripts {
     <script>
-        // Lista en memoria de recetas
-        let recetas = @Html.Raw(Json.Serialize(Model));
+        // Función para abrir el modal con los detalles
+        function showModal(action, paciente, madicamentos, instrucciones) {
+            $('#modalTitle').text(action + ' Detalle de la Receta');
+            $('#Paciente').val(Paciente);
+            $('#Medicamento').val(Medicamento);
+            $('#InstruccionesModal').val(Instrucciones);
 
-        // Maneja la validación del formulario
-        (() => {
-            'use strict';
-            const form = document.getElementById('formReceta');
-            form.addEventListener('submit', event => {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                } else {
-                    event.preventDefault(); // Evita el envío del formulario
-                    guardarReceta();
-                }
-                form.classList.add('was-validated');
-            });
-        })();
-
-        // Guardar receta (crear o actualizar)
-        function guardarReceta() {
-            const id = parseInt(document.getElementById('recetaId').value);
-            const nombre = document.getElementById('nombre').value;
-            const ingredientes = document.getElementById('ingredientes').value;
-            const instrucciones = document.getElementById('instrucciones').value;
-
-            if (id === 0) {
-                // Crear nueva receta
-                const nuevaReceta = {
-                    Id: recetas.length > 0 ? recetas[recetas.length - 1].Id + 1 : 1,
-                    Nombre: nombre,
-                    Ingredientes: ingredientes,
-                    Instrucciones: instrucciones
-                };
-                recetas.push(nuevaReceta);
-                agregarFilaTabla(nuevaReceta);
+            if (action === 'Editar') {
+                $('#Medicamento').prop('readonly', false); // Hacer editable
+                $('#editButton').show(); // Mostrar botón de guardar
             } else {
-                // Actualizar receta existente
-                const receta = recetas.find(r => r.Id === id);
-                receta.Nombre = nombre;
-                receta.Ingredientes = ingredientes;
-                receta.Instrucciones = instrucciones;
-                actualizarFilaTabla(receta);
+                $('#Medicamento').prop('readonly', true); // Solo lectura
+                $('#editButton').hide(); // Ocultar botón de guardar
             }
-            limpiarFormulario();
+
+            $('#notaModal').modal('show');
         }
 
-        // Agregar nueva fila a la tabla
-        function agregarFilaTabla(receta) {
-            const fila = `
-                        <tr id="fila-${receta.Id}">
-                            <td>${receta.Nombre}</td>
-                            <td>${receta.Ingredientes}</td>
-                            <td>${receta.Instrucciones}</td>
-                            <td>
-                                <button class="btn btn-warning btn-sm" onclick="editarReceta(${receta.Id})">Editar</button>
-                                <button class="btn btn-danger btn-sm" onclick="eliminarReceta(${receta.Id})">Eliminar</button>
-                            </td>
-                        </tr>`;
-            document.getElementById('tablaRecetas').insertAdjacentHTML('beforeend', fila);
-        }
-
-        // Actualizar una fila existente en la tabla
-        function actualizarFilaTabla(receta) {
-            const fila = document.getElementById(`fila-${receta.Id}`);
-            fila.innerHTML = `
-                        <td>${receta.Nombre}</td>
-                        <td>${receta.Ingredientes}</td>
-                        <td>${receta.Instrucciones}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" onclick="editarReceta(${receta.Id})">Editar</button>
-                            <button class="btn btn-danger btn-sm" onclick="eliminarReceta(${receta.Id})">Eliminar</button>
-                        </td>`;
-        }
-
-        // Cargar datos en el formulario para editar
-        function editarReceta(id) {
-            const receta = recetas.find(r => r.Id === id);
-            document.getElementById('recetaId').value = receta.Id;
-            document.getElementById('nombre').value = receta.Nombre;
-            document.getElementById('ingredientes').value = receta.Ingredientes;
-            document.getElementById('instrucciones').value = receta.Instrucciones;
-            new bootstrap.Collapse(document.getElementById('formNuevaReceta')).show();
-        }
-
-        // Eliminar una receta
-        function eliminarReceta(id) {
-            recetas = recetas.filter(r => r.Id !== id);
-            document.getElementById(`fila-${id}`).remove();
-        }
-
-        // Limpiar formulario
-        function limpiarFormulario() {
-            document.getElementById('recetaId').value = 0;
-            document.getElementById('formReceta').reset();
-            document.getElementById('formReceta').classList.remove('was-validated');
-            new bootstrap.Collapse(document.getElementById('formNuevaReceta')).hide();
+        // Función para eliminar una receta con animación de éxito
+        function eliminarReceta(Paciente) {
+            Swal.fire({
+                title: 'Receta eliminada',
+                text: `La receta para el ${Paciente} ha sido eliminada con éxito.`,
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 2000
+            });
         }
     </script>
-}
+</body>
+</html>
