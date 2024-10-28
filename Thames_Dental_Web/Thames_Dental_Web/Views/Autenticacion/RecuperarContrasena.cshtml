@@ -1,4 +1,6 @@
-﻿@{
+﻿@model UsuarioModel
+
+@{
     ViewData["Title"] = "Recuperar Contrasena";
     Layout = "~/Views/Shared/_Layout_None.cshtml";
 }
@@ -12,26 +14,24 @@
                     <!-- Logo -->
                     <div class="app-brand justify-content-center">
                         <a href="/" class="app-brand-link gap-2">
-                            <span class="app-brand-text demo text-body fw-bolder">Arcadify</span>
+                            <span class="app-brand-text demo text-body">Thames <span class="fw-bolder">Dental</span></span>
                         </a>
                     </div>
                     <!-- /Logo -->
                     <h4 class="mb-2">¿Olvidó su contraseña?</h4>
                     <p class="mb-4">Introduce tu correo electrónico para restablecer tu contraseña</p>
-                    <form id="formAuthentication" class="mb-3" action="index.html" method="POST">
+                    @using (Html.BeginForm("RecuperarContrasena", "Autenticacion"))
+                    {
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="text"
-                                   class="form-control"
-                                   id="email"
-                                   name="email"
-                                   placeholder="Introduzca su email"
-                                   autofocus />
+                            <label for="Email" class="form-label">Correo electrónico</label>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @id = "Email", 
+                                type = "email", @placeholder = "Introduzca su correo electrónico", @required = "required", @autofocus = "autofocus" }
+                            )
                         </div>
-                        <button class="btn btn-primary d-grid w-100">Restablecer contraseña</button>
-                    </form>
+                        <input type="submit" class="btn btn-primary d-grid w-100" value="Restablecer contraseña">
+                    }
                     <div class="text-center">
-                        <a href="auth-login-basic.html" class="d-flex align-items-center justify-content-center">
+                        <a href="@Url.Action("Ingresar", "Autenticacion")" class="d-flex align-items-center justify-content-center">
                             <i class="bx bx-chevron-left scaleX-n1-rtl bx-sm"></i>
                             Volver a inicio de sesión
                         </a>
