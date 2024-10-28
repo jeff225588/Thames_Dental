@@ -5,6 +5,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddSession();
 builder.Services.AddControllersWithViews();
 builder.Logging.AddConsole();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
