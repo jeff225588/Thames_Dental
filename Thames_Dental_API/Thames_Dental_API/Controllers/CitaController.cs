@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Thames_Dental_API.Modelos;
 using Dapper;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 
