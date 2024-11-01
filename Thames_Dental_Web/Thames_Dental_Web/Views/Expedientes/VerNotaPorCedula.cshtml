@@ -1,0 +1,44 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+    ViewData["Title"] = "Expediente del Cliente";
+}
+
+<h2 class="text-center">Ver Notas</h2>
+
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <div class="alert alert-info text-center">@ViewBag.Message</div>
+}
+
+<div class="container">
+    <form method="post" asp-action="VerNotaPorCedula" class="mb-4">
+        <div class="form-group">
+            <label for="Cedula">Cédula:</label>
+            <input type="text" class="form-control" id="Cedula" name="cedula" required />
+        </div>
+        <button type="submit" class="btn btn-success">Ver Notas</button>
+    </form>
+
+    @if (ViewBag.Notas != null && ViewBag.Notas.Count > 0)
+    {
+        <h3 class="text-center">Notas encontradas:</h3>
+        <div class="row">
+            @foreach (var nota in ViewBag.Notas)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Nota</h5>
+                            <p class="card-text">@nota.Detalle</p>
+                            <p class="card-text"><small class="text-muted">Fecha: @nota.Fecha.ToString("dd/MM/yyyy")</small></p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else if (ViewBag.Notas != null)
+    {
+        <div class="alert alert-warning text-center">No se encontraron notas para la cédula proporcionada.</div>
+    }
+</div>

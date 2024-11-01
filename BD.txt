@@ -1,0 +1,201 @@
+CREATE DATABASE thamesdental1;
+GO
+
+USE thamesdental1;
+GO
+
+
+CREATE TABLE ExpedienteCliente (
+    ClienteID INT IDENTITY(1,1) PRIMARY KEY,
+    Nombre NVARCHAR(100) NOT NULL,
+    PrimerApellido NVARCHAR(100) NOT NULL,
+    SegundoApellido NVARCHAR(100) NOT NULL,
+    TipoIdentificacion NVARCHAR(50) NOT NULL,
+    Identificacion NVARCHAR(50) NOT NULL,
+    TelefonoPrincipal NVARCHAR(20),
+    CorreoElectronico NVARCHAR(100),
+    Pais NVARCHAR(50),
+    Ciudad NVARCHAR(100),
+    DireccionExacta NVARCHAR(200),
+    FechaNacimiento DATE,
+    Genero NVARCHAR(50),
+    Ocupacion NVARCHAR(100),
+    ContactoEmergencia NVARCHAR(100),
+    TelefonoEmergencia NVARCHAR(20),
+    FechaIngreso DATE,
+    Notas NVARCHAR(MAX)
+);
+GO
+
+CREATE PROCEDURE sp_AgregarCliente
+    @Nombre NVARCHAR(100),
+    @PrimerApellido NVARCHAR(100),
+    @SegundoApellido NVARCHAR(100),
+    @TipoIdentificacion NVARCHAR(50),
+    @Identificacion NVARCHAR(50),
+    @TelefonoPrincipal NVARCHAR(20),
+    @CorreoElectronico NVARCHAR(100),
+    @Pais NVARCHAR(50),
+    @Ciudad NVARCHAR(100),
+    @DireccionExacta NVARCHAR(200),
+    @FechaNacimiento DATE,
+    @Genero NVARCHAR(50),
+    @Ocupacion NVARCHAR(100),
+    @ContactoEmergencia NVARCHAR(100),
+    @TelefonoEmergencia NVARCHAR(20),
+    @FechaIngreso DATE,
+    @Notas NVARCHAR(MAX)
+AS
+BEGIN
+    INSERT INTO ExpedienteCliente (
+        Nombre, PrimerApellido, SegundoApellido, TipoIdentificacion, Identificacion,
+        TelefonoPrincipal, CorreoElectronico, Pais, Ciudad, DireccionExacta,
+        FechaNacimiento, Genero, Ocupacion, ContactoEmergencia, TelefonoEmergencia,
+        FechaIngreso, Notas
+    )
+    VALUES (
+        @Nombre, @PrimerApellido, @SegundoApellido, @TipoIdentificacion, @Identificacion,
+        @TelefonoPrincipal, @CorreoElectronico, @Pais, @Ciudad, @DireccionExacta,
+        @FechaNacimiento, @Genero, @Ocupacion, @ContactoEmergencia, @TelefonoEmergencia,
+        @FechaIngreso, @Notas
+    );
+END;
+GO
+
+
+
+use thamesdental1
+
+
+CREATE TABLE Notas (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Fecha DATETIME NOT NULL,
+    Detalle NVARCHAR(MAX) NOT NULL,
+    ClienteId INT NOT NULL,  -- Aquí se relaciona con ExpedienteCliente
+    FOREIGN KEY (ClienteId) REFERENCES ExpedienteCliente(ClienteID)  -- Asegúrate de que la tabla ExpedienteCliente tenga una columna Id
+);
+
+
+CREATE PROCEDURE sp_AgregarNota
+    @Fecha DATETIME,
+    @Detalle NVARCHAR(MAX),
+    @Cedula NVARCHAR(50) -- Parámetro para la cédula
+AS
+BEGIN
+    DECLARE @ClienteId INT;
+
+    -- Buscar el ClienteId basado en la cédula
+    SELECT @ClienteId = ClienteID
+    FROM ExpedienteCliente
+    WHERE Identificacion = @Cedula;
+
+    -- Validar si se encontró el ClienteId
+    IF @ClienteId IS NULL
+    BEGIN
+        RAISERROR('No se encontró un cliente con la cédula proporcionada.', 16, 1);
+        RETURN; -- Terminar el procedimiento si no se encontró el cliente
+    END
+
+    -- Insertar la nota utilizando el ClienteId encontrado
+    INSERT INTO Notas (Fecha, Detalle, ClienteId)
+    VALUES (@Fecha, @Detalle, @ClienteId);
+END
+
+
+
+CREATE TABLE Autorizados (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    ClienteId INT NOT NULL,
+    Nombre NVARCHAR(255) NOT NULL,
+    TelefonoEmergencia NVARCHAR(20) NOT NULL,
+    FOREIGN KEY (ClienteId) REFERENCES ExpedienteCliente(ClienteID)
+);
+
+
+CREATE PROCEDURE sp_AgregarAutorizados
+    @Cedula NVARCHAR(20),
+    @Nombre NVARCHAR(255),
+    @TelefonoEmergencia NVARCHAR(20)
+AS
+BEGIN
+    DECLARE @ClienteId INT;
+
+    -- Obtener el ClienteId basado en la cédula
+    SELECT @ClienteId = ClienteID
+    FROM ExpedienteCliente
+    WHERE Identificacion = @Cedula;
+
+    -- Validar si se encontró el ClienteId
+    IF @ClienteId IS NULL
+    BEGIN
+        RAISERROR('Cliente no encontrado con la cédula proporcionada.', 16, 1);
+        RETURN;
+    END
+
+    -- Insertar el autorizado
+    INSERT INTO Autorizados (ClienteId, Nombre, TelefonoEmergencia)
+    VALUES (@ClienteId, @Nombre, @TelefonoEmergencia);
+END;
+
+
+
+use thamesdental1
+
+
+CREATE PROCEDURE sp_VerNotasPorCedula
+    @Cedula NVARCHAR(50) -- Parámetro para la cédula
+AS
+BEGIN
+    SELECT 
+        n.Id,
+        n.Fecha,
+        n.Detalle,
+        e.Identificacion AS Cedula -- Asumiendo que la tabla ExpedienteCliente tiene una columna llamada Identificacion
+    FROM 
+        Notas n
+    INNER JOIN 
+        ExpedienteCliente e ON n.ClienteId = e.ClienteID
+    WHERE 
+        e.Identificacion = @Cedula; -- Filtrar las notas por la cédula del cliente
+END
+
+
+EXEC sp_VerNotasPorCedula @Cedula = '123456789'; -- Reemplaza con la cédula real
+
+
+USE thamesdental1;
+GO
+
+CREATE PROCEDURE ListarExpedientesCliente
+AS
+BEGIN
+    SELECT 
+        ClienteID,
+        Nombre,
+        PrimerApellido,
+        SegundoApellido,
+        TipoIdentificacion,
+        Identificacion,
+        TelefonoPrincipal,
+        CorreoElectronico,
+        Pais,
+        Ciudad,
+        DireccionExacta,
+        FechaNacimiento,
+        Genero,
+        Ocupacion,
+        ContactoEmergencia,
+        TelefonoEmergencia,
+        FechaIngreso,
+        Notas
+    FROM 
+        ExpedienteCliente;
+END;
+GO
+
+
+EXEC ListarExpedientesCliente;
+
+
+
+

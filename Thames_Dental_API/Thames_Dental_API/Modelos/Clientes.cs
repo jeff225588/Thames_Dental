@@ -1,6 +1,6 @@
-﻿namespace Thames_Dental_Web.Models
+﻿namespace Thames_Dental_API.Models
 {
-    public class ClientModel
+    public class Cliente
     {
         public string Nombre { get; set; } = string.Empty;
         public string PrimerApellido { get; set; } = string.Empty;
@@ -30,7 +30,6 @@
         public string Cedula { get; set; } = string.Empty; // Campo para la cédula
     }
 
-
     public class Autorizado
     {
         public string Cedula { get; set; } = string.Empty; // Cédula del cliente
@@ -38,5 +37,4 @@
         public string TelefonoEmergencia { get; set; } = string.Empty; // Teléfono de emergencia
     }
 }
-
 

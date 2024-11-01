@@ -1,0 +1,43 @@
+﻿@model List<Thames_Dental_Web.Models.ClientModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+    ViewData["Title"] = "Lista de Expedientes";
+}
+
+<div class="container mt-5 mb-5">
+    <h2 class="text-center mb-4" style="color: #008cba;">Lista de Expedientes</h2>
+
+    @if (Model != null && Model.Count > 0)
+    {
+        <table class="table table-bordered table-hover" style="background-color: #f9f9f9;">
+            <thead style="background-color: #008cba; color: white;">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Primer Apellido</th>
+                    <th>Segundo Apellido</th>
+                    <th>Identificación</th>
+                    <th>Teléfono</th>
+                    <th>Correo</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var expediente in Model)
+                {
+                    <tr>
+                        <td>@expediente.Nombre</td>
+                        <td>@expediente.PrimerApellido</td>
+                        <td>@expediente.SegundoApellido</td>
+                        <td>@expediente.Identificacion</td>
+                        <td>@expediente.TelefonoPrincipal</td>
+                        <td>@expediente.CorreoElectronico</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="text-center">No hay expedientes disponibles.</p>
+    }
+</div>
