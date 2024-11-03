@@ -139,19 +139,23 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <div class="icon"><span class="ion-ios-calendar"></span></div>
-                                <input type="date" class="form-control" name="Fecha" required>
+                                <input type="text" name="Fecha" class="form-control" id="fecha-cita" placeholder="Elige una fecha">
                             </div>
                         </div>
+
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <div class="icon"><span class="ion-ios-clock"></span></div>
-                                <input type="time" class="form-control" name="Hora" required>
+                                <select class="form-control" id="hora-cita" name="Hora" required>
+                                    <option value="">Selecciona una hora</option>
+                                </select>
                             </div>
                         </div>
+                        <input type="hidden" id="hidden-hora" name="Hora">
+
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <div class="icon"><span class="icon-phone2"></span></div>

@@ -35,14 +35,33 @@ namespace Thames_Dental_Web.Controllers
             return RedirectToAction("Index", "Pages");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ObtenerHorasOcupadas(string fecha)
+        {
+            var response = await _client.GetAsync($"Cita/ObtenerHorasOcupadas?fecha={fecha}");
+            if (response.IsSuccessStatusCode)
+            {
+                var horasOcupadas = await response.Content.ReadFromJsonAsync<List<string>>();
+                return Json(horasOcupadas);
+            }
+            else
+            {
+                return Json(new List<string>()); // Retorna lista vacía si hay un error
+            }
+        }
+
+
+
         [HttpPost]
         public async Task<IActionResult> Agendar(CitaModel model)
         {
+
             try
             {
                 if (!ModelState.IsValid)
                 {
-                    TempData["SweetAlertMessage"] = "Datos de la cita no válidos.";
+
+                    TempData["SweetAlertMessage"] = "Datos de la cita no validos.";
                     TempData["SweetAlertType"] = "error";
                     return RedirectToAction("Index", "Pages");
                 }
@@ -99,6 +118,9 @@ namespace Thames_Dental_Web.Controllers
         }
 
 
+
+
+
         private string ObtenerEspecialistaPorEspecialidad(string especialidad)
         {
             var especialistas = new Dictionary<string, string>
@@ -114,6 +136,31 @@ namespace Thames_Dental_Web.Controllers
 
             return especialistas.ContainsKey(especialidad) ? especialistas[especialidad] : "Especialista no asignado";
         }
+
+
+
+        //Parte Administrativa 
+        [HttpGet]
+        public async Task<IActionResult> AdministrarCitas()
+        {
+            var response = await _client.GetAsync("Cita/ObtenerCitas");
+            if (response.IsSuccessStatusCode)
+            {
+                var citas = await response.Content.ReadFromJsonAsync<List<CitaModel>>();
+                return View("~/Views/Admin/AdministrarCitas.cshtml", citas);
+            }
+            else
+            {
+                TempData["SweetAlertMessage"] = "Error al cargar las citas.";
+                TempData["SweetAlertType"] = "error";
+                return View("~/Views/Admin/AdministrarCitas.cshtml", new List<CitaModel>());
+            }
+        }
+
+
+        //Parte Administrativa
+
+
     }
 }
 

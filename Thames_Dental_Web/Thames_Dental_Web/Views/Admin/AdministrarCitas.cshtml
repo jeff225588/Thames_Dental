@@ -1,0 +1,41 @@
+﻿@model List<Thames_Dental_Web.Models.CitaModel>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Especialidad</th>
+            <th>Especialista</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Procedimiento</th>
+            <th>Duración</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cita in Model)
+        {
+            <tr>
+                <td>@cita.NombreUsuario</td>
+                <td>@cita.Email</td>
+                <td>@cita.Especialidad</td>
+                <td>@cita.Especialista</td>
+                <td>@cita.Fecha.ToString("dd/MM/yyyy")</td>
+                <td>@cita.Hora</td>
+                <td>@cita.Procedimiento</td>
+                <td>@cita.Duracion minutos</td>
+                <td>
+                    <form asp-action="CancelarCita" asp-controller="Cita" method="post" style="display:inline;">
+                        <input type="hidden" name="id" value="@cita.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm">Cancelar</button>
+                    </form>
+                    <button class="btn btn-warning btn-sm">Reagendar</button>
+                    <button class="btn btn-success btn-sm">Aceptar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

@@ -262,5 +262,72 @@
     <script src="~/js/Pages/main.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var fechasNoDisponibles = ["2024-12-25", "2024-12-31"]; // Agrega las fechas específicas o pasadas
+
+            $('#fecha-cita').datepicker({
+                format: 'yyyy-mm-dd',
+                startDate: new Date(), // Impide seleccionar fechas pasadas
+                beforeShowDay: function (date) {
+                    var formattedDate = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+                    if (fechasNoDisponibles.includes(formattedDate)) {
+                        return { classes: 'text-danger', tooltip: 'Día no disponible' }; // Muestra en rojo
+                    }
+                    return true; // Permite la selección
+                }
+            });
+        });
+    </script>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var horaDropdown = document.getElementById('hora-cita');
+
+            $('#fecha-cita').on('changeDate', function () {
+                var fechaSeleccionada = $('#fecha-cita').datepicker('getDate');
+                var anio = fechaSeleccionada.getFullYear();
+                var mes = ('0' + (fechaSeleccionada.getMonth() + 1)).slice(-2);
+                var dia = ('0' + fechaSeleccionada.getDate()).slice(-2);
+                var fechaFormateada = `${anio}-${mes}-${dia}`; // Formato yyyy-MM-dd
+
+                console.log('Fecha seleccionada (formateada):', fechaFormateada);
+
+                fetch(`/Cita/ObtenerHorasOcupadas?fecha=${fechaFormateada}`)
+                    .then(response => response.json())
+                    .then(horasOcupadas => {
+                        console.log('Horas ocupadas obtenidas de la API:', horasOcupadas);
+
+                        var horaInicio = 7;
+                        var horaFin = 16; // 4:00 PM
+                        var intervalos = 30; // en minutos
+
+                        horaDropdown.innerHTML = '<option value="">Selecciona una hora</option>';
+
+                        for (var h = horaInicio; h < horaFin; h++) {
+                            for (var m = 0; m < 60; m += intervalos) {
+                                var horaStr = `${h < 10 ? '0' + h : h}:${m < 10 ? '0' + m : m}`;
+                                if (!horasOcupadas.includes(horaStr)) {
+                                    var option = document.createElement('option');
+                                    option.value = horaStr;
+                                    option.textContent = horaStr;
+                                    horaDropdown.appendChild(option);
+                                }
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error al obtener horas ocupadas:', error));
+            });
+        });
+
+
+    </script>
+
+
+
 </body>
 </html>

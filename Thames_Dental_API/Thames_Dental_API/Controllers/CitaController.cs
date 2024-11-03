@@ -56,12 +56,54 @@ namespace Thames_Dental_API.Controllers
 
 
 
+        [HttpGet("ObtenerHorasOcupadas")]
+        public async Task<IActionResult> ObtenerHorasOcupadas(string fecha)
+        {
+            Console.WriteLine($"Fecha recibida: {fecha}");
+            if (!DateTime.TryParse(fecha, out DateTime fechaSeleccionada))
+            {
+                return BadRequest("Fecha no válida.");
+            }
+
+            var connectionString = _conf.GetSection("ConnectionStrings:DefaultConnection").Value;
+
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var horasOcupadas = await connection.QueryAsync<string>(
+                        @"SELECT FORMAT(Hora, 'HH:mm') 
+                FROM Citas 
+                WHERE Fecha = @Fecha",
+                        new { Fecha = fechaSeleccionada });
+
+                    Console.WriteLine("Horas ocupadas obtenidas de la base de datos:");
+                    foreach (var hora in horasOcupadas)
+                    {
+                        Console.WriteLine(hora);
+                    }
+
+                    return Ok(horasOcupadas);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener horas ocupadas: {ex.Message}");
+                return StatusCode(500, "Error al obtener las horas ocupadas.");
+            }
+        }
+
+
+
+
+
         [HttpPost("Agendar")]
         public async Task<IActionResult> Agendar(Cita model)
         {
+
             if (!ModelState.IsValid)
             {
-                return BadRequest(new Respuesta { Codigo = -1, Mensaje = "Datos de la cita no válidos." });
+                return BadRequest(new Respuesta { Codigo = -1, Mensaje = "Datos de la cita no validos." });
             }
             // Obtener la cadena de conexión desde la configuración
             var connectionString = _conf.GetSection("ConnectionStrings:DefaultConnection").Value;
@@ -106,6 +148,30 @@ namespace Thames_Dental_API.Controllers
                 return StatusCode(500, respuesta);
             }
         }
+
+
+        //Parte Administrativa 
+        [HttpGet("ObtenerCitas")]
+        public async Task<IActionResult> ObtenerCitas()
+        {
+            var connectionString = _conf.GetSection("ConnectionStrings:DefaultConnection").Value;
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var citas = await connection.QueryAsync<Cita>("SELECT * FROM Citas");
+                    return Ok(citas);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener citas: {ex.Message}");
+                return StatusCode(500, "Error al obtener citas.");
+            }
+        }
+
+
+        //Parte Administrativa 
     }
 }
 
