@@ -1,7 +1,51 @@
 ﻿@model List<Thames_Dental_Web.Models.CitaModel>
+@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+    ViewData["Title"] = "Citas Administración";
+}
 
-<table class="table table-striped">
-    <thead>
+
+<body>
+
+
+    <!-- Reschedule Modal -->
+    <div class="modal fade" id="rescheduleModal" tabindex="-1" aria-labelledby="rescheduleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="rescheduleForm" method="post" asp-action="ReprogramarCita" asp-controller="Cita">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rescheduleModalLabel">Reprogramar Cita</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="Id" id="appointmentId" />
+
+                        <div class="mb-3">
+                            <label for="newDate" class="form-label">Nueva Fecha</label>
+                            <input type="date" class="form-control" id="newDate" name="Fecha" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="newTime" class="form-label">Nueva Hora</label>
+                            <input type="time" class="form-control" id="newTime" name="Hora" required />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container mt-5 mb-5"> 
+
+        <h2 class="text-center mb-4" style="color: #008cba;">Ver todas las citas Activas</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-light">
         <tr>
             <th>Nombre</th>
             <th>Email</th>
@@ -27,15 +71,63 @@
                 <td>@cita.Procedimiento</td>
                 <td>@cita.Duracion minutos</td>
                 <td>
-                    <form asp-action="CancelarCita" asp-controller="Cita" method="post" style="display:inline;">
-                        <input type="hidden" name="id" value="@cita.Id" />
-                        <button type="submit" class="btn btn-danger btn-sm">Cancelar</button>
-                    </form>
-                    <button class="btn btn-warning btn-sm">Reagendar</button>
-                    <button class="btn btn-success btn-sm">Aceptar</button>
+                        <form id="cancelar-form-@cita.Id" asp-controller="Cita" asp-action="CancelarCita" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@cita.Id" />
+                                    <button type="button" class="btn btn-primary btn-sm" style="background-color: #008cba; border-color: #008cba;" onclick="confirmarCancelacion(@cita.Id)">Cancelar</button>
+                        </form>
+
+
+                                <button class="btn btn-primary btn-sm" style="background-color: #008cba; border-color: #008cba;" onclick="openRescheduleModal(@cita.Id, '@cita.Fecha', '@cita.Hora')">Reprogramar</button>
+
+                                <button class="btn btn-primary btn-sm" style="background-color: #008cba; border-color: #008cba;">Aceptar</button>
+
                 </td>
             </tr>
         }
     </tbody>
-</table>
 
+</table>
+    </div>
+    </div>
+
+</body>
+
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script>
+    function openRescheduleModal(id, fecha, hora) {
+        document.getElementById('appointmentId').value = id;
+        document.getElementById('newDate').value = fecha;
+        document.getElementById('newTime').value = hora;
+
+        // Show the modal
+        var rescheduleModal = new bootstrap.Modal(document.getElementById('rescheduleModal'));
+        rescheduleModal.show();
+    }
+</script>
+
+
+<script>
+    function confirmarCancelacion(id) {
+        console.log("Id de la cita a cancelar:", id);
+        if (confirm("¿Estás seguro de que deseas cancelar esta cita?")) {
+            document.getElementById(`cancelar-form-${id}`).submit();
+        }
+    }
+</script>
+
+
+@if (TempData["SweetAlertMessage"] != null && TempData["SweetAlertType"] != null)
+{
+    <script>
+        Swal.fire({
+            icon: '@TempData["SweetAlertType"]',
+            title: '@TempData["SweetAlertMessage"]'
+        });
+    </script>
+}

@@ -12,5 +12,6 @@
         public TimeSpan Hora { get; set; }
         public string Procedimiento { get; set; } = string.Empty;
         public int Duracion { get; set; } // Duración en minutos
+        public string Estado { get; set; } = "Activa";
     }
 }

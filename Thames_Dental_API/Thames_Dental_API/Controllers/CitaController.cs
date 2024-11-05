@@ -171,6 +171,70 @@ namespace Thames_Dental_API.Controllers
         }
 
 
+        [HttpPost("CancelarCita")]
+        public async Task<IActionResult> CancelarCita(int id)
+        {
+            Console.WriteLine($"Id recibido en la API para cancelar cita: {id}");
+            var connectionString = _conf.GetSection("ConnectionStrings:DefaultConnection").Value;
+
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var query = "UPDATE Citas SET Estado = @Estado WHERE Id = @Id";
+                    var affectedRows = await connection.ExecuteAsync(query, new { Estado = "Cancelada", Id = id });
+
+                    Console.WriteLine($"Filas afectadas al cancelar la cita: {affectedRows}");
+
+                    if (affectedRows > 0)
+                    {
+                        return Ok(); // Simplemente regresa 200 OK
+                    }
+                    else
+                    {
+                        return NotFound(); // 404 si no se encontró la cita
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al cancelar la cita: {ex.Message}");
+                return StatusCode(500); // 500 en caso de un error del servidor
+            }
+        }
+
+
+        [HttpPost("ReprogramarCita")]
+        public async Task<IActionResult> ReprogramarCita(int id, DateTime fecha, TimeSpan hora)
+        {
+            var connectionString = _conf.GetSection("ConnectionStrings:DefaultConnection").Value;
+
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var query = "UPDATE Citas SET Fecha = @Fecha, Hora = @Hora WHERE Id = @Id";
+                    var affectedRows = await connection.ExecuteAsync(query, new { Fecha = fecha, Hora = hora, Id = id });
+
+                    if (affectedRows > 0)
+                    {
+                        return Ok("Cita reprogramada correctamente.");
+                    }
+                    else
+                    {
+                        return NotFound("Cita no encontrada.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al reprogramar la cita: {ex.Message}");
+                return StatusCode(500, $"Error al reprogramar la cita: {ex.Message}");
+            }
+
+        }
+
+
         //Parte Administrativa 
     }
 }

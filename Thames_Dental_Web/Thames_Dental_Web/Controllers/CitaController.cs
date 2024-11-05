@@ -158,6 +158,71 @@ namespace Thames_Dental_Web.Controllers
         }
 
 
+        [HttpPost]
+        public async Task<IActionResult> CancelarCita(int id)
+        {
+            Console.WriteLine($"Enviando solicitud de cancelación para Id: {id}");
+
+            // Envía la solicitud de cancelación
+            var response = await _client.PostAsync($"Cita/CancelarCita?id={id}", null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Si la respuesta es exitosa, muestra una alerta de éxito
+                TempData["SweetAlertMessage"] = "Cita cancelada correctamente.";
+                TempData["SweetAlertType"] = "success";
+            }
+            else
+            {
+                // Si falla la solicitud, muestra una alerta de error
+                TempData["SweetAlertMessage"] = "Error al cancelar la cita en el servidor.";
+                TempData["SweetAlertType"] = "error";
+            }
+
+            return RedirectToAction("AdministrarCitas");
+        }
+
+
+        // Método para manejar la reprogramación de citas
+        [HttpPost]
+        public async Task<IActionResult> ReprogramarCita(int id, DateTime fecha, TimeSpan hora)
+        {
+            try
+            {
+                var response = await _client.PostAsync($"Cita/ReprogramarCita?id={id}&fecha={fecha:yyyy-MM-dd}&hora={hora}", null);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadAsStringAsync();
+                    if (result == "Cita reprogramada correctamente.")
+                    {
+                        TempData["SweetAlertMessage"] = result;
+                        TempData["SweetAlertType"] = "success";
+                    }
+                    else
+                    {
+                        TempData["SweetAlertMessage"] = result;
+                        TempData["SweetAlertType"] = "error";
+                    }
+                }
+                else
+                {
+                    TempData["SweetAlertMessage"] = $"Error al reprogramar la cita. Detalles: {response.ReasonPhrase}";
+                    TempData["SweetAlertType"] = "error";
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al reprogramar la cita: {ex.Message}");
+                TempData["SweetAlertMessage"] = "Error al reprogramar la cita en el servidor.";
+                TempData["SweetAlertType"] = "error";
+            }
+
+            return RedirectToAction("AdministrarCitas");
+        }
+
+
+
         //Parte Administrativa
 
 
