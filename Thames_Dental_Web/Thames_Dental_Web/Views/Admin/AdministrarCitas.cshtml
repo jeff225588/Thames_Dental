@@ -79,7 +79,12 @@
 
                                 <button class="btn btn-primary btn-sm" style="background-color: #008cba; border-color: #008cba;" onclick="openRescheduleModal(@cita.Id, '@cita.Fecha', '@cita.Hora')">Reprogramar</button>
 
-                                <button class="btn btn-primary btn-sm" style="background-color: #008cba; border-color: #008cba;">Aceptar</button>
+                                <form asp-action="AceptarCita" method="post" style="display: inline;">
+                                    <input type="hidden" name="id" value="@cita.Id" />
+                                    <button type="submit" class="btn btn-primary btn-sm" style="background-color: #008cba; border-color: #008cba;">
+                                        Aceptar
+                                    </button>
+                                </form>
 
                 </td>
             </tr>

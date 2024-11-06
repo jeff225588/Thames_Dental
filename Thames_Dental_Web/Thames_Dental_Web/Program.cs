@@ -10,6 +10,8 @@ builder.Services.AddHttpClient();
 // Configuración del servicio de email
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
+builder.Services.AddScoped<GoogleCalendarService>();
+
 
 var app = builder.Build();
 

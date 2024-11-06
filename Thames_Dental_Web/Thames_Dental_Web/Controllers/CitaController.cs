@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Google.Apis.Calendar.v3;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Net.Http;
@@ -13,13 +14,15 @@ namespace Thames_Dental_Web.Controllers
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
         private readonly IEmailSender _emailSender;
+        private readonly GoogleCalendarService _calendarService;
         private readonly HttpClient _client;
 
-        public CitaController(IHttpClientFactory httpClientFactory, IConfiguration configuration, IEmailSender emailSender)
+        public CitaController(IHttpClientFactory httpClientFactory, IConfiguration configuration, IEmailSender emailSender, GoogleCalendarService calendarService)
         {
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _emailSender = emailSender;
+            _calendarService = calendarService;
             _client = _httpClientFactory.CreateClient();
 
             // Configurar la dirección base de la API
@@ -277,6 +280,48 @@ namespace Thames_Dental_Web.Controllers
             return RedirectToAction("AdministrarCitas");
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> AceptarCita(int id)
+        {
+            Console.WriteLine("Starting AceptarCita process...");
+            var citaResponse = await _client.GetAsync($"Cita/ObtenerCita?id={id}");
+            if (citaResponse.IsSuccessStatusCode)
+            {
+                var model = await citaResponse.Content.ReadFromJsonAsync<CitaModel>();
+
+                if (model != null)
+                {
+                    DateTime startDateTime = model.Fecha.Date + model.Hora;
+                    DateTime endDateTime = startDateTime.AddMinutes(model.Duracion);
+
+                    Console.WriteLine("Calling GoogleCalendarService to add event...");
+                    await _calendarService.AgregarEventoGoogleCalendarAsync(
+                        summary: $"Cita con {model.Especialista} - {model.Especialidad}",
+                        description: $"Procedimiento: {model.Procedimiento}",
+                        location: "Tejar de el Guarco, Cartago, Costa Rica",
+                        startDateTime: startDateTime,
+                        endDateTime: endDateTime
+                    );
+
+                    TempData["SweetAlertMessage"] = "Cita aceptada y añadida a Google Calendar.";
+                    TempData["SweetAlertType"] = "success";
+                }
+                else
+                {
+                    TempData["SweetAlertMessage"] = "Error al obtener los detalles de la cita.";
+                    TempData["SweetAlertType"] = "error";
+                }
+            }
+            else
+            {
+                TempData["SweetAlertMessage"] = "Error al aceptar la cita.";
+                TempData["SweetAlertType"] = "error";
+            }
+
+            Console.WriteLine("Finished AceptarCita process.");
+            return RedirectToAction("AdministrarCitas");
+        }
 
 
 
