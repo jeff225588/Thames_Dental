@@ -7,6 +7,10 @@ builder.Services.AddControllersWithViews();
 builder.Logging.AddConsole();
 builder.Services.AddHttpClient();
 
+// Configuración del servicio de email
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

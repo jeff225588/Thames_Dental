@@ -149,6 +149,34 @@ namespace Thames_Dental_API.Controllers
             }
         }
 
+        [HttpGet("ObtenerCita")]
+        public async Task<IActionResult> ObtenerCita(int id)
+        {
+            var connectionString = _conf.GetSection("ConnectionStrings:DefaultConnection").Value;
+
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    var query = "SELECT * FROM Citas WHERE Id = @Id";
+                    var cita = await connection.QueryFirstOrDefaultAsync<Cita>(query, new { Id = id });
+
+                    if (cita == null)
+                    {
+                        return NotFound("Cita no encontrada");
+                    }
+
+                    return Ok(cita);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener la cita: {ex.Message}");
+                return StatusCode(500, "Error al obtener los detalles de la cita.");
+            }
+        }
+
+
 
         //Parte Administrativa 
         [HttpGet("ObtenerCitas")]
@@ -181,18 +209,29 @@ namespace Thames_Dental_API.Controllers
             {
                 using (var connection = new SqlConnection(connectionString))
                 {
-                    var query = "UPDATE Citas SET Estado = @Estado WHERE Id = @Id";
-                    var affectedRows = await connection.ExecuteAsync(query, new { Estado = "Cancelada", Id = id });
+                    // Primero, obtenemos los datos de la cita
+                    var querySelect = "SELECT Email, NombreUsuario, Fecha, Hora, Especialidad, Procedimiento, Especialista FROM Citas WHERE Id = @Id";
+                    var cita = await connection.QueryFirstOrDefaultAsync<Cita>(querySelect, new { Id = id });
+
+                    if (cita == null)
+                    {
+                        return NotFound(); // 404 si no se encontró la cita
+                    }
+
+                    // Luego, actualizamos el estado de la cita a "Cancelada"
+                    var queryUpdate = "UPDATE Citas SET Estado = @Estado WHERE Id = @Id";
+                    var affectedRows = await connection.ExecuteAsync(queryUpdate, new { Estado = "Cancelada", Id = id });
 
                     Console.WriteLine($"Filas afectadas al cancelar la cita: {affectedRows}");
 
                     if (affectedRows > 0)
                     {
-                        return Ok(); // Simplemente regresa 200 OK
+                        // Devolvemos los detalles de la cita para que se pueda enviar el correo
+                        return Ok(cita);
                     }
                     else
                     {
-                        return NotFound(); // 404 si no se encontró la cita
+                        return StatusCode(500, "No se pudo actualizar el estado de la cita.");
                     }
                 }
             }
@@ -202,6 +241,7 @@ namespace Thames_Dental_API.Controllers
                 return StatusCode(500); // 500 en caso de un error del servidor
             }
         }
+
 
 
         [HttpPost("ReprogramarCita")]

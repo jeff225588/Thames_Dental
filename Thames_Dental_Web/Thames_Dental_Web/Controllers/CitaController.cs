@@ -12,12 +12,14 @@ namespace Thames_Dental_Web.Controllers
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
+        private readonly IEmailSender _emailSender;
         private readonly HttpClient _client;
 
-        public CitaController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        public CitaController(IHttpClientFactory httpClientFactory, IConfiguration configuration, IEmailSender emailSender)
         {
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
+            _emailSender = emailSender;
             _client = _httpClientFactory.CreateClient();
 
             // Configurar la dirección base de la API
@@ -95,6 +97,17 @@ namespace Thames_Dental_Web.Controllers
                     {
                         TempData["SweetAlertMessage"] = "Cita agendada correctamente.";
                         TempData["SweetAlertType"] = "success";
+                        // Enviar correo al usuario
+                        await _emailSender.SendEmailAsync(
+                            model.Email,
+                            "Confirmación de Cita - Thames Dental",
+                            model.NombreUsuario,
+                            model.Fecha.ToString("dd/MM/yyyy"),
+                            model.Hora.ToString(@"hh\:mm"),
+                            model.Especialidad,
+                            model.Procedimiento,
+                            model.Especialista
+                        );
                     }
                     else
                     {
@@ -157,24 +170,46 @@ namespace Thames_Dental_Web.Controllers
             }
         }
 
-
         [HttpPost]
         public async Task<IActionResult> CancelarCita(int id)
         {
             Console.WriteLine($"Enviando solicitud de cancelación para Id: {id}");
+
+            // Obtener los detalles de la cita desde la API o base de datos
+            var citaResponse = await _client.GetAsync($"Cita/ObtenerCita?id={id}");
 
             // Envía la solicitud de cancelación
             var response = await _client.PostAsync($"Cita/CancelarCita?id={id}", null);
 
             if (response.IsSuccessStatusCode)
             {
-                // Si la respuesta es exitosa, muestra una alerta de éxito
                 TempData["SweetAlertMessage"] = "Cita cancelada correctamente.";
                 TempData["SweetAlertType"] = "success";
+
+
+                if (citaResponse.IsSuccessStatusCode)
+                {
+                    var model = await citaResponse.Content.ReadFromJsonAsync<CitaModel>();
+
+                    // Enviar correo de notificación de cancelación
+                    if (model != null)
+                    {
+                        await _emailSender.SendEmailAsync(
+                            model.Email,
+                            "Cancelación de Cita - Thames Dental",
+                            model.NombreUsuario,
+                            model.Fecha.ToString("dd/MM/yyyy"),
+                            model.Hora.ToString(@"hh\:mm"),
+                            model.Especialidad,
+                            model.Procedimiento,
+                            model.Especialista,
+                            isCancellation: true
+                        );
+                    }
+                }
             }
             else
             {
-                // Si falla la solicitud, muestra una alerta de error
                 TempData["SweetAlertMessage"] = "Error al cancelar la cita en el servidor.";
                 TempData["SweetAlertType"] = "error";
             }
@@ -183,27 +218,48 @@ namespace Thames_Dental_Web.Controllers
         }
 
 
+
         // Método para manejar la reprogramación de citas
         [HttpPost]
         public async Task<IActionResult> ReprogramarCita(int id, DateTime fecha, TimeSpan hora)
         {
             try
             {
+                // Obtener detalles de la cita antes de reprogramar
+                var citaResponse = await _client.GetAsync($"Cita/ObtenerCita?id={id}");
+                if (!citaResponse.IsSuccessStatusCode)
+                {
+                    TempData["SweetAlertMessage"] = "No se pudo obtener la información de la cita.";
+                    TempData["SweetAlertType"] = "error";
+                    return RedirectToAction("AdministrarCitas");
+                }
+
+                var model = await citaResponse.Content.ReadFromJsonAsync<CitaModel>();
+
+                // Enviar solicitud para reprogramar la cita
                 var response = await _client.PostAsync($"Cita/ReprogramarCita?id={id}&fecha={fecha:yyyy-MM-dd}&hora={hora}", null);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var result = await response.Content.ReadAsStringAsync();
-                    if (result == "Cita reprogramada correctamente.")
-                    {
-                        TempData["SweetAlertMessage"] = result;
-                        TempData["SweetAlertType"] = "success";
-                    }
-                    else
-                    {
-                        TempData["SweetAlertMessage"] = result;
-                        TempData["SweetAlertType"] = "error";
-                    }
+                    TempData["SweetAlertMessage"] = "Cita reprogramada correctamente.";
+                    TempData["SweetAlertType"] = "success";
+
+                    // Actualizar la fecha y hora en el modelo
+                    model.Fecha = fecha;
+                    model.Hora = hora;
+
+                    // Enviar correo de notificación de reprogramación
+                    await _emailSender.SendEmailAsync(
+                        model.Email,
+                        "Reprogramación de Cita - Thames Dental",
+                        model.NombreUsuario,
+                        model.Fecha.ToString("dd/MM/yyyy"),
+                        model.Hora.ToString(@"hh\:mm"),
+                        model.Especialidad,
+                        model.Procedimiento,
+                        model.Especialista,
+                        isReschedule: true
+                    );
                 }
                 else
                 {
@@ -220,6 +276,7 @@ namespace Thames_Dental_Web.Controllers
 
             return RedirectToAction("AdministrarCitas");
         }
+
 
 
 
