@@ -124,15 +124,39 @@
                         <span class="menu-header-text">Pages</span>
                     </li>
 
-                    <!-- Administración de Citas -->
+
+
+                    <!-- Expediente del cliente -->
                     <li class="menu-header small text-uppercase">
-                        <span class="menu-header-text">Administración</span>
+                        <span class="menu-header-text">Administración de Citas</span>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" asp-area="" asp-controller="Cita" asp-action="AdministrarCitas">
-                            <i class="menu-icon tf-icons bx bx-calendar"></i>
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons bx bx-dock-top"></i>
                             <div data-i18n="Administración de Citas">Administración de Citas</div>
                         </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a class="menu-link" asp-area="" asp-controller="Cita" asp-action="CitasActivas">
+                                    <div data-i18n="Administración de Citas">Citas Activas</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a class="menu-link" asp-area="" asp-controller="Cita" asp-action="CitasCanceladas">
+                                    <div data-i18n="Administración de Citas">Citas Canceladas</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a class="menu-link" asp-area="" asp-controller="Cita" asp-action="CitasConfirmadas">
+                                    <div data-i18n="Administración de Citas">Citas Confirmadas</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a class="menu-link" asp-area="" asp-controller="Cita" asp-action="CitasCompletadas">
+                                    <div data-i18n="Administración de Citas">Citas Completadas</div>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
 
                     <li class="menu-item">

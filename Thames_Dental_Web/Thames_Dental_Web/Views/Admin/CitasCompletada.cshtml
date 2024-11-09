@@ -1,0 +1,68 @@
+﻿@model List<Thames_Dental_Web.Models.CitaModel>
+@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+    ViewData["Title"] = "Citas Administración";
+}
+
+
+<body>
+
+
+    <div class="container mt-5 mb-5"> 
+
+        <h2 class="text-center mb-4" style="color: #008cba;">Ver todas las citas Completadas</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-light">
+        <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Especialidad</th>
+            <th>Especialista</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Procedimiento</th>
+            <th>Duración</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cita in Model)
+        {
+            <tr>
+                <td>@cita.NombreUsuario</td>
+                <td>@cita.Email</td>
+                <td>@cita.Especialidad</td>
+                <td>@cita.Especialista</td>
+                <td>@cita.Fecha.ToString("dd/MM/yyyy")</td>
+                <td>@cita.Hora</td>
+                <td>@cita.Procedimiento</td>
+                <td>@cita.Duracion minutos</td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+    </div>
+    </div>
+
+</body>
+
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+
+
+@if (TempData["SweetAlertMessage"] != null && TempData["SweetAlertType"] != null)
+{
+    <script>
+        Swal.fire({
+            icon: '@TempData["SweetAlertType"]',
+            title: '@TempData["SweetAlertMessage"]'
+        });
+    </script>
+}

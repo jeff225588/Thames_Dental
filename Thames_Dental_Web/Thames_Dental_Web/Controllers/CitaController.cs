@@ -156,22 +156,49 @@ namespace Thames_Dental_Web.Controllers
 
 
         //Parte Administrativa 
+
         [HttpGet]
-        public async Task<IActionResult> AdministrarCitas()
+        public async Task<IActionResult> CitasActivas()
         {
-            var response = await _client.GetAsync("Cita/ObtenerCitas");
+            return await ObtenerCita("Activa");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CitasCanceladas()
+        {
+            return await ObtenerCita("Cancelada");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CitasConfirmadas()
+        {
+            return await ObtenerCita("Confirmada");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CitasCompletadas()
+        {
+            return await ObtenerCita("Completada");
+        }
+
+        private async Task<IActionResult> ObtenerCita(string estado)
+        {
+            var response = await _client.GetAsync($"Cita/ObtenerCita?estado={estado}");
             if (response.IsSuccessStatusCode)
             {
                 var citas = await response.Content.ReadFromJsonAsync<List<CitaModel>>();
-                return View("~/Views/Admin/AdministrarCitas.cshtml", citas);
+                return View($"~/Views/Admin/Citas{estado}.cshtml", citas);
             }
             else
             {
-                TempData["SweetAlertMessage"] = "Error al cargar las citas.";
+                TempData["SweetAlertMessage"] = $"Error al cargar las citas {estado.ToLower()}.";
                 TempData["SweetAlertType"] = "error";
-                return View("~/Views/Admin/AdministrarCitas.cshtml", new List<CitaModel>());
+                return View($"~/Views/Admin/Citas{estado}.cshtml", new List<CitaModel>());
             }
         }
+
+
+
 
         [HttpPost]
         public async Task<IActionResult> CancelarCita(int id)
@@ -217,7 +244,7 @@ namespace Thames_Dental_Web.Controllers
                 TempData["SweetAlertType"] = "error";
             }
 
-            return RedirectToAction("AdministrarCitas");
+            return RedirectToAction("CitasActiva");
         }
 
 
@@ -277,7 +304,7 @@ namespace Thames_Dental_Web.Controllers
                 TempData["SweetAlertType"] = "error";
             }
 
-            return RedirectToAction("AdministrarCitas");
+            return RedirectToAction("CitasActiva");
         }
 
 
@@ -304,8 +331,18 @@ namespace Thames_Dental_Web.Controllers
                         endDateTime: endDateTime
                     );
 
-                    TempData["SweetAlertMessage"] = "Cita aceptada y añadida a Google Calendar.";
-                    TempData["SweetAlertType"] = "success";
+                    // Llamada al API para actualizar el estado a "Confirmada"
+                    var confirmResponse = await _client.PostAsync($"Cita/ConfirmarCita?id={id}", null);
+                    if (confirmResponse.IsSuccessStatusCode)
+                    {
+                        TempData["SweetAlertMessage"] = "Cita aceptada y añadida a Google Calendar.";
+                        TempData["SweetAlertType"] = "success";
+                    }
+                    else
+                    {
+                        TempData["SweetAlertMessage"] = "Cita añadida a Google Calendar, pero no se pudo confirmar en el servidor.";
+                        TempData["SweetAlertType"] = "warning";
+                    }
                 }
                 else
                 {
@@ -320,7 +357,28 @@ namespace Thames_Dental_Web.Controllers
             }
 
             Console.WriteLine("Finished AceptarCita process.");
-            return RedirectToAction("AdministrarCitas");
+            return RedirectToAction("CitasActivas");
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> CompletarCita(int id)
+        {
+            var response = await _client.PostAsync($"Cita/CompletarCita?id={id}", null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["SweetAlertMessage"] = "Cita completada exitosamente.";
+                TempData["SweetAlertType"] = "success";
+            }
+            else
+            {
+                TempData["SweetAlertMessage"] = "Error al completar la cita.";
+                TempData["SweetAlertType"] = "error";
+            }
+
+            return RedirectToAction("CitasCompletadas"); // Puedes cambiar esta acción según lo necesites
         }
 
 
