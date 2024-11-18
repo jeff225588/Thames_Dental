@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Text;
 using System.Text.Json;
 using Thames_Dental_Web.Models;
+using Thames_Dental_Web.Services;
+using Microsoft.AspNetCore.Http;
+using System.Security.Cryptography;
 
 namespace Thames_Dental_Web.Controllers
 {
@@ -10,11 +14,13 @@ namespace Thames_Dental_Web.Controllers
 
         private readonly IHttpClientFactory _http;
         private readonly IConfiguration _conf;
+        private readonly IMetodosComunes _comunes;
 
-        public AutenticacionController(IHttpClientFactory http, IConfiguration conf)
+        public AutenticacionController(IHttpClientFactory http, IConfiguration conf, IMetodosComunes comunes)
         {
             _http = http;
             _conf = conf;
+            _comunes = comunes;
         }
 
 
@@ -30,6 +36,8 @@ namespace Thames_Dental_Web.Controllers
             using (var client = _http.CreateClient())
             {
                 string url = _conf.GetSection("Variables:RutaApi").Value + "Autenticacion/Registrar";
+
+                model.Contrasena = _comunes.Encrypt(model.Contrasena);
                 JsonContent datos = JsonContent.Create(model);
 
                 var response = client.PostAsync(url, datos).Result;
@@ -72,12 +80,15 @@ namespace Thames_Dental_Web.Controllers
         {
             return View();
         }
+
         [HttpPost]
         public IActionResult Ingresar(UsuarioModel model)
         {
             using (var client = _http.CreateClient())
             {
                 string url = _conf.GetSection("Variables:RutaApi").Value + "Autenticacion/Ingresar";
+
+                model.Contrasena = _comunes.Encrypt(model.Contrasena);
                 JsonContent datos = JsonContent.Create(model);
 
                 var response = client.PostAsync(url, datos).Result;
@@ -89,7 +100,9 @@ namespace Thames_Dental_Web.Controllers
                     if (result != null && result.Codigo == 0)
                     {
                         var datosContenido = JsonSerializer.Deserialize<UsuarioModel>((JsonElement)result.Contenido!);
+
                         HttpContext.Session.SetString("NombreUsuario", datosContenido!.Nombre);
+
                         return RedirectToAction("Index", "Pages");
                     }
                     else
@@ -102,7 +115,12 @@ namespace Thames_Dental_Web.Controllers
             return View();
         }
 
-
+        [HttpGet]
+        public IActionResult CerrarSesion()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Pages");
+        }
 
         [HttpGet]
         public IActionResult RecuperarContrasena()
@@ -111,6 +129,11 @@ namespace Thames_Dental_Web.Controllers
         }
         [HttpPost]
         public IActionResult RecuperarContrasena(UsuarioModel model)
+        {
+            return View();
+        }
+
+        public IActionResult NotFound404()
         {
             return View();
         }

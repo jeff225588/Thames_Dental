@@ -1,3 +1,5 @@
+using Thames_Dental_Web.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -11,7 +13,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 builder.Services.AddScoped<GoogleCalendarService>();
-
+builder.Services.AddScoped<IMetodosComunes, MetodosComunes>();
 
 var app = builder.Build();
 
@@ -24,7 +26,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 // Middleware for handling non-success status codes, including 404
-app.UseStatusCodePagesWithReExecute("/Home/NotFound");
+app.UseStatusCodePagesWithReExecute("/Autenticacion/NotFound404");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
