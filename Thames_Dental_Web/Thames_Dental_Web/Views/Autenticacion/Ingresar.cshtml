@@ -20,6 +20,11 @@
                     <!-- /Logo -->
                     <h4 class="mb-2">Iniciar sesión!</h4>
 
+                    @if (ViewBag.Mensaje != null)
+                    {
+                        <div class="alert alert-danger text-center">@ViewBag.Mensaje</div>
+                    }
+
                     @using (Html.BeginForm("Ingresar", "Autenticacion"))
                     {
                         <div class="mb-3">

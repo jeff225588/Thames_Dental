@@ -4,6 +4,14 @@
 }
 
 <section class="home-slider owl-carousel">
+    @if (Context.Session.GetString("NombreUsuario") != null)
+    {
+        @Context.Session.GetString("NombreUsuario")
+    }
+    else
+    {
+        <p>Invitado</p>
+    }
     <div class="slider-item" style="background-image: url('https://images.pexels.com/photos/52527/dentist-pain-borowac-cure-52527.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');">
         <div class="overlay"></div>
         <div class="container">

@@ -28,10 +28,9 @@ app.UseStatusCodePagesWithReExecute("/Home/NotFound");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

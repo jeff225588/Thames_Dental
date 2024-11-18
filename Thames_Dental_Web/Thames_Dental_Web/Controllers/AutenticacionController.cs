@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Text.Json;
 using Thames_Dental_Web.Models;
 
 namespace Thames_Dental_Web.Controllers
@@ -48,9 +49,6 @@ namespace Thames_Dental_Web.Controllers
                     }
                 }
             }
-
-
-
             return View();
         }
 
@@ -77,6 +75,30 @@ namespace Thames_Dental_Web.Controllers
         [HttpPost]
         public IActionResult Ingresar(UsuarioModel model)
         {
+            using (var client = _http.CreateClient())
+            {
+                string url = _conf.GetSection("Variables:RutaApi").Value + "Autenticacion/Ingresar";
+                JsonContent datos = JsonContent.Create(model);
+
+                var response = client.PostAsync(url, datos).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
+
+                    if (result != null && result.Codigo == 0)
+                    {
+                        var datosContenido = JsonSerializer.Deserialize<UsuarioModel>((JsonElement)result.Contenido!);
+                        HttpContext.Session.SetString("NombreUsuario", datosContenido!.Nombre);
+                        return RedirectToAction("Index", "Pages");
+                    }
+                    else
+                    {
+                        ViewBag.Mensaje = result!.Mensaje;
+                        return View();
+                    }
+                }
+            }
             return View();
         }
 

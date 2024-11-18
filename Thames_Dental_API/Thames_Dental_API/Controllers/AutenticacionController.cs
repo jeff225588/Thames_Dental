@@ -50,5 +50,40 @@ namespace Thames_Dental_API.Controllers
                 return Ok(respuesta);
             }
         }
+
+        [HttpPost]
+        [Route("Ingresar")]
+        public IActionResult Ingresar(UsuarioModel model)
+        {
+            using (var context = new SqlConnection(_conf.GetSection("ConnectionStrings:DefaultConnection").Value))
+            {
+                var respuesta = new Respuesta();
+
+                try
+                {
+                    var result = context.QueryFirstOrDefault<UsuarioModel>("IniciarSesion",
+                                                 new { model.Email, model.Contrasena });
+
+                    if (result != null)
+                    {
+                        respuesta.Codigo = 0;
+                        respuesta.Contenido = result;
+                        respuesta.Mensaje = "Usuario encontrado correctamente";
+                    }
+                    else
+                    {
+                        respuesta.Codigo = -1;
+                        respuesta.Mensaje = "Error: Datos no se encontraron en el sistema.";
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    respuesta.Codigo = -1;
+                    respuesta.Mensaje = "Error: Error al buscar los datos en el sistema.";
+                }
+
+                return Ok(respuesta);
+            }
+        }
     }
 }
