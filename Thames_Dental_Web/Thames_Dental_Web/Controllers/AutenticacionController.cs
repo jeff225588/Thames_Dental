@@ -6,6 +6,7 @@ using Thames_Dental_Web.Models;
 using Thames_Dental_Web.Services;
 using Microsoft.AspNetCore.Http;
 using System.Security.Cryptography;
+using System.Net.Http.Headers;
 
 namespace Thames_Dental_Web.Controllers
 {
@@ -101,7 +102,10 @@ namespace Thames_Dental_Web.Controllers
                     {
                         var datosContenido = JsonSerializer.Deserialize<UsuarioModel>((JsonElement)result.Contenido!);
 
+                        HttpContext.Session.SetString("UsuarioId", datosContenido!.UsuarioId.ToString());
                         HttpContext.Session.SetString("NombreUsuario", datosContenido!.Nombre);
+                        HttpContext.Session.SetString("TokenUsuario", datosContenido!.Token);
+                        HttpContext.Session.SetString("RolID", datosContenido!.RolID.ToString());
 
                         return RedirectToAction("Index", "Pages");
                     }
@@ -130,7 +134,67 @@ namespace Thames_Dental_Web.Controllers
         [HttpPost]
         public IActionResult RecuperarContrasena(UsuarioModel model)
         {
+            using (var client = _http.CreateClient())
+            {
+                string url = _conf.GetSection("Variables:RutaApi").Value + "Autenticacion/RecuperarContrasena";
+
+                JsonContent datos = JsonContent.Create(model);
+
+                var response = client.PostAsync(url, datos).Result;
+                var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
+
+                if (result != null && result.Codigo == 0)
+                {
+                    return RedirectToAction("Ingresar", "Autenticacion");
+                }
+                else
+                {
+                    ViewBag.Mensaje = result!.Mensaje;
+                    return View();
+                }
+            }
+        }
+
+        [HttpGet]
+        public IActionResult CambiarContrasena()
+        {
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult CambiarContrasena(UsuarioModel model)
+        {
+            model.Contrasena = _comunes.Encrypt(model.Contrasena);
+            model.ConfirmarContrasena = _comunes.Encrypt(model.ConfirmarContrasena);
+
+            if (model.Contrasena != model.ConfirmarContrasena)
+            {
+                ViewBag.Mensaje = "La confirmación de su contraseña no coincide";
+                return View();
+            }
+
+            model.UsuarioId = long.Parse(HttpContext.Session.GetString("UsuarioId")!);
+
+            using (var client = _http.CreateClient())
+            {
+                string url = _conf.GetSection("Variables:RutaApi").Value + "Autenticacion/CambiarAcceso";
+
+                JsonContent datos = JsonContent.Create(model);
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("TokenUsuario"));
+                var response = client.PutAsync(url, datos).Result;
+                var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
+
+                if (result != null && result.Codigo == 0)
+                {
+                    return RedirectToAction("Index", "Pages");
+                }
+                else
+                {
+                    ViewBag.Mensaje = result!.Mensaje;
+                    return View();
+                }
+            }
         }
 
         public IActionResult NotFound404()
