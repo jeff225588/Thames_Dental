@@ -122,10 +122,10 @@ namespace Thames_Dental_API.Controllers
                     if (result != null)
                     {
                         var Codigo = GenerarCodigo();
-                        var Contrasenna = Encrypt(Codigo);
+                        var Contrasena = Encrypt(Codigo);
                         var UsaClaveTemporal = true;
                         var Vigencia = DateTime.Now.AddMinutes(10);
-                        context.Execute("ActualizarContrasena", new { result.UsuarioId, Contrasenna, UsaClaveTemporal, Vigencia });
+                        context.Execute("ActualizarContrasena", new { result.UsuarioId, Contrasena, UsaClaveTemporal, Vigencia });
 
                         var ruta = Path.Combine(_env.ContentRootPath, "RecuperarAcceso.html");
                         var html = System.IO.File.ReadAllText(ruta);
