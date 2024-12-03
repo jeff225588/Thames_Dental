@@ -61,21 +61,6 @@ namespace Thames_Dental_Web.Controllers
             return View();
         }
 
-
-
-        [HttpGet]
-        public IActionResult RegistrarAdmin()
-        {
-            return View();
-        }
-        [HttpPost]
-        public IActionResult RegistrarAdmin(UsuarioModel model)
-        {
-            return View();
-        }
-
-
-
         [HttpGet]
         public IActionResult Ingresar()
         {
