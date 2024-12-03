@@ -1,0 +1,95 @@
+﻿@model Thames_Dental_Web.Models.ClientModel
+
+@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+    ViewData["Title"] = "Detalles del Cliente";
+}
+
+<!-- Sección de Autorizados -->
+<div class="mt-5">
+    <h4>Autorizados</h4>
+    @if (Model.Autorizado != null && Model.Autorizado.Any())
+    {
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Teléfono de Emergencia</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var autorizado in Model.Autorizado)
+                {
+                    <tr>
+                        <td>@autorizado.Nombre</td>
+                        <td>@autorizado.TelefonoEmergencia</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No se encontraron autorizados para este cliente.</p>
+    }
+</div>
+
+<!-- Botones de acción -->
+<div class="text-center mt-5">
+    <a href="@Url.Action("AgregarAutorizadoporid", "Expedientes", new { ClienteID = Model.ClienteID })"
+       class="btn btn-info btn-symmetric">Agregar Autorizado</a>
+    <button onclick="window.history.back()"
+            class="btn btn-secondary btn-symmetric">
+        Salir
+    </button>
+</div>
+
+<!-- Estilos CSS -->
+<style>
+    :root {
+        --primary-color: #007bff; /* Azul */
+        --secondary-color: #6c757d; /* Gris */
+        --background-color: #f8f9fa; /* Fondo claro */
+        --header-color: #343a40; /* Header oscuro */
+        --table-header-bg: #e0e0e0; /* Fondo claro de encabezado */
+        --table-header-color: #000000; /* Texto negro */
+    }
+
+    /* Encabezado de la tabla */
+    .table th {
+        background-color: var(--table-header-bg); /* Fondo claro */
+        color: var(--table-header-color); /* Texto negro */
+        text-align: center; /* Centrar los títulos */
+    }
+
+    /* Botones simétricos */
+    .btn-symmetric {
+        min-width: 160px; /* Espacio suficiente para el texto */
+        height: 45px; /* Altura uniforme */
+        margin: 0 10px; /* Espaciado entre botones */
+        font-size: 16px; /* Texto legible */
+        text-align: center; /* Centrado del texto */
+        white-space: nowrap; /* Evita texto en varias líneas */
+    }
+
+    /* Hover del botón info */
+    .btn-info:hover {
+        background-color: #0056b3;
+        color: #fff;
+    }
+
+    /* Fondo y estilos generales */
+    body {
+        background-color: var(--background-color);
+    }
+
+    h2, h4 {
+        color: var(--header-color);
+    }
+
+    .table {
+        background-color: #ffffff;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+</style>

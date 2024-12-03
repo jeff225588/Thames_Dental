@@ -1,0 +1,104 @@
+﻿@model ClientModel
+
+@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+    ViewData["Title"] = "Historial Clínico";
+}
+
+<h2 class="text-center text-white bg-primary py-3 rounded">Historial Clínico</h2>
+
+<div class="container mt-4">
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            @if (!string.IsNullOrEmpty(ViewBag.Message))
+            {
+                <div class="alert alert-warning">
+                    @ViewBag.Message
+                </div>
+            }
+
+            @if (Model.HistorialClinicoporid != null && Model.HistorialClinicoporid.Any())
+            {
+                <div class="row">
+                    @foreach (var item in Model.HistorialClinicoporid)
+                    {
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    
+                                    <ul class="list-group">
+                                        
+                                        <li class="list-group-item"><strong>Tipo de Sangre:</strong> @item.TipoSangre</li>
+                                        <li class="list-group-item"><strong>Anotaciones:</strong> @item.Anotaciones</li>
+                                        <li class="list-group-item"><strong>Dolor/Molestia:</strong> @item.DolorMolestia</li>
+                                        <li class="list-group-item"><strong>Nervioso:</strong> @item.Nervioso</li>
+                                        <li class="list-group-item"><strong>Atención Médica:</strong> @item.AtencionMedica</li>
+                                        <li class="list-group-item"><strong>Medicamentos:</strong> @item.Medicamentos</li>
+                                        <li class="list-group-item"><strong>Alergias:</strong> @item.Alergico</li>
+                                        <li class="list-group-item"><strong>Sangrado Excesivo:</strong> @item.SangradoExcesivo</li>
+                                        <li class="list-group-item"><strong>Reacción Anestésica:</strong> @item.ReaccionAnestesica</li>
+                                        <li class="list-group-item"><strong>Medicamentos Últimos 2 Meses:</strong> @item.MedicamentosUltimos2Meses</li>
+                                        <li class="list-group-item"><strong>Operaciones:</strong> @item.Operaciones</li>
+                                        <li class="list-group-item"><strong>Falla Cardíaca:</strong> @item.FallaCardiaca</li>
+                                        <li class="list-group-item"><strong>Infarto:</strong> @item.Infarto</li>
+                                        <li class="list-group-item"><strong>Angina de Pecho:</strong> @item.AnginaPecho</li>
+                                        <li class="list-group-item"><strong>Presión Alta:</strong> @item.PresionAlta</li>
+                                        <li class="list-group-item"><strong>Soplo de Corazón:</strong> @item.SoploCorazon</li>
+                                        <li class="list-group-item"><strong>Lesiones Cardíacas Congénitas:</strong> @item.LesionesCardiacasCongenitas</li>
+                                        <li class="list-group-item"><strong>Válvulas Cardíacas Artificiales:</strong> @item.ValvulasCardiacasArtificiales</li>
+                                        <li class="list-group-item"><strong>Marcapasos:</strong> @item.Marcapasos</li>
+                                        <li class="list-group-item"><strong>Operación de Corazón:</strong> @item.OperacionCorazon</li>
+                                        <li class="list-group-item"><strong>Transplante:</strong> @item.Transplante</li>
+                                        <li class="list-group-item"><strong>Herpes Labial:</strong> @item.HerpesLabial</li>
+                                        <li class="list-group-item"><strong>Anemia:</strong> @item.Anemia</li>
+                                        <li class="list-group-item"><strong>Derrame Cerebral:</strong> @item.DerrameCerebral</li>
+                                        <li class="list-group-item"><strong>Problemas de Riñón:</strong> @item.ProblemasRinon</li>
+                                        <li class="list-group-item"><strong>Úlceras/Gastritis:</strong> @item.UlcerasGastritis</li>
+                                        <li class="list-group-item"><strong>Enfisema Pulmonar:</strong> @item.EnfisemaPulmonar</li>
+                                        <li class="list-group-item"><strong>Tos Frecuente:</strong> @item.TosFrecuente</li>
+                                        <li class="list-group-item"><strong>VIH Positivo:</strong> @item.VIHPositivo</li>
+                                        <li class="list-group-item"><strong>Enfermedad Venérea:</strong> @item.EnfermedadVenera</li>
+                                        <li class="list-group-item"><strong>Asma:</strong> @item.Asma</li>
+                                        <li class="list-group-item"><strong>Tuberculosis:</strong> @item.Tuberculosis</li>
+                                        <li class="list-group-item"><strong>Fiebre Reumática:</strong> @item.FiebreReumatica</li>
+                                        <li class="list-group-item"><strong>Sinusitis:</strong> @item.Sinusitis</li>
+                                        <li class="list-group-item"><strong>Alergias:</strong> @item.Alergias</li>
+                                        <li class="list-group-item"><strong>Diabetes:</strong> @item.Diabetes</li>
+                                        <li class="list-group-item"><strong>Problemas de Tiroides:</strong> @item.ProblemasTiroides</li>
+                                        <li class="list-group-item"><strong>Radioterapia:</strong> @item.Radioterapia</li>
+                                        <li class="list-group-item"><strong>Quimioterapia:</strong> @item.Quimioterapia</li>
+                                        <li class="list-group-item"><strong>Artritis:</strong> @item.Artritis</li>
+                                        <li class="list-group-item"><strong>Reumatismo:</strong> @item.Reumatismo</li>
+                                        <li class="list-group-item"><strong>Tratamiento Psiquiátrico:</strong> @item.TratamientoPsiquiatrico</li>
+                                        <li class="list-group-item"><strong>Dolor Unión Mandibular:</strong> @item.DolorUnionMandibular</li>
+                                        <li class="list-group-item"><strong>Hepatitis A:</strong> @item.HepatitisA</li>
+                                        <li class="list-group-item"><strong>Hepatitis B:</strong> @item.HepatitisB</li>
+                                        <li class="list-group-item"><strong>Hepatitis C:</strong> @item.HepatitisC</li>
+                                        <li class="list-group-item"><strong>Problemas Hepáticos:</strong> @item.ProblemasHepaticos</li>
+                                        <li class="list-group-item"><strong>Transfusión de Sangre:</strong> @item.TransfusionSangre</li>
+                                        <li class="list-group-item"><strong>Epilepsia/Convulsiones:</strong> @item.EpilepsiaConvulsiones</li>
+                                        <li class="list-group-item"><strong>Desmayos:</strong> @item.Desmayos</li>
+                                        <li class="list-group-item"><strong>Nerviosismo:</strong> @item.Nerviosismo</li>
+                                        <li class="list-group-item"><strong>Aparición de Hematomas:</strong> @item.AparicionHematomas</li>
+                                       
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info text-center">
+                    No se encontraron registros de historial clínico para este cliente.
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <button class="btn btn-primary" style="background-color: #008cba; border-color: #008cba;" onclick="location.href='@Url.Action("AgregarHistorialClinicoPorId", "Expedientes", new { clienteID = Model.ClienteID })'">Expediente Clínico</button>
+        <button class="btn btn-secondary" onclick="window.history.back()">Volver</button>
+    </div>
+</div>

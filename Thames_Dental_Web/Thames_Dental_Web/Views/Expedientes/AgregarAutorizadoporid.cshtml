@@ -1,0 +1,111 @@
+﻿@model Thames_Dental_Web.Models.ClientModel
+
+@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+    ViewData["Title"] = "Agregar Autorizado";
+}
+
+<div class="container mt-5">
+    <h2>Agregar Autorizado</h2>
+
+    <!-- Formulario para agregar autorizado -->
+    <form asp-action="AgregarAutorizadoporid" method="post">
+        <input type="hidden" asp-for="ClienteID" />
+
+        <div class="form-group">
+            <label asp-for="Nombre" class="form-label">Nombre del Autorizado</label>
+            <input asp-for="Nombre" class="form-control" required />
+            <span asp-validation-for="Nombre" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="TelefonoEmergencia" class="form-label">Teléfono de Emergencia</label>
+            <input asp-for="TelefonoEmergencia" class="form-control" required />
+            <span asp-validation-for="TelefonoEmergencia" class="text-danger"></span>
+        </div>
+
+        <!-- Botones con estilos uniformes -->
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary btn-symmetric">Guardar</button>
+            <button onclick="window.history.back()" type="button" class="btn btn-secondary btn-symmetric">Salir</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            // Mostrar mensaje de éxito
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: '@TempData["SuccessMessage"]',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Redirigir a la página de VerAutorizados después de la confirmación
+                            window.location.href = '@Url.Action("VerAutorizados", "Expedientes", new { clienteID = Model.ClienteID })';
+                        }
+                    });
+            </text>
+        }
+
+                // Mostrar mensaje de error
+        @if (TempData["ErrorMessage"] != null && TempData["SuccessMessage"] == null)
+        {
+            <text>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: '@TempData["ErrorMessage"]',
+                        confirmButtonText: 'OK'
+                    });
+            </text>
+        }
+                });
+    </script>
+
+    <!-- Activar la validación en el lado del cliente si la necesitas -->
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<!-- Estilos CSS -->
+<style>
+    :root {
+        --primary-color: #007bff; /* Azul */
+        --secondary-color: #6c757d; /* Gris */
+        --background-color: #f8f9fa; /* Fondo claro */
+        --button-hover-color: #0056b3; /* Hover de botón azul */
+    }
+
+    /* Botones simétricos */
+    .btn-symmetric {
+        min-width: 160px; /* Asegura el ancho uniforme */
+        height: 45px; /* Altura uniforme */
+        margin: 0 10px; /* Espaciado entre botones */
+        font-size: 16px; /* Tamaño del texto */
+        text-align: center;
+    }
+
+    /* Estilo del botón primario (Guardar) */
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: #fff;
+        border: none;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--button-hover-color);
+        }
+
+    /* Fondo y estilos generales */
+    body {
+        background-color: var(--background-color);
+    }
+</style>
