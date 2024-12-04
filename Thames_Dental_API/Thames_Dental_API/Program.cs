@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,16 +22,32 @@ builder.Services.AddSwaggerGen(options =>
         Name = "Authorization",
         Type = SecuritySchemeType.ApiKey
     });
+    options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
 var SecretKey = builder.Configuration["Variables:Llave"]!.ToString();
 
-
-
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateAudience = false,
+        ValidateIssuer = false,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecretKey)),
+        ValidateLifetime = true,
+        LifetimeValidator = (DateTime? notBefore, DateTime? expires, SecurityToken securityToken, TokenValidationParameters validationParameters) =>
+        {
+            if (expires != null)
+            {
+                return expires > DateTime.UtcNow;
+            }
+            return false;
+        }
+    };
+});
 
 builder.Logging.AddConsole();
-
-
 
 var app = builder.Build();
 
@@ -54,9 +72,6 @@ app.Use(async (context, next) =>
 });
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
