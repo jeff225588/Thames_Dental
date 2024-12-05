@@ -1,0 +1,59 @@
+﻿@model Thames_Dental_Web.Models.InventarioModel
+
+
+<h2 class="text-center mb-4" style="color: #008cba;">Editar Inventario de Thames Dental</h2>
+
+<div class="container mt-5 mb-5">
+    <form asp-controller="Inventario" asp-action="EditarInventario" method="post">
+        <input type="hidden" asp-for="IdInventario" />
+
+        <div class="row g-3">
+            <!-- Primera fila -->
+            <div class="col-md-6">
+                <label for="Nombre" class="form-label">Nombre</label>
+                <input asp-for="Nombre" class="form-control" placeholder="Nombre" />
+                <span asp-validation-for="Nombre" class="text-danger"></span>
+            </div>
+            <div class="col-md-3">
+                <label for="Cantidad" class="form-label">Cantidad</label>
+                <input asp-for="Cantidad" class="form-control" placeholder="Cantidad" />
+                <span asp-validation-for="Cantidad" class="text-danger"></span>
+            </div>
+            <div class="col-md-3">
+                <label for="Proveedor" class="form-label">Proveedor</label>
+                <input asp-for="Proveedor" class="form-control" placeholder="Proveedor" />
+                <span asp-validation-for="Proveedor" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row g-3 mt-3">
+            <!-- Campo Descripción en toda la fila -->
+            <div class="col-12">
+                <label for="Descripcion" class="form-label">Descripción</label>
+                <textarea asp-for="Descripcion" class="form-control" rows="3" placeholder="Descripción"></textarea>
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row g-3 mt-3">
+            <!-- Segunda fila -->
+            <div class="col-md-6">
+                <label for="PrecioUnitario" class="form-label">Precio Unitario</label>
+                <input asp-for="PrecioUnitario" class="form-control" placeholder="Precio Unitario" />
+                <span asp-validation-for="PrecioUnitario" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label for="FechaIngreso" class="form-label">Fecha de Ingreso</label>
+                <input asp-for="FechaIngreso" class="form-control" placeholder="Fecha de Ingreso" />
+                <span asp-validation-for="FechaIngreso" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary" style="background-color: #008cba; border-color: #008cba;">
+                Guardar Cambios
+            </button>
+        </div>
+    </form>
+</div>
+

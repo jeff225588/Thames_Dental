@@ -1,0 +1,122 @@
+﻿@model Thames_Dental_Web.Models.ClientModel
+
+@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+    
+    ViewData["Title"] = "Expediente del Cliente";
+}
+
+<div class="container mt-5 mb-5">
+    <h2 class="text-center mb-4" style="color: #008cba;">Expediente del Cliente</h2>
+
+    <!-- Botones de navegación AgregarHistorialClinicoPorId -->
+    <div class="text-center mb-4">
+        <button class="btn btn-primary" style="background-color: #008cba; border-color: #008cba;" onclick="location.href='@Url.Action("VerRecetas", "Expedientes", new { clienteID = Model.ClienteID })'">Recetas</button>
+        <button class="btn btn-primary" style="background-color: #008cba; border-color: #008cba;" onclick="location.href='@Url.Action("VerAutorizados", "Expedientes", new { clienteID = Model.ClienteID })'">Autorizados </button>
+        <button class="btn btn-primary" style="background-color: #008cba; border-color: #008cba;" onclick="location.href='@Url.Action("EditarExpediente", "Expedientes", new { clienteID = Model.ClienteID })'">Editar</button>
+        <button class="btn btn-primary" style="background-color: #008cba; border-color: #008cba;" onclick="location.href='@Url.Action("VerHistorialClinicoporid", "Expedientes", new { clienteID = Model.ClienteID })'">Expediente Clinico</button>
+        <button class="btn btn-primary" style="background-color: #008cba; border-color: #008cba;" onclick="location.href='@Url.Action("VerNotasPorID", "Expedientes", new { clienteID = Model.ClienteID })'">Notas</button>
+        <button class="btn btn-primary" style="background-color: #008cba; border-color: #008cba;" onclick="location.href='@Url.Action("ObtenerCotizacionesPorID", "Expedientes", new { clienteID = Model.ClienteID })'">Cotizaciones</button>
+        <button class="btn btn-danger" style="background-color: #d9534f; border-color: #d9534f;" onclick="location.href='@Url.Action("ListaExpedientes", "Expedientes")'">Salir</button>
+    </div>
+
+    
+        <!-- Campos bloqueados -->
+        <div class="row g-3 mb-3">
+            <div class="col-md-4">
+                <label for="Nombre" class="form-label">Nombre</label>
+                <input asp-for="Nombre" class="form-control" placeholder="Nombre" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="PrimerApellido" class="form-label">Primer Apellido</label>
+                <input asp-for="PrimerApellido" class="form-control" placeholder="Primer Apellido" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="SegundoApellido" class="form-label">Segundo Apellido</label>
+                <input asp-for="SegundoApellido" class="form-control" placeholder="Segundo Apellido" readonly />
+            </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-4">
+                <label for="TipoIdentificacion" class="form-label">Tipo de Identificación</label>
+                <select asp-for="TipoIdentificacion" class="form-select" disabled>
+                    <option value="Físico">Físico</option>
+                    <option value="Jurídico">Jurídico</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="Identificacion" class="form-label">Identificación</label>
+                <input asp-for="Identificacion" class="form-control" placeholder="Número de Identificación" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="TelefonoPrincipal" class="form-label">Teléfono Principal</label>
+                <input asp-for="TelefonoPrincipal" class="form-control" placeholder="Teléfono Principal" readonly />
+            </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-4">
+                <label for="CorreoElectronico" class="form-label">Correo Electrónico</label>
+                <input asp-for="CorreoElectronico" class="form-control" placeholder="Correo Electrónico" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="Pais" class="form-label">País</label>
+                <select asp-for="Pais" class="form-select" disabled>
+                    <option value="Costa Rica">Costa Rica</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="Ciudad" class="form-label">Ciudad</label>
+                <input asp-for="Ciudad" class="form-control" placeholder="Ciudad" readonly />
+            </div>
+        </div>
+
+        <div class="col-md-12 mb-3">
+            <label for="DireccionExacta" class="form-label">Dirección Exacta</label>
+            <input asp-for="DireccionExacta" class="form-control" placeholder="Dirección Exacta" readonly />
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-4">
+                <label for="FechaNacimiento" class="form-label">Fecha de Nacimiento</label>
+                <input asp-for="FechaNacimiento" class="form-control" type="date" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="Genero" class="form-label">Género</label>
+                <select asp-for="Genero" class="form-select" disabled>
+                    <option value="Indefinido">Indefinido</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="Ocupacion" class="form-label">Ocupación</label>
+                <input asp-for="Ocupacion" class="form-control" placeholder="Ocupación" readonly />
+            </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <label for="ContactoEmergencia" class="form-label">Contacto de Emergencia</label>
+                <input asp-for="ContactoEmergencia" class="form-control" placeholder="Contacto de Emergencia" readonly />
+            </div>
+            <div class="col-md-6">
+                <label for="TelefonoEmergencia" class="form-label">Teléfono Contacto Emergencia</label>
+                <input asp-for="TelefonoEmergencia" class="form-control" placeholder="Teléfono Contacto Emergencia" readonly />
+            </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <label for="FechaIngreso" class="form-label">Fecha de Ingreso</label>
+                <input asp-for="FechaIngreso" class="form-control" type="date" readonly />
+            </div>
+            <div class="col-md-6">
+                <label for="Notas" class="form-label">Notas</label>
+                <textarea asp-for="Notas" class="form-control" rows="3" placeholder="Notas adicionales" readonly></textarea>
+            </div>
+        </div>
+    
+</div>

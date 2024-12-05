@@ -2,11 +2,11 @@
 
 @{
     Layout = "~/Views/Shared/_Layout_Admin.cshtml";
-    ViewData["Title"] = "Lista de Expedientes";
+    ViewData["Title"] = "Lista de Expedientes Desactivados";
 }
 
 <div class="container mt-5 mb-5">
-    <h2 class="text-center mb-4" style="color: #008cba;">Lista de Expedientes</h2>
+    <h2 class="text-center mb-4" style="color: #008cba;">Lista de Expedientes Desactivados</h2>
 
     <!-- Barra de búsqueda -->
     <div class="row mb-3">
@@ -19,8 +19,6 @@
     {
         <table class="table table-bordered table-hover" style="background-color: #f9f9f9;">
             <thead style="background-color: #8d9b9f; color: #ffffff; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);">
-
-            <thead style="background-color: #8d9b9f; color: white;">
                 <tr>
                     <th>ClienteID</th>
                     <th>Nombre</th>
@@ -29,7 +27,7 @@
                     <th>Identificación</th>
                     <th>Teléfono</th>
                     <th>Correo</th>
-                    <th>Acciones</th> <!-- Columna para los botones -->
+                    <th>Acciones</th> <!-- Columna para el botón de activar -->
                 </tr>
             </thead>
             <tbody id="expedienteTable">
@@ -44,22 +42,11 @@
                         <td>@expediente.TelefonoPrincipal</td>
                         <td>@expediente.CorreoElectronico</td>
                         <td>
-                            <!-- Botones de Ver y Editar -->
-                            <a href="@Url.Action("VerCliente", "Expedientes", new { clienteID = expediente.ClienteID })" class="btn btn-info btn-sm">Ver</a>
-
-                            <a href="@Url.Action("EditarExpediente", "Expedientes", new { clienteID = expediente.ClienteID })" class="btn btn-warning btn-sm">Editar</a>
-
-                            <!-- Formulario para eliminar con el ClienteID (bloqueado) -->
-                            <form id="deleteForm_@expediente.ClienteID" style="display:inline;">
-                                <input type="hidden" name="ClienteID" value="@expediente.ClienteID" />
-                                <button type="button" class="btn btn-danger btn-sm" disabled>Eliminar</button>
-                            </form>
-
-                            <!-- Formulario para desactivar -->
+                            <!-- Botón de Activar -->
                             <form asp-action="ActualizarEstadoExpediente" method="post" style="display:inline;">
                                 <input type="hidden" name="clienteId" value="@expediente.ClienteID" />
-                                <input type="hidden" name="nuevoEstado" value="false" />
-                                <button type="submit" class="btn btn-secondary btn-sm">Desactivar</button>
+                                <input type="hidden" name="nuevoEstado" value="true" />
+                                <button type="submit" class="btn btn-success btn-sm">Activar</button>
                             </form>
                         </td>
                     </tr>
@@ -125,7 +112,7 @@
             const pageNumberBtn = document.createElement('button');
             pageNumberBtn.classList.add('btn', 'btn-secondary', 'btn-sm', 'mx-1');
             pageNumberBtn.textContent = i;
-            pageNumberBtn.onclick = function() {
+            pageNumberBtn.onclick = function () {
                 currentPage = i;
                 displayPage(currentPage);
             };
@@ -160,28 +147,6 @@
                     tr[i].style.display = "none";
                 }
             }
-        }
-    }
-
-    function eliminarExpediente(ClienteID) {
-        if (confirm('¿Está seguro de que desea eliminar este expediente?')) {
-            const url = `/Expedientes/EliminarExpediente/${ClienteID}`;
-            fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
-            })
-                .then(response => {
-                    if (response.ok) {
-                        alert("Expediente eliminado exitosamente.");
-                        location.reload();
-                    } else {
-                        alert("Error al eliminar el expediente.");
-                    }
-                })
-                .catch(error => {
-                    alert("Error de conexión.");
-                    console.error('Error:', error);
-                });
         }
     }
 

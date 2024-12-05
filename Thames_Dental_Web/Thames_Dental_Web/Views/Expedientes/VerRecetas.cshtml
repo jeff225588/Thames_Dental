@@ -1,0 +1,60 @@
+﻿@model Thames_Dental_Web.Models.ClientModel
+
+@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+    ViewData["Title"] = "Recetas del Cliente";
+}
+
+<div class="container mt-5 mb-5">
+    <h2 class="text-center mb-4" style="color: #008cba;">Recetas del Cliente</h2>
+
+    <!-- Botones para agregar nueva receta y volver -->
+    <div class="mb-4 text-center">
+        <a href="@Url.Action("AgregarRecetaporid", "Expedientes", new { ClienteID = Model.ClienteID })"
+           class="btn btn-info btn-symmetric text-nowrap">Agregar Receta</a>
+        <button class="btn btn-secondary btn-symmetric text-nowrap" onclick="history.back();">Volver</button>
+    </div>
+
+    @if (Model.Recetas != null && Model.Recetas.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-primary" style="background-color: #e6f7ff; color: #005580;">
+                    <tr>
+                        <th scope="col">ID Receta</th>
+                        <th scope="col">Medicamento</th>
+                        <th scope="col">Instrucciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var receta in Model.Recetas)
+                    {
+                        <tr>
+                            <td>@receta.Id</td>
+                            <td>@receta.Medicamento</td>
+                            <td>@receta.Instrucciones</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center" role="alert">
+            @ViewBag.Message ?? "Este usuario no tiene recetas."
+        </div>
+    }
+</div>
+
+<style>
+    .btn-symmetric {
+        min-width: 160px; /* Garantiza suficiente espacio para el texto */
+        height: 45px; /* Uniforma la altura */
+        padding: 10px; /* Añade espacio interno para el texto */
+        margin: 0 10px; /* Espaciado horizontal entre botones */
+        font-size: 16px; /* Texto legible */
+        text-align: center; /* Asegura que el texto esté centrado */
+        white-space: nowrap; /* Evita que el texto se desborde en varias líneas */
+    }
+</style>

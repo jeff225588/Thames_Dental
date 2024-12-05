@@ -27,7 +27,16 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
         <div class="container">
-            <a class="navbar-brand" href="/">Thames <span>Dental</span></a>
+            <a class="navbar-brand" href="/">Thames <span>Dental</span>
+                @if (Context.Session.GetString("NombreUsuario") != null)
+                {
+                    @Context.Session.GetString("NombreUsuario")
+                }
+                else
+                {
+                    <p>Invitado</p>
+                }
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -39,26 +48,32 @@
                             <span>Admin</span>
                         </a>
                     </li>
-                    <li class="nav-item @(ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")">
+                    <li class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
                         <a class="nav-link" asp-area="" asp-controller="Pages" asp-action="Index">Inicio</a>
                     </li>
-                    <li class="nav-item @(ViewContext.RouteData.Values["action"].ToString() == "Nosotros" ? "active" : "")">
+                    <li class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Nosotros" ? "active" : "")">
                         <a class="nav-link" asp-area="" asp-controller="Pages" asp-action="Nosotros">Nosotros</a>
                     </li>
-                    <li class="nav-item @(ViewContext.RouteData.Values["action"].ToString() == "Servicios" ? "active" : "")">
+                    <li class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Servicios" ? "active" : "")">
                         <a class="nav-link" asp-area="" asp-controller="Pages" asp-action="Servicios">Servicios</a>
                     </li>
-                    <li class="nav-item @(ViewContext.RouteData.Values["action"].ToString() == "Equipo" ? "active" : "")">
+                    <li class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Equipo" ? "active" : "")">
                         <a class="nav-link" asp-area="" asp-controller="Pages" asp-action="Equipo">Equipo</a>
                     </li>
-                    <li class="nav-item @(ViewContext.RouteData.Values["action"].ToString() == "Contacto" ? "active" : "")">
+                    <li class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Contacto" ? "active" : "")">
                         <a class="nav-link" asp-area="" asp-controller="Pages" asp-action="Contacto">Contacto</a>
                     </li>
-                    <li class="nav-item cta @(ViewContext.RouteData.Values["action"].ToString() == "Contacto" ? "active" : "")">
+                    <li class="nav-item cta @(ViewContext.RouteData.Values["action"]?.ToString() == "Contacto" ? "active" : "")">
                         <a class="nav-link" asp-area="" asp-controller="Pages" asp-action="Contacto" data-bs-toggle="modal" data-bs-target="#modalRequest">
                             <span>Agendar Cita</span>
                         </a>
                     </li>
+                    @if (Context.Session.GetString("NombreUsuario") != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Autenticacion" asp-action="CerrarSesion">Cerrar Sesión</a>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>

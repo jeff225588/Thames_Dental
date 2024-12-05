@@ -1,0 +1,55 @@
+﻿@model ClientModel
+
+@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+    ViewData["Title"] = "Expediente del Cliente";
+}
+
+<h2 class="text-center">Ver Notas</h2>
+
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <div class="alert alert-info text-center">@ViewBag.Message</div>
+}
+
+<div class="container">
+    <!-- Formulario que envía el ClienteID de forma oculta -->
+    <form method="post" asp-action="VerNotasPorID" class="mb-4">
+        <!-- Campo oculto que obtiene el ClienteID del modelo -->
+        <input type="hidden" id="ClienteID" name="clienteId" value="@Model.ClienteID" />
+    </form>
+
+    @if (Model.Nota != null && Model.Nota.Count > 0)
+    {
+        <h3 class="text-center">Notas encontradas:</h3>
+        <div class="row">
+            @foreach (var nota in Model.Nota)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Nota</h5>
+                            <p class="card-text">@nota.Detalle</p>
+                            <p class="card-text"><small class="text-muted">Fecha: @nota.Fecha.ToString("dd/MM/yyyy")</small></p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center">No se encontraron notas para este cliente.</div>
+    }
+
+    <div class="d-flex justify-content-center mt-3">
+        <!-- Botón de Agregar Nota -->
+        <button class="btn btn-primary" style="background-color: #008cba; border-color: #008cba;" onclick="location.href='@Url.Action("AgregarNotaporid", "Expedientes", new { clienteID = Model.ClienteID })'">Agregar Nota</button>
+
+        <!-- Espacio entre los botones -->
+        <div style="width: 10px;"></div>
+
+        <!-- Botón de salir -->
+        <button class="btn btn-secondary" onclick="window.history.back();">Salir</button>
+    </div>
+</div>

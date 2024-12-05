@@ -19,6 +19,12 @@
                     </div>
                     <!-- /Logo -->
                     <h4 class="mb-2">¿Olvidó su contraseña?</h4>
+
+                    @if (ViewBag.Mensaje != null)
+                    {
+                        <div class="alert alert-danger text-center">@ViewBag.Mensaje</div>
+                    }
+
                     <p class="mb-4">Introduce tu correo electrónico para restablecer tu contraseña</p>
                     @using (Html.BeginForm("RecuperarContrasena", "Autenticacion"))
                     {

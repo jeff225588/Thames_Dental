@@ -13,21 +13,6 @@ namespace Thames_Dental_Web.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult HomePage()
-        {
-            return View();
-        }
-
-        public IActionResult NotFound()
-        {
-            return View();
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

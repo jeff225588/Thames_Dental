@@ -1,0 +1,400 @@
+﻿@model Thames_Dental_Web.Models.ClientModel
+
+@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+    ViewData["Title"] = "Historia Clínica";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border-radius: 12px;
+            border: 1px solid #007bff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+
+        .btn-lg {
+            width: 100%;
+            background-color: #28a745;
+            border: none;
+        }
+
+            .btn-lg:hover {
+                background-color: #218838;
+            }
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h4 class="mb-0">Expediente Clínico</h4>
+            </div>
+            <div class="card-body">
+
+
+                <form asp-action="AgregarHistorialClinicoPorId" method="post">
+                    <!-- Id del Paciente (Ya no solicitamos la cédula, se toma directamente del modelo) -->
+                    <input type="hidden" asp-for="ClienteID" />>
+                    !-- Tipo de Sangre -->
+                    <div class="mb-3">
+                        <label for="TipoSangre" class="form-label">Tipo de Sangre</label>
+                        <select id="TipoSangre" name="TipoSangre" class="form-select" required>
+                            <option value="" disabled selected>Seleccione</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                        </select>
+                    </div>
+
+                    <!-- Anotaciones -->
+                    <div class="mb-3">
+                        <label for="Anotaciones" class="form-label">Anotaciones</label>
+                        <textarea id="Anotaciones" name="Anotaciones" class="form-control" rows="3" placeholder="Escriba aquí cualquier anotación relevante..."></textarea>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <!-- Cuestionario de Salud -->
+                    <h5 class="mt-4">Cuestionario de Salud</h5>
+                    <div class="mb-3">
+                        <label class="form-label">¿Presenta algún dolor o molestia?</label>
+                        <div>
+                            <input type="checkbox" id="DolorMolestia" name="DolorMolestia" value="true" />
+                            <label for="DolorMolestia">Sí</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">¿Se siente nervioso por el tratamiento?</label>
+                        <div>
+                            <input type="checkbox" id="Nervioso" name="Nervioso" value="true" />
+                            <label for="Nervioso">Sí</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">¿Bajo atención médica en los últimos 2 años?</label>
+                        <div>
+                            <input type="checkbox" id="AtencionMedica" name="AtencionMedica" value="true" />
+                            <label for="AtencionMedica">Sí</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">¿Ha ingerido medicamentos en los últimos 2 años?</label>
+                        <div>
+                            <input type="checkbox" id="Medicamentos" name="Medicamentos" value="true" />
+                            <label for="Medicamentos">Sí</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">¿Es alérgico a medicamentos?</label>
+                        <div>
+                            <input type="checkbox" id="Alergico" name="Alergico" value="true" />
+                            <label for="Alergico">Sí</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">¿Ha tenido sangrado excesivo que ha requerido atención médica?</label>
+                        <div>
+                            <input type="checkbox" id="SangradoExcesivo" name="SangradoExcesivo" value="true" />
+                            <label for="SangradoExcesivo">Sí</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">¿Ha tenido alguna reacción alérgica con la anestesia?</label>
+                        <div>
+                            <input type="checkbox" id="ReaccionAnestesica" name="ReaccionAnestesica" value="true" />
+                            <label for="ReaccionAnestesica">Sí</label>
+                        </div>
+                    </div>
+                    <hr class="my-4" />
+
+                    <h5>Condiciones Médicas</h5>
+
+                    <div class="condition">
+                        <input type="checkbox" id="FallaCardiaca" name="FallaCardiaca" value="true" />
+                        <label for="FallaCardiaca">Falla Cardíaca</label>
+                    </div>
+
+
+                    <div class="condition">
+                        <input type="checkbox" id="Infarto" name="Infarto" value="true" />
+                        <label for="Infarto">Infarto</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="AnginaPecho" name="AnginaPecho" value="true" />
+                        <label for="AnginaPecho">AnginaPecho</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="PresionAlta" name="PresionAlta" value="true" />
+                        <label for="PresionAlta">PresionAlta</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="SoploCorazon" name="SoploCorazon" value="true" />
+                        <label for="SoploCorazon">SoploCorazon</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="LesionesCardiacasCongenitas" name="LesionesCardiacasCongenitas" value="true" />
+                        <label for="LesionesCardiacasCongenitas">LesionesCardiacasCongenitas</label>
+                    </div>
+
+
+                    <div class="condition">
+                        <input type="checkbox" id="ValvulasCardiacasArtificiales" name="ValvulasCardiacasArtificiales" value="true" />
+                        <label for="ValvulasCardiacasArtificiales">ValvulasCardiacasArtificiales</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="Marcapasos" name="Marcapasos" value="true" />
+                        <label for="Marcapasos">Marcapasos</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="OperacionCorazon" name="OperacionCorazon" value="true" />
+                        <label for="OperacionCorazon">OperacionCorazon</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="Transplante" name="Transplante" value="true" />
+                        <label for="Transplante">Transplante</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="HerpesLabial" name="HerpesLabial" value="true" />
+                        <label for="HerpesLabial">HerpesLabial</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="Anemia " name="Anemia" value="true" />
+                        <label for="Anemia ">Anemia </label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="DerrameCerebral" name="DerrameCerebral" value="true" />
+                        <label for="DerrameCerebral">DerrameCerebral</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="ProblemasRinon" name="ProblemasRinon" value="true" />
+                        <label for="ProblemasRinon">ProblemasRinon</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="UlcerasGastritis" name="UlcerasGastritis" value="true" />
+                        <label for="UlcerasGastritis">UlcerasGastritis</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="EnfisemaPulmonars" name="EnfisemaPulmonar" value="true" />
+                        <label for="EnfisemaPulmonar">EnfisemaPulmonar</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="TosFrecuente" name="TosFrecuente" value="true" />
+                        <label for="TosFrecuente">TosFrecuente</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="VIHPositivo" name="VIHPositivo" value="true" />
+                        <label for="VIHPositivo">VIHPositivo</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="EnfermedadVenera" name="EnfermedadVenera" value="true" />
+                        <label for="EnfermedadVenera">EnfermedadVenera</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="Asma" name="Asma" value="true" />
+                        <label for="Asma">Asma</label>
+                    </div>
+
+
+
+                    <div class="condition">
+                        <input type="checkbox" id="Tuberculosis" name="Tuberculosis" value="true" />
+                        <label for="Tuberculosis">Tuberculosis</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="FiebreReumatica" name="FiebreReumatica" value="true" />
+                        <label for="FiebreReumatica">FiebreReumatica</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="Sinusitis" name="Sinusitis" value="true" />
+                        <label for="Sinusitis">Sinusitis</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="Alergias" name="Alergias" value="true" />
+                        <label for="Alergias">Alergias</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="Diabetes" name="Diabetes" value="true" />
+                        <label for="Diabetes">Diabetes</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="ProblemasTiroides" name="ProblemasTiroides" value="true" />
+                        <label for="ProblemasTiroides">ProblemasTiroides</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="Radioterapia" name="Radioterapia" value="true" />
+                        <label for="Radioterapia">Radioterapia</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="Quimioterapia" name="Quimioterapia" value="true" />
+                        <label for="Quimioterapia">Quimioterapia</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="Artritis" name="Artritis" value="true" />
+                        <label for="Artritis">Artritis</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="Reumatismo" name="Reumatismo" value="true" />
+                        <label for="Reumatismo">Reumatismo</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="TratamientoPsiquiatrico" name="TratamientoPsiquiatrico" value="true" />
+                        <label for="TratamientoPsiquiatrico">TratamientoPsiquiatrico</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="TratamientoPsiquiatrico" name="TratamientoPsiquiatrico" value="true" />
+                        <label for="TratamientoPsiquiatrico">TratamientoPsiquiatrico</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="DolorUnionMandibular" name="DolorUnionMandibular" value="true" />
+                        <label for="DolorUnionMandibular">DolorUnionMandibular</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="HepatitisA" name="HepatitisA" value="true" />
+                        <label for="HepatitisA">HepatitisA</label>
+                    </div>
+
+
+                    <div class="condition">
+                        <input type="checkbox" id="HepatitisB" name="HepatitisB" value="true" />
+                        <label for="HepatitisB">HepatitisB</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="HepatitisC" name="HepatitisC" value="true" />
+                        <label for="HepatitisC">HepatitisC</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="ProblemasHepaticos" name="ProblemasHepaticos" value="true" />
+                        <label for="ProblemasHepaticos">ProblemasHepaticos</label>
+                    </div>
+
+
+                    <div class="condition">
+                        <input type="checkbox" id="TransfusionSangre" name="TransfusionSangre" value="true" />
+                        <label for="TransfusionSangre">TransfusionSangre</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="EpilepsiaConvulsiones" name="EpilepsiaConvulsiones" value="true" />
+                        <label for="EpilepsiaConvulsiones">EpilepsiaConvulsiones</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="Desmayos" name="Desmayos" value="true" />
+                        <label for="Desmayos">Desmayos</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="Nerviosismo" name="Nerviosismo" value="true" />
+                        <label for="Nerviosismo">Nerviosismos</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="AparicionHematomas" name="AparicionHematomas" value="true" />
+                        <label for="AparicionHematomas">AparicionHematomas</label>
+                    </div>
+
+                    <div class="condition">
+                        <input type="checkbox" id="OtraCondicion" name="AparicionHematomas" value="true" />
+                        <label for="OtraCondicion">OtraCondicion</label>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label for="MedicamentosUltimos2Meses" class="form-label">Medicamentos (últimos 2 meses)</label>
+                        <input type="text" id="MedicamentosUltimos2Meses" name="MedicamentosUltimos2Meses" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Operaciones" class="form-label">Operaciones</label>
+                        <input type="text" id="Operaciones" name="Operaciones" class="form-control" />
+                    </div>
+
+                    <div class="text-end mt-4">
+                        <button type="submit" class="btn btn-lg">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

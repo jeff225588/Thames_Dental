@@ -1,0 +1,27 @@
+﻿@model Thames_Dental_Web.Models.CotizacionModel
+
+@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+    ViewData["Title"] = "Agregar Cotización";
+}
+
+<h2 class="text-center">Agregar Cotización</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger text-center">@TempData["ErrorMessage"]</div>
+}
+
+<form asp-action="AgregarCotizacion" method="post">
+    <div class="form-group">
+        <label for="TextoCotizacion">Texto de la Cotización:</label>
+        <textarea class="form-control" id="TextoCotizacion" name="TextoCotizacion" rows="4" required></textarea>
+    </div>
+
+    <input type="hidden" name="ClienteID" value="@Model.ClienteID" />
+
+    <div class="text-center mt-3">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a class="btn btn-secondary" href="javascript:history.back()">Cancelar</a>
+    </div>
+</form>
