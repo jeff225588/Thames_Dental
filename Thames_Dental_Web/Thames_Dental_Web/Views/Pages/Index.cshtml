@@ -3,6 +3,69 @@
     ViewData["Title"] = "Inicio";
 }
 
+<style>
+
+    .btn-reservar {
+        background-color: whitesmoke; /* Fondo blanco */
+        border: none; /* Elimina bordes */
+        color: steelblue; /* Texto azul */
+        font-weight: bold; /* Resalta el texto */
+        padding: 5px 5px; /* Espaciado interno */
+        border-radius: 5px; /* Bordes redondeados */
+        display: inline-block; /* Asegura que el botón respete su tamaño */
+        width: 20%; /* Ocupa todo el ancho del contenedor */
+        text-align: center; /* Centra el texto */
+        box-sizing: border-box; /* Asegura que padding no expanda el tamaño */
+        transition: background-color 0.3s ease, transform 0.2s ease; /* Animaciones */
+    }
+
+        .btn-reservar:hover {
+            background-color: #f0f0f0; /* Fondo más oscuro en hover */
+            transform: scale(1.05); /* Agrandamiento suave */
+            cursor: pointer;
+        }
+
+
+
+
+
+    .color-4 {
+        background: linear-gradient(to right, #5783bc, steelblue); /* Gradiente celeste claro */
+        color: whitesmoke
+    }
+
+    .color-5 {
+        background: linear-gradient(to right, steelblue, #5783bc ); /* Gradiente celeste claro */
+        color: whitesmoke
+    }
+
+    .color-6 {
+        background: linear-gradient(to right, steelblue, #5783bc ); /* Gradiente celeste claro */
+        color: whitesmoke
+    }
+
+    .phone-number, .openinghours {
+        font-weight: bold; /* Para resaltar estos textos */
+    }
+
+    h3, h6 {
+        color: whitesmoke; /* Encabezados más oscuros */
+    }
+
+    .btn-primary {
+        background-color: #5CBFD8; /* Botón más claro */
+        border-color: #5CBFD8;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: #4BAFC9; /* Color más oscuro al pasar el mouse */
+            border-color: #4BAFC9;
+        }
+
+
+</style>
+
 <section class="home-slider owl-carousel">
     <div class="slider-item" style="background-image: url('https://images.pexels.com/photos/52527/dentist-pain-borowac-cure-52527.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');">
         <div class="overlay"></div>
@@ -34,12 +97,12 @@
 <section class="ftco-intro">
     <div class="container">
         <div class="row no-gutters">
-            <div class="col-md-6 color-1 p-4">
+            <div class="col-md-6 color-4 p-4">
                 <h3 class="mb-4">Número de Contacto</h3>
                 <p>No dude en contactarnos</p>
                 <span class="phone-number">+ (506) 8304-0865</span>
             </div>
-            <div class="col-md-6 color-2 p-4">
+            <div class="col-md-6 color-6 p-4">
                 <h3 class="mb-4">Horarios</h3>
                 <h6 class="mb-4">Horario con cita y a convenir</h6>
                 <p class="openinghours d-flex">
@@ -55,7 +118,7 @@
                     <span>Cerrado</span>
                 </p>
             </div>
-            <div class="col-md-6 color-3 p-4">
+            <div class="col-md-6 color-5 p-4">
                 <h3 class="mb-2">Reserva tu cita</h3>
 
                 <form asp-action="Agendar" asp-controller="Cita" method="post" class="appointment-form" id="appointment-form">
@@ -164,8 +227,9 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <input type="submit" value="Reservar" class="btn btn-primary">
+                        <button type="submit" class="btn btn-reservar">Reservar</button>
                     </div>
+
                 </form>
 
 

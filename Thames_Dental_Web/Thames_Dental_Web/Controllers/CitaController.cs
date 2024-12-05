@@ -324,7 +324,7 @@ namespace Thames_Dental_Web.Controllers
 
                     Console.WriteLine("Calling GoogleCalendarService to add event...");
                     await _calendarService.AgregarEventoGoogleCalendarAsync(
-                        summary: $"Cita con {model.Especialista} - {model.Especialidad}",
+                        summary: $"Cita con {model.NombreUsuario}",
                         description: $"Procedimiento: {model.Procedimiento}",
                         location: "Tejar de el Guarco, Cartago, Costa Rica",
                         startDateTime: startDateTime,

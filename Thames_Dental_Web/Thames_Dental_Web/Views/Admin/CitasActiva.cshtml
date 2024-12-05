@@ -4,9 +4,47 @@
     ViewData["Title"] = "Citas Administración";
 }
 
-
 <body>
+    <style>
+        /* Inline CSS for button styling and alignment */
+        .table-actions-container {
+            display: flex;
+            flex-direction: column; /* Stack buttons vertically */
+            gap: 10px; /* Space between buttons */
+            align-items: stretch; /* Make all buttons the same width */
+        }
 
+        .btn.action-button {
+            color: white;
+            font-weight: bold;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            width: 100%; /* Ensure all buttons have the same width */
+        }
+
+            .btn.action-button.cancelar {
+                background-color: darkred;
+                border-color: darkred;
+            }
+
+            .btn.action-button.reprogramar {
+                background-color: #008cba;
+                border-color: #008cba;
+            }
+
+            .btn.action-button.aceptar {
+                background-color: forestgreen;
+                border-color: forestgreen;
+            }
+
+        .table-actions-container form {
+            margin: 0; /* Remove extra margin for form elements */
+            display: inline-block; /* Ensure forms are inline-block for alignment */
+        }
+    </style>
 
     <!-- Reschedule Modal -->
     <div class="modal fade" id="rescheduleModal" tabindex="-1" aria-labelledby="rescheduleModalLabel" aria-hidden="true">
@@ -39,62 +77,63 @@
         </div>
     </div>
 
-
-    <div class="container mt-5 mb-5"> 
-
+    <div class="container mt-5 mb-5">
         <h2 class="text-center mb-4" style="color: #008cba;">Ver todas las citas Activas</h2>
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead class="table-light">
-        <tr>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>Especialidad</th>
-            <th>Especialista</th>
-            <th>Fecha</th>
-            <th>Hora</th>
-            <th>Procedimiento</th>
-            <th>Duración</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var cita in Model)
-        {
-            <tr>
-                <td>@cita.NombreUsuario</td>
-                <td>@cita.Email</td>
-                <td>@cita.Especialidad</td>
-                <td>@cita.Especialista</td>
-                <td>@cita.Fecha.ToString("dd/MM/yyyy")</td>
-                <td>@cita.Hora</td>
-                <td>@cita.Procedimiento</td>
-                <td>@cita.Duracion minutos</td>
-                <td>
-                        <form id="cancelar-form-@cita.Id" asp-controller="Cita" asp-action="CancelarCita" method="post" style="display:inline;">
-                            <input type="hidden" name="id" value="@cita.Id" />
-                                    <button type="button" class="btn btn-primary btn-sm" style="background-color: #008cba; border-color: #008cba;" onclick="confirmarCancelacion(@cita.Id)">Cancelar</button>
-                        </form>
-
-
-                                <button class="btn btn-primary btn-sm" style="background-color: #008cba; border-color: #008cba;" onclick="openRescheduleModal(@cita.Id, '@cita.Fecha', '@cita.Hora')">Reprogramar</button>
-
-                                <form asp-action="AceptarCita" method="post" style="display: inline;">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Especialidad</th>
+                        <th>Especialista</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Procedimiento</th>
+                        <th>Duración</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cita in Model)
+                    {
+                        <tr>
+                            <td>@cita.NombreUsuario</td>
+                            <td>@cita.Email</td>
+                            <td>@cita.Especialidad</td>
+                            <td>@cita.Especialista</td>
+                            <td>@cita.Fecha.ToString("dd/MM/yyyy")</td>
+                            <td>@cita.Hora</td>
+                            <td>@cita.Procedimiento</td>
+                            <td>@cita.Duracion minutos</td>
+                            <td class="table-actions-container">
+                                <!-- Cancelar Button -->
+                                <form id="cancelar-form-@cita.Id" asp-controller="Cita" asp-action="CancelarCita" method="post">
                                     <input type="hidden" name="id" value="@cita.Id" />
-                                    <button type="submit" class="btn btn-primary btn-sm" style="background-color: #008cba; border-color: #008cba;">
-                                        Aceptar
+                                    <button type="button" class="btn action-button cancelar" onclick="confirmarCancelacion(@cita.Id)">
+                                        Cancelar
                                     </button>
                                 </form>
 
-                </td>
-            </tr>
-        }
-    </tbody>
+                                <!-- Reprogramar Button -->
+                                <button class="btn action-button reprogramar" onclick="openRescheduleModal(@cita.Id, '@cita.Fecha', '@cita.Hora')">
+                                    Reprogramar
+                                </button>
 
-</table>
+                                <!-- Aceptar Button -->
+                                <form asp-action="AceptarCita" method="post">
+                                    <input type="hidden" name="id" value="@cita.Id" />
+                                    <button type="submit" class="btn action-button aceptar">
+                                        Aceptar
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
-    </div>
-
 </body>
 
 <!-- SweetAlert2 CSS -->
@@ -102,7 +141,6 @@
 
 <!-- SweetAlert2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 
 <script>
     function openRescheduleModal(id, fecha, hora) {
@@ -114,10 +152,7 @@
         var rescheduleModal = new bootstrap.Modal(document.getElementById('rescheduleModal'));
         rescheduleModal.show();
     }
-</script>
 
-
-<script>
     function confirmarCancelacion(id) {
         console.log("Id de la cita a cancelar:", id);
         if (confirm("¿Estás seguro de que deseas cancelar esta cita?")) {
@@ -125,7 +160,6 @@
         }
     }
 </script>
-
 
 @if (TempData["SweetAlertMessage"] != null && TempData["SweetAlertType"] != null)
 {
