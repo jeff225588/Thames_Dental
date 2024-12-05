@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Thames_Dental_API.Models
+namespace Thames_Dental_Web.Models
 {
-    public class Inventario
+    public class InventarioModel
     {
 
         public int IdInventario { get; set; }
@@ -30,5 +30,6 @@ namespace Thames_Dental_API.Models
 
         [Required]
         public bool Activo { get; set; } // Campo para eliminado lógico
+
     }
 }

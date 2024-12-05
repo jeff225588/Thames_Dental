@@ -1,0 +1,227 @@
+﻿@inject IConfiguration Configuration
+@model List<Thames_Dental_Web.Models.InventarioModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+    ViewData["Title"] = "Lista de Inventario";
+    var rutaApi = Configuration["Variables:RutaApi"]; // Obtiene la ruta de la API desde appsettings.json
+}
+
+<style>
+    .action-btn {
+        width: 80px;
+        height: 25px;
+        text-align: center;
+        display: inline-block;
+        line-height: 1.2;
+    }
+
+        .action-btn.btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+
+        .action-btn.btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+    .btn-top-right {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+    }
+</style>
+
+<div class="container mt-5 mb-5">
+    <h2 class="text-center mb-4" style="color: #008cba;">Lista de Inventario</h2>
+
+
+    <!-- Botón para redirigir a ListarInventarioInactivo -->
+    <a href="@Url.Action("ListarInventarioInactivo", "Inventario")" class="btn btn-secondary btn-top-right">
+        Ver Inventario Inactivo
+    </a>
+
+    <!-- Botón de Descargar Reporte PDF -->
+    <div class="mb-3 text-right">
+        <a href="@($"{rutaApi}Inventario/GenerarReportePDF")" class="btn btn-primary" target="_blank">
+            Descargar Reporte PDF
+        </a>
+    </div>
+
+    <!-- Barra de búsqueda -->
+    <div class="row mb-3">
+        <div class="col-md-6 offset-md-3">
+            <input type="text" id="searchBox" class="form-control" placeholder="Buscar por nombre..." onkeyup="searchInventario()">
+        </div>
+    </div>
+
+    @if (Model != null && Model.Count > 0)
+    {
+        <table id="inventarioTable" class="table table-bordered table-hover" style="background-color: #f9f9f9;">
+            <thead style="background-color: #008cba; color: white;">
+                <tr>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Descripcion</th>
+                    <th>Cantidad</th>
+                    <th>Proveedor</th>
+                    <th>PrecioUnitario</th>
+                    <th>FechaIngreso</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var inventario in Model)
+                {
+                    <tr>
+                        <td>@inventario.IdInventario</td>
+                        <td>@inventario.Nombre</td>
+                        <td>@inventario.Descripcion</td>
+                        <td>@inventario.Cantidad</td>
+                        <td>@inventario.Proveedor</td>
+                        <td>@inventario.PrecioUnitario</td>
+                        <td>@inventario.FechaIngreso.ToString("dd-MM-yyyy")</td>
+                        <td>
+                            <!-- Botón Editar -->
+                            <a href="@Url.Action("EditarInventario", "Inventario", new { IdInventario = inventario.IdInventario })"
+                               class="btn btn-warning btn-sm action-btn">Editar</a>
+
+                            <!-- Formulario para eliminar con el IdInventario -->
+                            <form id="deleteForm_@inventario.IdInventario" style="display:inline;">
+                                <input type="hidden" name="IdInventario" value="@inventario.IdInventario" />
+                                <button type="button" class="btn btn-danger btn-sm action-btn" onclick="eliminarInventario(@inventario.IdInventario)">Eliminar</button>
+                            </form>
+                        </td>
+
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+        <!-- Paginación con números -->
+        <div id="paginationControls" class="text-center">
+            <button id="prevBtn" class="btn btn-primary" onclick="changePage('prev')">Anterior</button>
+            <div id="pageNumbers" class="d-inline-block"></div>
+            <button id="nextBtn" class="btn btn-primary" onclick="changePage('next')">Siguiente</button>
+        </div>
+
+    }
+    else
+    {
+        <p class="text-center">No hay inventario disponible.</p>
+    }
+</div>
+
+<script>
+
+ const pageSize = 10; // Número de filas por página
+    let currentPage = 1;
+
+    // Selecciona las filas correctas de la tabla de inventario
+    const rows = document.querySelectorAll('#inventarioTable tbody tr');
+    const totalPages = Math.ceil(rows.length / pageSize);
+
+    function displayPage(page) {
+        if (rows.length === 0) return;
+
+        const start = (page - 1) * pageSize;
+        const end = start + pageSize;
+
+        rows.forEach((row, index) => {
+            if (index >= start && index < end) {
+                row.style.display = ''; // Mostrar fila
+            } else {
+                row.style.display = 'none'; // Ocultar fila
+            }
+        });
+
+        // Actualiza el estado de los botones
+        document.getElementById('prevBtn').disabled = page === 1;
+        document.getElementById('nextBtn').disabled = page === totalPages;
+
+        // Actualiza los números de página
+        updatePageNumbers();
+    }
+
+    function changePage(direction) {
+        if (direction === 'prev' && currentPage > 1) {
+            currentPage--;
+        } else if (direction === 'next' && currentPage < totalPages) {
+            currentPage++;
+        }
+        displayPage(currentPage);
+    }
+
+    function updatePageNumbers() {
+        const pageNumbersContainer = document.getElementById('pageNumbers');
+        pageNumbersContainer.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageNumberBtn = document.createElement('button');
+            pageNumberBtn.classList.add('btn', 'btn-secondary', 'btn-sm', 'mx-1');
+            pageNumberBtn.textContent = i;
+            pageNumberBtn.onclick = function () {
+                currentPage = i;
+                displayPage(currentPage);
+            };
+            if (i === currentPage) {
+                pageNumberBtn.classList.add('active');
+            }
+            pageNumbersContainer.appendChild(pageNumberBtn);
+        }
+    }
+
+
+
+
+    function searchInventario() {
+        var input = document.getElementById("searchBox");
+        var filter = input.value.toLowerCase();
+        var table = document.getElementById("inventarioTable");
+        var tr = table.getElementsByTagName("tr");
+
+        for (var i = 1; i < tr.length; i++) { // Empieza en 1 para evitar el encabezado
+            var td = tr[i].getElementsByTagName("td")[1]; // Índice 1 para la columna Nombre
+
+            if (td) {
+                var txtValue = td.textContent || td.innerText;
+                if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+     function eliminarInventario(IdInventario) {
+        if (confirm('¿Está seguro de que desea eliminar este inventario?')) {
+            const url = `/Inventario/EliminarInventario/${IdInventario}`;
+            console.log("URL para eliminar:", url); // Verifica si el IdInventario está siendo pasado correctamente
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Inventario eliminado exitosamente.");
+                        location.reload();
+                    } else {
+                        alert("Error al eliminar el Inventario.");
+                    }
+                })
+                .catch(error => {
+                    alert("Error de conexión.");
+                    console.error('Error:', error);
+                });
+        }
+    } 
+
+    // Inicializar la página inicial
+    displayPage(currentPage);
+</script>
