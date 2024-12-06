@@ -89,12 +89,8 @@
                 }
             })
                 .then(response => {
-                    if (response.ok) {
-                        alert("Inventario restaurado exitosamente.");
-                        location.reload();
-                    } else {
-                        alert("Error al restaurar el Inventario.");
-                    }
+                    alert("Inventario restaurado exitosamente.");
+                    location.reload();              
                 })
                 .catch(error => {
                     alert("Error de conexión.");
