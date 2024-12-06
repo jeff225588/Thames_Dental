@@ -82,9 +82,17 @@
                         <ul class="menu-sub">
                             <li class="menu-item">
                                 <a class="menu-link" asp-area="" asp-controller="Expedientes" asp-action="Expediente">
-                                    <div data-i18n="Expediente">Expediente</div>
+                                    <div data-i18n="Expediente">Agregar Expediente</div>
                                 </a>
                             </li>
+
+                            <li class="menu-item">
+                                <a class="menu-link" asp-area="" asp-controller="Expedientes" asp-action="ListaExpedientes">
+                                    <div data-i18n="ListaExpedientes">Ver expedientes</div>
+                                </a>
+                            </li>
+
+
                             <li class="menu-item">
                                 <a class="menu-link" asp-area="" asp-controller="Expedientes" asp-action="Autorizados">
                                     <div data-i18n="Autorizados">Autorizados</div>
@@ -100,33 +108,13 @@
                                     <div data-i18n="Historia Clínica">Historia Clínica</div>
                                 </a>
                             </li>
-                            <li class="menu-item">
-                                <a class="menu-link" asp-area="" asp-controller="Expedientes" asp-action="Odontograma">
-                                    <div data-i18n="Odontograma">Odontograma</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a class="menu-link" asp-area="" asp-controller="Expedientes" asp-action="Recetario">
-                                    <div data-i18n="Recetario">Recetario</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a class="menu-link" asp-area="" asp-controller="Expedientes" asp-action="Laboratorio">
-                                    <div data-i18n="Laboratorio">Laboratorio</div>
-                                </a>
-                            </li>
+                            
+                            
+                            
                         </ul>
                     </li>
-                    
 
-                    <!-- Pages -->
-                    <li class="menu-header small text-uppercase">
-                        <span class="menu-header-text">Pages</span>
-                    </li>
-
-
-
-                    <!-- Expediente del cliente -->
+                    <!-- Citas -->
                     <li class="menu-header small text-uppercase">
                         <span class="menu-header-text">Administración de Citas</span>
                     </li>
@@ -159,6 +147,12 @@
                         </ul>
                     </li>
 
+
+
+                    <!-- Pages -->
+                    <li class="menu-header small text-uppercase">
+                        <span class="menu-header-text">Pages</span>
+                    </li>
                     <li class="menu-item">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons bx bx-dock-top"></i>

@@ -7,10 +7,7 @@
 
 <h2 class="text-center">Ver Notas</h2>
 
-@if (!string.IsNullOrEmpty(ViewBag.Message))
-{
-    <div class="alert alert-info text-center">@ViewBag.Message</div>
-}
+
 
 <div class="container">
     <!-- Formulario que envía el ClienteID de forma oculta -->
@@ -50,6 +47,6 @@
         <div style="width: 10px;"></div>
 
         <!-- Botón de salir -->
-        <button class="btn btn-secondary" onclick="window.history.back();">Salir</button>
+        <button class="btn btn-secondary" onclick="location.href='@Url.Action("VerCliente", "Expedientes", new { clienteID = Model.ClienteID })'">Salir</button>
     </div>
 </div>

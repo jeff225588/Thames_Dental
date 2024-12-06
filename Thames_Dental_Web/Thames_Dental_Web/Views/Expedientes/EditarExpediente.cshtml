@@ -130,6 +130,7 @@
 
         <div class="text-center">
             <button type="submit" class="btn btn-primary" style="background-color: #008cba; border-color: #008cba;">Guardar Cambios</button>
+            <button class="btn btn-secondary" onclick="location.href='@Url.Action("VerCliente", "Expedientes", new { clienteID = Model.ClienteID })'">Salir</button>
         </div>
     </form>
 </div>

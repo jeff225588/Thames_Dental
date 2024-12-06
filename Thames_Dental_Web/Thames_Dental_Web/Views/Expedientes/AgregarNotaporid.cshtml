@@ -41,7 +41,7 @@
             <!-- Contenedor para los botones (Agregar Nota y Salir) alineados a la par -->
             <div class="d-flex justify-content-between mt-4">
                 <button type="submit" class="btn btn-primary">Agregar Nota</button>
-                <button class="btn btn-secondary" onclick="window.history.back();">Salir</button>
+                <button class="btn btn-secondary" onclick="location.href='@Url.Action("VerCliente", "Expedientes", new { clienteID = Model.ClienteID })'">Salir</button>
             </div>
         </form>
     </div>

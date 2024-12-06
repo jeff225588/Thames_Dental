@@ -10,13 +10,7 @@
 <div class="container mt-4">
     <div class="card shadow mb-4">
         <div class="card-body">
-            @if (!string.IsNullOrEmpty(ViewBag.Message))
-            {
-                <div class="alert alert-warning">
-                    @ViewBag.Message
-                </div>
-            }
-
+            
             @if (Model.HistorialClinicoporid != null && Model.HistorialClinicoporid.Any())
             {
                 <div class="row">
