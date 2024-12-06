@@ -19,8 +19,8 @@ namespace Thames_Dental_Web.Filters
             {
                 // Redirige a la página principal si el rol no es "1"
                 filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary {
-                    { "controller","Pages"},
-                    { "action", "Index" }
+                    { "controller","Autenticacion"},
+                    { "action", "NotFound404" }
                 });
             }
         }
