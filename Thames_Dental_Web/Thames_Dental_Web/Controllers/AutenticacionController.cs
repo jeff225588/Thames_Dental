@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using Thames_Dental_Web.Models;
 using Thames_Dental_Web.Services;
+using Thames_Dental_Web.Filters;
 using Microsoft.AspNetCore.Http;
 using System.Security.Cryptography;
 using System.Net.Http.Headers;
@@ -183,6 +184,13 @@ namespace Thames_Dental_Web.Controllers
         }
 
         public IActionResult NotFound404()
+        {
+            return View();
+        }
+
+        [AdminFilter]
+        [HttpGet]
+        public IActionResult TestFilter()
         {
             return View();
         }
