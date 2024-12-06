@@ -7,6 +7,19 @@ namespace Thames_Dental_API.Models
 
         public int IdInventario { get; set; }
 
+
+        public int IdAuditoria { get; set; }
+
+        public string Accion { get; set; } = string.Empty;
+
+
+        [Required]
+        [DataType(DataType.Date)]
+        public DateTime FechaCambio { get; set; }
+
+
+
+
         [Required]
         [StringLength(100)]
         public string Nombre { get; set; } = string.Empty;

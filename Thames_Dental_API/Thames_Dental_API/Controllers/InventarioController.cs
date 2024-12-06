@@ -67,6 +67,21 @@ namespace InventarioAPI.Controllers
 
 
 
+
+        [HttpGet("ListarAuditoriaInventario")]
+        public async Task<IActionResult> ListarAuditoriaInventario()
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+
+                var inventario = await connection.QueryAsync<Inventario>("ListarAuditoriaInventario", commandType: CommandType.StoredProcedure);
+
+                return Ok(inventario);
+            }
+        }
+
+
+
         //[HttpDelete("EliminarInventario/{IdInventario}")]
         //public async Task<IActionResult> EliminarInventario(int IdInventario)
         //{

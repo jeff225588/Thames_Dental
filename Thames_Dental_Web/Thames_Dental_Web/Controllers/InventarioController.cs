@@ -75,6 +75,29 @@ namespace Inventario.Controllers
             }
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> ListarAuditoriaInventario()
+        {
+            using (var client = _http.CreateClient())
+            {
+                string url = _conf.GetSection("Variables:RutaApi").Value + "Inventario/ListarAuditoriaInventario";
+                var response = await client.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var inventario = await response.Content.ReadFromJsonAsync<List<InventarioModel>>();
+                    return View("ListarAuditoriaInventario", inventario); // Cargar la nueva vista con los datos
+                }
+                else
+                {
+                    ViewBag.Message = "Error al obtener la lista de inventario.";
+                    return View("ListarAuditoriaInventario", new List<InventarioModel>()); // Retornar una lista vacía en caso de error
+                }
+            }
+        }
+
+
         //[HttpPost("Inventario/EliminarInventario/{IdInventario}")]
         //public async Task<IActionResult> EliminarInventario(int IdInventario)
         //{

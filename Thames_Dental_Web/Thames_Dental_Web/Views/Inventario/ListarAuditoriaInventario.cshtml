@@ -1,0 +1,120 @@
+﻿@model List<Thames_Dental_Web.Models.InventarioModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+    ViewData["Title"] = "Listado del Registro de Inventario";
+}
+
+<style>
+
+    #auditoriaTable th {
+        color: white !important;
+    }
+</style>
+
+<h2 class="text-center">@ViewData["Title"]</h2>
+
+<table id="auditoriaTable" class="table table-bordered table-hover" style="background-color: #f9f9f9;">
+    <thead class="thead-dark" style="background-color: #008cba; color: white;">
+        <tr>
+            <th>Id Auditoría</th>
+            <th>Id Inventario</th>
+            <th>Acción</th>
+            <th>Fecha de Cambio</th>
+            <th>Nombre</th>
+            <th>Cantidad</th>
+            <th>Proveedor</th>
+            <th>Precio Unitario</th>
+            <th>Fecha de Ingreso</th>
+            <th>Activo</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.IdAuditoria</td>
+                <td>@item.IdInventario</td>
+                <td>@item.Accion</td>
+                <td>@item.FechaCambio.ToString("dd/MM/yyyy hh:mm")</td>
+                <td>@item.Nombre</td>
+                <td>@item.Cantidad</td>
+                <td>@item.Proveedor</td>
+                <td>@item.PrecioUnitario.ToString("C")</td>
+                <td>@item.FechaIngreso.ToString("dd/MM/yyyy")</td>
+                <td>@(item.Activo ? "Sí" : "No")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<div id="paginationControls" class="text-center">
+    <button id="prevBtn" class="btn btn-primary" onclick="changePage('prev')">Anterior</button>
+    <div id="pageNumbers" class="d-inline-block"></div>
+    <button id="nextBtn" class="btn btn-primary" onclick="changePage('next')">Siguiente</button>
+</div>
+
+<script>
+    const pageSize = 10; // Número de filas por página
+    let currentPage = 1;
+
+    // Selecciona las filas correctas de la tabla de auditoría
+    const rows = document.querySelectorAll('#auditoriaTable tbody tr');
+    const totalPages = Math.ceil(rows.length / pageSize);
+
+    function displayPage(page) {
+        if (rows.length === 0) return;
+
+        const start = (page - 1) * pageSize;
+        const end = start + pageSize;
+
+        rows.forEach((row, index) => {
+            if (index >= start && index < end) {
+                row.style.display = ''; // Mostrar fila
+            } else {
+                row.style.display = 'none'; // Ocultar fila
+            }
+        });
+
+        // Actualiza el estado de los botones
+        document.getElementById('prevBtn').disabled = page === 1;
+        document.getElementById('nextBtn').disabled = page === totalPages;
+
+        // Actualiza los números de página
+        updatePageNumbers();
+    }
+
+    function changePage(direction) {
+        if (direction === 'prev' && currentPage > 1) {
+            currentPage--;
+        } else if (direction === 'next' && currentPage < totalPages) {
+            currentPage++;
+        }
+        displayPage(currentPage);
+    }
+
+    function updatePageNumbers() {
+        const pageNumbersContainer = document.getElementById('pageNumbers');
+        pageNumbersContainer.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageNumberBtn = document.createElement('button');
+            pageNumberBtn.classList.add('btn', 'btn-secondary', 'btn-sm', 'mx-1');
+            pageNumberBtn.textContent = i;
+            pageNumberBtn.onclick = function () {
+                currentPage = i;
+                displayPage(currentPage);
+            };
+            if (i === currentPage) {
+                pageNumberBtn.classList.add('active');
+            }
+            pageNumbersContainer.appendChild(pageNumberBtn);
+        }
+    }
+
+    // Inicializar la primera página al cargar la vista
+    document.addEventListener('DOMContentLoaded', function () {
+        displayPage(currentPage);
+    });
+</script>
