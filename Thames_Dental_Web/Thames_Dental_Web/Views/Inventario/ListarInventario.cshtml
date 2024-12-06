@@ -8,6 +8,11 @@
 }
 
 <style>
+
+    #inventarioTable th {
+        color: white !important;
+    }
+
     .action-btn {
         width: 80px;
         height: 25px;
@@ -37,13 +42,13 @@
     <h2 class="text-center mb-4" style="color: #008cba;">Lista de Inventario</h2>
 
 
-    <!-- Botón para redirigir a ListarInventarioInactivo -->
-    <a href="@Url.Action("ListarInventarioInactivo", "Inventario")" class="btn btn-secondary btn-top-right">
-        Ver Inventario Inactivo
-    </a>
+    <div class="d-flex justify-content-end mb-3">
+        <!-- Botón para redirigir a ListarInventarioInactivo -->
+        <a href="@Url.Action("ListarInventarioInactivo", "Inventario")" class="btn btn-secondary mx-2">
+            Ver Inventario Inactivo
+        </a>
 
-    <!-- Botón de Descargar Reporte PDF -->
-    <div class="mb-3 text-right">
+        <!-- Botón de Descargar Reporte PDF -->
         <a href="@($"{rutaApi}Inventario/GenerarReportePDF")" class="btn btn-primary" target="_blank">
             Descargar Reporte PDF
         </a>

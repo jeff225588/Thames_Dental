@@ -5,8 +5,23 @@
     ViewData["Title"] = "Inventario Inactivo";
 }
 
+<style>
+    #inventarioTable th {
+        color: white !important;
+    }
+</style>
+
+
 <div class="container mt-5 mb-5">
     <h2 class="text-center mb-4" style="color: #dc3545;">Inventario Inactivo</h2>
+
+
+    <div class="d-flex justify-content-end mb-3">
+        <!-- Botón para redirigir a ListarInventarioInactivo -->
+        <a href="@Url.Action("ListarInventario", "Inventario")" class="btn btn-primary mx-2">
+            Ver Inventario Activo
+        </a>
+    </div>
 
     <!-- Barra de búsqueda -->
     <div class="row mb-3">
