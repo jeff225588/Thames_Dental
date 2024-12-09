@@ -5,6 +5,7 @@ using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
+using System.Data;
 
 namespace Thames_Dental_API.Controllers
 {
@@ -197,7 +198,6 @@ namespace Thames_Dental_API.Controllers
         }
 
 
-
         [HttpPost("CancelarCita")]
         public async Task<IActionResult> CancelarCita(int id)
         {
@@ -208,30 +208,20 @@ namespace Thames_Dental_API.Controllers
             {
                 using (var connection = new SqlConnection(connectionString))
                 {
-                    // Primero, obtenemos los datos de la cita
-                    var querySelect = "SELECT Email, NombreUsuario, Fecha, Hora, Especialidad, Procedimiento, Especialista FROM Citas WHERE Id = @Id";
-                    var cita = await connection.QueryFirstOrDefaultAsync<Cita>(querySelect, new { Id = id });
+                    // Ejecutar el SP
+                    var parameters = new { Id = id };
+                    var cita = await connection.QueryFirstOrDefaultAsync<Cita>(
+                        "CancelarCita",
+                        parameters,
+                        commandType: CommandType.StoredProcedure
+                    );
 
                     if (cita == null)
                     {
                         return NotFound(); // 404 si no se encontró la cita
                     }
 
-                    // Luego, actualizamos el estado de la cita a "Cancelada"
-                    var queryUpdate = "UPDATE Citas SET Estado = @Estado WHERE Id = @Id";
-                    var affectedRows = await connection.ExecuteAsync(queryUpdate, new { Estado = "Cancelada", Id = id });
-
-                    Console.WriteLine($"Filas afectadas al cancelar la cita: {affectedRows}");
-
-                    if (affectedRows > 0)
-                    {
-                        // Devolvemos los detalles de la cita para que se pueda enviar el correo
-                        return Ok(cita);
-                    }
-                    else
-                    {
-                        return StatusCode(500, "No se pudo actualizar el estado de la cita.");
-                    }
+                    return Ok(cita); // Devuelve los detalles de la cita cancelada
                 }
             }
             catch (Exception ex)
@@ -240,6 +230,7 @@ namespace Thames_Dental_API.Controllers
                 return StatusCode(500); // 500 en caso de un error del servidor
             }
         }
+
 
 
 
