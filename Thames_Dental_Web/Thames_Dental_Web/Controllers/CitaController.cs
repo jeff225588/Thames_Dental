@@ -244,7 +244,7 @@ namespace Thames_Dental_Web.Controllers
                 TempData["SweetAlertType"] = "error";
             }
 
-            return RedirectToAction("CitasActiva");
+            return RedirectToAction("CitasActivas");
         }
 
 
@@ -304,7 +304,7 @@ namespace Thames_Dental_Web.Controllers
                 TempData["SweetAlertType"] = "error";
             }
 
-            return RedirectToAction("CitasActiva");
+            return RedirectToAction("CitasActivas"); 
         }
 
 
