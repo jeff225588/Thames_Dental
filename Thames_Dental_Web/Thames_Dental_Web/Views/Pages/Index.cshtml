@@ -30,17 +30,20 @@
 
 
     .color-4 {
-        background: linear-gradient(to right, #5783bc, steelblue); /* Gradiente celeste claro */
+        background: rgb(70,130,180);
+        background: linear-gradient(90deg, rgba(70,130,180,1) 0%, rgba(87,131,188,1) 100%);
         color: whitesmoke
     }
 
     .color-5 {
-        background: linear-gradient(to right, steelblue, #5783bc ); /* Gradiente celeste claro */
+        background: rgb(70,130,180);
+        background: linear-gradient(90deg, rgba(70,130,180,1) 0%, rgba(87,131,188,1) 100%);
         color: whitesmoke
     }
 
     .color-6 {
-        background: linear-gradient(to right, steelblue, #5783bc ); /* Gradiente celeste claro */
+        background: rgb(70,130,180);
+        background: linear-gradient(90deg, rgba(70,130,180,1) 0%, rgba(87,131,188,1) 100%);
         color: whitesmoke
     }
 
@@ -74,7 +77,10 @@
                 <div class="col-md-6 col-sm-12 ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
                     <h1 class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Logre la sonrisa perfecta que desea</h1>
                     <p class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">En Thames Dental su sonrisa es nuestra prioridad.</p>
-                    <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><a href="#" class="btn btn-primary px-4 py-3">Agendar Cita</a></p>
+                    @if (Context.Session.GetString("NombreUsuario") != null)
+                    {
+                        <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><a href="#" class="btn btn-primary px-4 py-3">Agendar Cita</a></p>
+                    }
                 </div>
             </div>
         </div>
@@ -87,7 +93,10 @@
                 <div class="col-md-6 col-sm-12 ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
                     <h1 class="mb-4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Logre la sonrisa perfecta que desea</h1>
                     <p class="mb-4">En Thames Dental su sonrisa es nuestra prioridad.</p>
-                    <p><a href="#" class="btn btn-primary px-4 py-3">Agendar Cita</a></p>
+                    @if (Context.Session.GetString("NombreUsuario") != null)
+                    {
+                        <p><a href="#" class="btn btn-primary px-4 py-3">Agendar Cita</a></p>
+                    }
                 </div>
             </div>
         </div>
@@ -97,146 +106,161 @@
 <section class="ftco-intro">
     <div class="container">
         <div class="row no-gutters">
-            <div class="col-md-6 color-4 p-4">
-                <h3 class="mb-4">Número de Contacto</h3>
-                <p>No dude en contactarnos</p>
-                <span class="phone-number">+ (506) 8304-0865</span>
-            </div>
-            <div class="col-md-6 color-6 p-4">
-                <h3 class="mb-4">Horarios</h3>
-                <h6 class="mb-4">Horario con cita y a convenir</h6>
-                <p class="openinghours d-flex">
-                    <span>Lunes - Viernes</span>
-                    <span>12:00md - 8:00pm</span>
-                </p>
-                <p class="openinghours d-flex">
-                    <span>Sábados</span>
-                    <span>9:00am - 12:00md</span>
-                </p>
-                <p class="openinghours d-flex">
-                    <span>Martes - Domingo</span>
-                    <span>Cerrado</span>
-                </p>
-            </div>
-            <div class="col-md-6 color-5 p-4">
-                <h3 class="mb-2">Reserva tu cita</h3>
-
-                <form asp-action="Agendar" asp-controller="Cita" method="post" class="appointment-form" id="appointment-form">
-
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <div class="select-wrap">
-                                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                                    <select name="especialidad" id="especialidad" class="form-control">
-                                        <option value="">Especialidades</option>
-                                        <option value="Consulta General">Consulta General</option>
-                                        <option value="Peridoncia">Peridoncia</option>
-                                        <option value="Endodoncia">Endodoncia</option>
-                                        <option value="Cirujia Maxilofacial">Cirujia Maxilofacial</option>
-                                        <option value="Odontopediatria">Odontopediatria</option>
-                                        <option value="ATM">ATM</option>
-                                        <option value="Ortodoncia">Ortodoncia</option>
-
-                                    </select>
+            
+            @if (Context.Session.GetString("NombreUsuario") != null)
+            {
+                <div class="col-md-6 color-4 p-4">
+                    <h3 class="mb-4">Número de Contacto</h3>
+                    <p>En Thames Dental, brindamos atención odontológica de emergencia 24/7.</p>
+                    <span class="phone-number">+ (506) 8304-0865</span>
+                </div>
+                <div class="col-md-6 color-6 p-4">
+                    <h3 class="mb-4">Horarios</h3>
+                    <h6 class="mb-4">Horario con cita y a convenir</h6>
+                    <p class="openinghours d-flex">
+                        <span>Lunes - Viernes</span>
+                        <span>12:00 - 20:00</span>
+                    </p>
+                    <p class="openinghours d-flex">
+                        <span>Sábados</span>
+                        <span>9:00 - 12:00</span>
+                    </p>
+                    <p class="openinghours d-flex">
+                        <span>Martes y Domingos</span>
+                        <span>Cerrado</span>
+                    </p>
+                </div>
+            } else {
+                <div class="col-md-3 color-4 p-4">
+                    <h3 class="mb-4">Número de Contacto</h3>
+                    <p>En Thames Dental, brindamos atención odontológica de emergencia 24/7.</p>
+                    <span class="phone-number">+ (506) 8304-0865</span>
+                </div>
+                <div class="col-md-3 color-6 p-4">
+                    <h3 class="mb-4">Horarios</h3>
+                    <h6 class="mb-4">Horario con cita y a convenir</h6>
+                    <p class="openinghours d-flex">
+                        <span>Lunes - Viernes</span>
+                        <span>12:00 - 20:00</span>
+                    </p>
+                    <p class="openinghours d-flex">
+                        <span>Sábados</span>
+                        <span>9:00 - 12:00</span>
+                    </p>
+                    <p class="openinghours d-flex">
+                        <span>Martes y Domingos</span>
+                        <span>Cerrado</span>
+                    </p>
+                </div>
+                <div class="col-md-6 color-5 p-4">
+                    <h3 class="mb-2">Reserva tu cita</h3>
+                    <form asp-action="Agendar" asp-controller="Cita" method="post" class="appointment-form" id="appointment-form">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <div class="select-wrap">
+                                        <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+                                        <select name="especialidad" id="especialidad" class="form-control">
+                                            <option value="">Especialidades</option>
+                                            <option value="Consulta General">Consulta General</option>
+                                            <option value="Peridoncia">Peridoncia</option>
+                                            <option value="Endodoncia">Endodoncia</option>
+                                            <option value="Cirujia Maxilofacial">Cirujia Maxilofacial</option>
+                                            <option value="Odontopediatria">Odontopediatria</option>
+                                            <option value="ATM">ATM</option>
+                                            <option value="Ortodoncia">Ortodoncia</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <div class="select-wrap">
+                                        <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+                                        <select name="Procedimiento" id="servicio" class="form-control">
+                                            <option value="">Servicios</option>
+                                            <option value="Limpieza dental">Limpieza dental</option>
+                                            <!-- 
+                                            <option value="Blanqueamiento">Blanqueamiento</option>
+                                            <option value="Ortodoncia">Ortodoncia</option>
+                                            <option value="Biopsia">Biopsia</option>
+                                            <option value="Corona">Corona</option>
+                                            <option value="Puente">Puente</option>
+                                            <option value="Implante">Implante</option>
+                                            <option value="Calzas">Calzas</option>
+                                            <option value="Cirujia de cordales">Cirujia de cordales</option>
+                                            -->
+                                            <option value="Consulta general">Consulta general</option>
 
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <div class="select-wrap">
-                                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                                    <select name="Procedimiento" id="servicio" class="form-control">
-                                        <option value="">Servicios</option>
-                                        <option value="Limpieza dental">Limpieza dental</option>
-                                        <!-- 
-                                        <option value="Blanqueamiento">Blanqueamiento</option>
-                                        <option value="Ortodoncia">Ortodoncia</option>
-                                        <option value="Biopsia">Biopsia</option>
-                                        <option value="Corona">Corona</option>
-                                        <option value="Puente">Puente</option>
-                                        <option value="Implante">Implante</option>
-                                        <option value="Calzas">Calzas</option>
-                                        <option value="Cirujia de cordales">Cirujia de cordales</option>
-                                        -->
-                                        <option value="Consulta general">Consulta general</option>
+                                            <!-- Grupo de servicios para "Consulta General" -->
+                                            <option value="Consulta General" data-group="Consulta General">Consulta General</option>
+                                            <option value="Limpieza dental" data-group="Consulta General">Limpieza dental</option>
+                                            <!--
+                                            <option value="Blanqueamiento" data-group="Consulta General">Blanqueamiento</option>
+                                            <option value="Calzas" data-group="Consulta General">Calzas</option>
+                                            <option value="Corona" data-group="Consulta General">Corona</option>
+                                            <option value="Puentes" data-group="Consulta General">Puentes</option>
+                                            <option value="Implante" data-group="Consulta General">Implante</option>
+                                             -->
 
-                                        <!-- Grupo de servicios para "Consulta General" -->
-                                        <option value="Consulta General" data-group="Consulta General">Consulta General</option>
-                                        <option value="Limpieza dental" data-group="Consulta General">Limpieza dental</option>
-                                        <!--
-                                        <option value="Blanqueamiento" data-group="Consulta General">Blanqueamiento</option>
-                                        <option value="Calzas" data-group="Consulta General">Calzas</option>
-                                        <option value="Corona" data-group="Consulta General">Corona</option>
-                                        <option value="Puentes" data-group="Consulta General">Puentes</option>
-                                        <option value="Implante" data-group="Consulta General">Implante</option>
-                                         -->
+                                            <!-- Grupo de servicios para "Ortodoncia" -->
+                                            <option value="Consulta General" data-group="Ortodoncia">Consulta General</option>
 
-                                        <!-- Grupo de servicios para "Ortodoncia" -->
-                                        <option value="Consulta General" data-group="Ortodoncia">Consulta General</option>
-
-                                        <!-- Grupo de servicios para "Peridoncia" -->
-                                        <option value="Consulta General" data-group="Peridoncia">Consulta General</option>
-                                        <!-- Grupo de servicios para "Endodoncia" -->
-                                        <option value="Consulta General" data-group="Endodoncia">Consulta General</option>
-                                        <!-- Grupo de servicios para "Cirujia Maxilofacial" -->
-                                        <option value="Cirujia de cordales" data-group="Cirujia Maxilofacial">Cirujia de cordales</option>
-                                        <!-- Grupo de servicios para "Odontopediatria" -->
-                                        <option value="Consulta General" data-group="Odontopediatria">Consulta General</option>
-                                        <!-- Grupo de servicios para "ATM" -->
-                                        <option value="Biopsia" data-group="ATM">Biopsia</option>
+                                            <!-- Grupo de servicios para "Peridoncia" -->
+                                            <option value="Consulta General" data-group="Peridoncia">Consulta General</option>
+                                            <!-- Grupo de servicios para "Endodoncia" -->
+                                            <option value="Consulta General" data-group="Endodoncia">Consulta General</option>
+                                            <!-- Grupo de servicios para "Cirujia Maxilofacial" -->
+                                            <option value="Cirujia de cordales" data-group="Cirujia Maxilofacial">Cirujia de cordales</option>
+                                            <!-- Grupo de servicios para "Odontopediatria" -->
+                                            <option value="Consulta General" data-group="Odontopediatria">Consulta General</option>
+                                            <!-- Grupo de servicios para "ATM" -->
+                                            <option value="Biopsia" data-group="ATM">Biopsia</option>
                                          
-                                    </select>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <div class="icon"><span class="icon-user"></span></div>
+                                    <input type="text" class="form-control" name="NombreUsuario" placeholder="Nombre" required>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <div class="icon"><span class="icon-paper-plane"></span></div>
+                                    <input type="email" class="form-control" name="Email" placeholder="Email" required>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <div class="icon"><span class="icon-user"></span></div>
-                                <input type="text" class="form-control" name="NombreUsuario" placeholder="Nombre" required>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <input type="text" name="Fecha" class="form-control" id="fecha-cita" placeholder="Elige una fecha">
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <select class="form-control" id="hora-cita" name="Hora" required>
+                                        <option value="">Selecciona una hora</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <input type="hidden" id="hidden-hora" name="Hora">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <div class="icon"><span class="icon-phone2"></span></div>
+                                    <input type="tel" class="form-control" name="Telefono" placeholder="Teléfono" required>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <div class="icon"><span class="icon-paper-plane"></span></div>
-                                <input type="email" class="form-control" name="Email" placeholder="Email" required>
-                            </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-reservar">Reservar</button>
                         </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <input type="text" name="Fecha" class="form-control" id="fecha-cita" placeholder="Elige una fecha">
-                            </div>
-                        </div>
-
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <select class="form-control" id="hora-cita" name="Hora" required>
-                                    <option value="">Selecciona una hora</option>
-                                </select>
-                            </div>
-                        </div>
-                        <input type="hidden" id="hidden-hora" name="Hora">
-
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <div class="icon"><span class="icon-phone2"></span></div>
-                                <input type="tel" class="form-control" name="Telefono" placeholder="Teléfono" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-reservar">Reservar</button>
-                    </div>
-
-                </form>
-
-
-            </div>
+                    </form>
+                </div>
+            }
         </div>
     </div>
 </section>
@@ -338,7 +362,6 @@
     </div>
 </section>
 
-
 <section class="ftco-section">
     <div class="container">
         <div class="row justify-content-center mb-5 pb-5">
@@ -350,12 +373,12 @@
         <div class="row">
             <div class="col-lg-3 col-md-6 d-flex mb-sm-4 ftco-animate">
                 <div class="staff">
-                    <div class="img mb-4" style="background-image: url(images/person_5.jpg);"></div>
+                    <div class="img mb-4 align-item-center justify-content-center" style="background-image: url('@Url.Content("~/img/avatar1.png")');"></div>
                     <div class="info text-center">
                         <h3><a href="teacher-single.html">Dra.Stephanie Thames</a></h3>
                         <span class="position">Cirujana Dentista</span>
                         <div class="text">
-                            <p>...</p>
+                            <p>Especialista</p>
                             <ul class="ftco-social">
                                 <li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a></li>
                                 <li class="ftco-animate"><a href="#"><span class="icon-facebook"></span></a></li>
@@ -368,7 +391,7 @@
             </div>
             <div class="col-lg-3 col-md-6 d-flex mb-sm-4 ftco-animate">
                 <div class="staff">
-                    <div class="img mb-4" style="background-image: url(images/person_6.jpg);"></div>
+                    <div class="img mb-4" style="background-image: url('@Url.Content("~/img/avatar1.png")');"></div>
                     <div class="info text-center">
                         <h3><a href="teacher-single.html">Josue Ulate</a></h3>
                         <span class="position">Endodoncia</span>
@@ -386,7 +409,7 @@
             </div>
             <div class="col-lg-3 col-md-6 d-flex mb-sm-4 ftco-animate">
                 <div class="staff">
-                    <div class="img mb-4" style="background-image: url(images/person_7.jpg);"></div>
+                    <div class="img mb-4" style="background-image: url('@Url.Content("~/img/avatar1.png")');"></div>
                     <div class="info text-center">
                         <h3><a href="teacher-single.html">Natalia Marenco</a></h3>
                         <span class="position">Ortodoncia</span>
@@ -404,7 +427,7 @@
             </div>
             <div class="col-lg-3 col-md-6 d-flex mb-sm-4 ftco-animate">
                 <div class="staff">
-                    <div class="img mb-4" style="background-image: url(images/person_8.jpg);"></div>
+                    <div class="img mb-4" style="background-image: url('@Url.Content("~/img/avatar1.png")');"></div>
                     <div class="info text-center">
                         <h3><a href="teacher-single.html">Pablo ARGUELLO</a></h3>
                         <span class="position">Cirujia Maxilofacial</span>
@@ -422,7 +445,7 @@
             </div>
             <div class="col-lg-3 col-md-6 d-flex mb-sm-4 ftco-animate">
                 <div class="staff">
-                    <div class="img mb-4" style="background-image: url(images/person_1.jpg);"></div>
+                    <div class="img mb-4" style="background-image: url('@Url.Content("~/img/avatar1.png")');"></div>
                     <div class="info text-center">
                         <h3><a href="teacher-single.html">Karen Brenes</a></h3>
                         <span class="position">Odontopediatria</span>
@@ -438,14 +461,13 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
     </div>
 </section>
 
-<section class="ftco-section ftco-counter img" id="section-counter" style="background-image: url('https://images.unsplash.com/photo-1593022356769-11f762e25ed9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');" data-stellar-background-ratio="0.5">
-    <div class="container">
+<section class="ftco-section ftco-counter img" id="section-counter" style="background-image: url('https://images.unsplash.com/photo-1593022356769-11f762e25ed9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-attachment: fixed; background-size: cover; background-position: center;">
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background-color: rgba(0, 0, 0, 0.5);"></div>
+    <div class="container position-relative">
         <div class="row d-flex align-items-center">
             <div class="col-md-3 aside-stretch py-5">
                 <div class=" heading-section heading-section-white ftco-animate pr-md-4">
@@ -492,9 +514,6 @@
         </div>
     </div>
 </section>
-
-<p></p>
-
 <section class="ftco-gallery">
     <div class="container-wrap">
         <div class="row no-gutters">
@@ -583,9 +602,6 @@
         </div>
     </div>
 </section>
-
-<p></p>
-
 <div id="map">
     <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15724.313000480763!2d-83.9399857!3d9.8437952!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa11f73f7ea384f%3A0x18f4aacd4fc19159!2sThames%20Dental!5e0!3m2!1ses!2scr!4v1728266859906!5m2!1ses!2scr" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
 </div>
