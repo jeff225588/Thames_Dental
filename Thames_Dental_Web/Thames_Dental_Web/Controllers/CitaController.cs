@@ -307,11 +307,12 @@ namespace Thames_Dental_Web.Controllers
             return RedirectToAction("CitasActivas"); 
         }
 
-
         [HttpPost]
         public async Task<IActionResult> AceptarCita(int id)
         {
             Console.WriteLine("Starting AceptarCita process...");
+
+            // Obtener los detalles de la cita desde la API
             var citaResponse = await _client.GetAsync($"Cita/ObtenerCita?id={id}");
             if (citaResponse.IsSuccessStatusCode)
             {
@@ -319,29 +320,39 @@ namespace Thames_Dental_Web.Controllers
 
                 if (model != null)
                 {
-                    DateTime startDateTime = model.Fecha.Date + model.Hora;
-                    DateTime endDateTime = startDateTime.AddMinutes(model.Duracion);
-
-                    Console.WriteLine("Calling GoogleCalendarService to add event...");
-                    await _calendarService.AgregarEventoGoogleCalendarAsync(
-                        summary: $"Cita con {model.NombreUsuario}",
-                        description: $"Procedimiento: {model.Procedimiento}",
-                        location: "Tejar de el Guarco, Cartago, Costa Rica",
-                        startDateTime: startDateTime,
-                        endDateTime: endDateTime
-                    );
-
-                    // Llamada al API para actualizar el estado a "Confirmada"
-                    var confirmResponse = await _client.PostAsync($"Cita/ConfirmarCita?id={id}", null);
-                    if (confirmResponse.IsSuccessStatusCode)
+                    try
                     {
-                        TempData["SweetAlertMessage"] = "Cita aceptada y añadida a Google Calendar.";
-                        TempData["SweetAlertType"] = "success";
+                        // Construir fecha y hora de inicio y fin
+                        DateTime startDateTime = model.Fecha.Date + model.Hora;
+                        DateTime endDateTime = startDateTime.AddMinutes(model.Duracion);
+
+                        Console.WriteLine("Calling GoogleCalendarService to add event...");
+                        await _calendarService.AgregarEventoGoogleCalendarAsync(
+                            summary: $"Cita con {model.NombreUsuario}",
+                            description: $"Procedimiento: {model.Procedimiento}",
+                            location: "Tejar de el Guarco, Cartago, Costa Rica",
+                            startDateTime: startDateTime,
+                            endDateTime: endDateTime
+                        );
+
+                        // Llamada al API para confirmar la cita
+                        var confirmResponse = await _client.PostAsync($"Cita/ConfirmarCita?id={id}", null);
+                        if (confirmResponse.IsSuccessStatusCode)
+                        {
+                            TempData["SweetAlertMessage"] = "Cita aceptada y añadida a Google Calendar.";
+                            TempData["SweetAlertType"] = "success";
+                        }
+                        else
+                        {
+                            TempData["SweetAlertMessage"] = "Cita añadida a Google Calendar, pero no se pudo confirmar en el servidor.";
+                            TempData["SweetAlertType"] = "warning";
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        TempData["SweetAlertMessage"] = "Cita añadida a Google Calendar, pero no se pudo confirmar en el servidor.";
-                        TempData["SweetAlertType"] = "warning";
+                        Console.WriteLine($"Error al agregar cita al calendario: {ex.Message}");
+                        TempData["SweetAlertMessage"] = "Error al añadir la cita a Google Calendar.";
+                        TempData["SweetAlertType"] = "error";
                     }
                 }
                 else
@@ -359,7 +370,6 @@ namespace Thames_Dental_Web.Controllers
             Console.WriteLine("Finished AceptarCita process.");
             return RedirectToAction("CitasActivas");
         }
-
 
 
         [HttpPost]

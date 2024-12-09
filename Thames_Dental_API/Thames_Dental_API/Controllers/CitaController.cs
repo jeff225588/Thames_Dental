@@ -264,7 +264,6 @@ namespace Thames_Dental_API.Controllers
 
         }
 
-
         [HttpPost("ConfirmarCita")]
         public async Task<IActionResult> ConfirmarCita(int id)
         {
@@ -274,26 +273,20 @@ namespace Thames_Dental_API.Controllers
             {
                 using (var connection = new SqlConnection(connectionString))
                 {
-                    // Verificar si la cita existe antes de actualizar
-                    var cita = await connection.QueryFirstOrDefaultAsync<Cita>("SELECT * FROM Citas WHERE Id = @Id", new { Id = id });
+                    // Llamar al SP ConfirmarCita
+                    var parameters = new { Id = id };
+                    var result = await connection.ExecuteScalarAsync<int>(
+                        "ConfirmarCita",
+                        parameters,
+                        commandType: CommandType.StoredProcedure
+                    );
 
-                    if (cita == null)
+                    if (result == -1)
                     {
                         return NotFound("Cita no encontrada");
                     }
 
-                    // Actualizar el estado de la cita a "Confirmada"
-                    var updateQuery = "UPDATE Citas SET Estado = @Estado WHERE Id = @Id";
-                    var affectedRows = await connection.ExecuteAsync(updateQuery, new { Estado = "Confirmada", Id = id });
-
-                    if (affectedRows > 0)
-                    {
-                        return Ok("Cita confirmada correctamente");
-                    }
-                    else
-                    {
-                        return StatusCode(500, "Error al actualizar el estado de la cita");
-                    }
+                    return Ok("Cita confirmada correctamente");
                 }
             }
             catch (Exception ex)
@@ -302,6 +295,7 @@ namespace Thames_Dental_API.Controllers
                 return StatusCode(500, "Error al confirmar la cita");
             }
         }
+
 
 
         [HttpPost("CompletarCita")]
