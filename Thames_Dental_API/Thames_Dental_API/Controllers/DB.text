@@ -1,0 +1,153 @@
+﻿CREATE PROCEDURE ObtenerHorasOcupadas
+    @Fecha DATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT FORMAT(Hora, 'HH:mm') AS HoraOcupada
+    FROM Citas
+    WHERE Fecha = @Fecha;
+END;
+GO
+
+CREATE PROCEDURE VerificarCitaExistente
+    @Especialista NVARCHAR(100),
+    @Fecha DATE,
+    @Hora TIME
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT COUNT(1) AS Existe
+    FROM Citas
+    WHERE Especialista = @Especialista AND Fecha = @Fecha AND Hora = @Hora;
+END;
+GO
+
+
+CREATE PROCEDURE InsertarCita
+    @NombreUsuario NVARCHAR(100),
+    @Email NVARCHAR(100),
+    @Especialidad NVARCHAR(100),
+    @Especialista NVARCHAR(100),
+    @Fecha DATE,
+    @Hora TIME,
+    @Procedimiento NVARCHAR(100),
+    @Duracion INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO Citas (NombreUsuario, Email, Especialidad, Especialista, Fecha, Hora, Procedimiento, Duracion)
+    VALUES (@NombreUsuario, @Email, @Especialidad, @Especialista, @Fecha, @Hora, @Procedimiento, @Duracion);
+END;
+GO
+
+
+
+
+CREATE PROCEDURE ObtenerCita
+    @Id INT = NULL,
+    @Estado NVARCHAR(50) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF @Id IS NOT NULL
+    BEGIN
+        SELECT * 
+        FROM Citas
+        WHERE Id = @Id;
+    END
+    ELSE IF @Estado IS NOT NULL
+    BEGIN
+        SELECT *
+        FROM Citas
+        WHERE Estado = @Estado;
+    END
+    ELSE
+    BEGIN
+        RAISERROR ('Debe proporcionar un Id o un estado.', 16, 1);
+    END
+END;
+GO
+
+
+CREATE PROCEDURE CancelarCita
+    @Id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Buscar la información de la cita
+    SELECT Email, NombreUsuario, Fecha, Hora, Especialidad, Procedimiento, Especialista
+    FROM Citas
+    WHERE Id = @Id;
+
+    -- Actualizar el estado de la cita
+    UPDATE Citas
+    SET Estado = 'Cancelada'
+    WHERE Id = @Id;
+END;
+GO
+
+
+
+
+CREATE PROCEDURE ReprogramarCita
+    @Id INT,
+    @Fecha DATE,
+    @Hora TIME
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE Citas
+    SET Fecha = @Fecha, Hora = @Hora
+    WHERE Id = @Id;
+
+    SELECT * 
+    FROM Citas
+    WHERE Id = @Id;
+END;
+GO
+
+
+CREATE PROCEDURE ConfirmarCita
+    @Id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE Citas
+    SET Estado = 'Confirmada'
+    WHERE Id = @Id;
+END;
+GO
+
+
+CREATE PROCEDURE CompletarCita
+    @Id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE Citas
+    SET Estado = 'Completada'
+    WHERE Id = @Id;
+END;
+GO
+
+
+CREATE PROCEDURE EditarDuracion
+    @Id INT,
+    @Duracion INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE Citas
+    SET Duracion = @Duracion
+    WHERE Id = @Id;
+END;
+GO

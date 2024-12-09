@@ -11,8 +11,19 @@
     <div class="container mt-5 mb-5"> 
 
         <h2 class="text-center mb-4" style="color: #008cba;">Ver todas las citas Completadas</h2>
+
+        <!-- Barra de búsqueda y botón -->
+        <div class="d-flex justify-content-between mb-3">
+            <input type="text"
+                   id="searchBar"
+                   class="form-control"
+                   placeholder="Buscar cita por nombre, email, especialidad..."
+                   style="width: 70%;"
+                   onkeyup="searchTable()" />
+        </div>
+
         <div class="table-responsive">
-            <table class="table table-bordered">
+            <table class="table table-bordered" id="appointmentsTable">
                 <thead class="table-light">
         <tr>
             <th>Nombre</th>
@@ -44,6 +55,28 @@
 </table>
     </div>
     </div>
+
+    <script>
+        function searchTable() {
+            // Obtiene el texto ingresado en la barra de búsqueda
+            const input = document.getElementById("searchBar").value.toLowerCase();
+            // Selecciona todas las filas del cuerpo de la tabla
+            const rows = document.querySelectorAll("#appointmentsTable tbody tr");
+
+            rows.forEach(row => {
+                // Obtiene todo el texto de las celdas en la fila actual
+                const cells = row.querySelectorAll("td");
+                const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(" ");
+
+                // Muestra u oculta la fila dependiendo de si contiene el texto buscado
+                if (rowText.includes(input)) {
+                    row.style.display = ""; // Muestra la fila
+                } else {
+                    row.style.display = "none"; // Oculta la fila
+                }
+            });
+        }
+    </script>
 
 </body>
 

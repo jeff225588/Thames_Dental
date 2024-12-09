@@ -1,10 +1,13 @@
 ﻿@model List<Thames_Dental_Web.Models.CitaModel>
+
 @{
     Layout = "~/Views/Shared/_Layout_Admin.cshtml";
     ViewData["Title"] = "Citas Administración";
 }
 
 <body>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css">
+
     <style>
         /* Inline CSS for button styling and alignment */
         .table-actions-container {
@@ -44,7 +47,36 @@
             margin: 0; /* Remove extra margin for form elements */
             display: inline-block; /* Ensure forms are inline-block for alignment */
         }
+
+        /* Botón Editar */
+        .btn.action-button.editar {
+            background-color: #ff9900; /* Naranja */
+            border-color: #ff9900;
+        }
+
+            /* Hover para el botón Editar */
+            .btn.action-button.editar:hover {
+                background-color: #e68a00; /* Naranja más oscuro */
+                border-color: #e68a00;
+            }
+
+        h2, h1, h3, h4, h5, h6 {
+            text-decoration: none !important; /* Elimina subrayados forzados */
+        }
+
+        a {
+            text-decoration: none !important; /* Elimina subrayados en enlaces */
+        }
+
+            a:hover {
+                text-decoration: underline; /* Solo subraya cuando pases el mouse */
+            }
+
+
     </style>
+
+
+
 
     <!-- Reschedule Modal -->
     <div class="modal fade" id="rescheduleModal" tabindex="-1" aria-labelledby="rescheduleModalLabel" aria-hidden="true">
@@ -77,10 +109,53 @@
         </div>
     </div>
 
-    <div class="container mt-5 mb-5">
+
+    <!-- Modal para editar la duración -->
+    <div class="modal fade" id="editDurationModal" tabindex="-1" aria-labelledby="editDurationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="editDurationForm" method="post" asp-action="EditarDuracion" asp-controller="Cita">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editDurationModalLabel">Editar Duración</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="Id" id="editDurationId" />
+                        <div class="mb-3">
+                            <label for="newDuration" class="form-label">Nueva Duración (minutos)</label>
+                            <input type="number" class="form-control" id="newDuration" name="Duracion" min="1" required />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid mt-5 mb-5">
         <h2 class="text-center mb-4" style="color: #008cba;">Ver todas las citas Activas</h2>
+
+        <!-- Barra de búsqueda y botón -->
+        <div class="d-flex justify-content-between mb-3">
+            <input type="text"
+                   id="searchBar"
+                   class="form-control"
+                   placeholder="Buscar cita por nombre, email, especialidad..."
+                   style="width: 70%;"
+                   onkeyup="searchTable()" />
+
+
+            <a href="@Url.Action("FormularioAgendar", "Cita")" class="btn btn-primary">
+                Agendar Cita
+            </a>
+
+        </div>
+
         <div class="table-responsive">
-            <table class="table table-bordered">
+            <table class="table table-bordered" id="appointmentsTable">
                 <thead class="table-light">
                     <tr>
                         <th>Nombre</th>
@@ -127,6 +202,12 @@
                                         Aceptar
                                     </button>
                                 </form>
+
+                                <!-- Botón Editar Duración -->
+                                <button class="btn action-button editar" onclick="openEditDurationModal(@cita.Id, '@cita.Duracion')">
+                                    Editar
+                                </button>
+
                             </td>
                         </tr>
                     }
@@ -134,6 +215,40 @@
             </table>
         </div>
     </div>
+
+    <script>
+        function openEditDurationModal(id, duracion) {
+            console.log("Abrir modal para editar duración:", id, duracion);
+            document.getElementById('editDurationId').value = id;
+            document.getElementById('newDuration').value = duracion;
+
+            var editDurationModal = new bootstrap.Modal(document.getElementById('editDurationModal'));
+            editDurationModal.show();
+        }
+    </script>
+
+    <script>
+        function searchTable() {
+            // Obtiene el texto ingresado en la barra de búsqueda
+            const input = document.getElementById("searchBar").value.toLowerCase();
+            // Selecciona todas las filas del cuerpo de la tabla
+            const rows = document.querySelectorAll("#appointmentsTable tbody tr");
+
+            rows.forEach(row => {
+                // Obtiene todo el texto de las celdas en la fila actual
+                const cells = row.querySelectorAll("td");
+                const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(" ");
+
+                // Muestra u oculta la fila dependiendo de si contiene el texto buscado
+                if (rowText.includes(input)) {
+                    row.style.display = ""; // Muestra la fila
+                } else {
+                    row.style.display = "none"; // Oculta la fila
+                }
+            });
+        }
+    </script>
+
 </body>
 
 <!-- SweetAlert2 CSS -->
@@ -141,6 +256,8 @@
 
 <!-- SweetAlert2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 
 <script>
     function openRescheduleModal(id, fecha, hora) {
@@ -170,3 +287,9 @@
         });
     </script>
 }
+
+
+
+
+
+

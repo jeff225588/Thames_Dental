@@ -343,6 +343,59 @@ namespace Thames_Dental_API.Controllers
         }
 
 
+        [HttpPost("AAgendar")]
+        public async Task<IActionResult> AAgendar(Cita model)
+        {
+             
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new Respuesta { Codigo = -1, Mensaje = "Datos de la cita no validos." });
+            }
+            // Obtener la cadena de conexión desde la configuración
+            var connectionString = _conf.GetSection("ConnectionStrings:DefaultConnection").Value;
+            var respuesta = new Respuesta();
+
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    // Verificar si existe una cita en la misma fecha y hora con el mismo especialista
+                    var consultaExistente = await connection.QueryFirstOrDefaultAsync<int>(
+                        "SELECT COUNT(1) FROM Citas WHERE Especialista = @Especialista AND Fecha = @Fecha AND Hora = @Hora",
+                        new { model.Especialista, model.Fecha, model.Hora });
+
+                    if (consultaExistente > 0)
+                    {
+                        respuesta.Codigo = -1;
+                        respuesta.Mensaje = "El especialista ya tiene una cita en la misma fecha y hora.";
+                        return Ok(respuesta); // Retornamos Ok con el mensaje de error estructurado
+                    }
+
+                    // Agregar la cita
+                    var query = @"INSERT INTO Citas (NombreUsuario, Email, Especialidad, Especialista, Fecha, Hora, Procedimiento, Duracion) 
+                                  VALUES (@NombreUsuario, @Email, @Especialidad, @Especialista, @Fecha, @Hora, @Procedimiento, @Duracion)";
+
+                    await connection.ExecuteAsync(query, model);
+
+                    respuesta.Codigo = 0;
+                    respuesta.Mensaje = "Cita agendada correctamente.";
+                    return Ok(respuesta); // Retornamos Ok con el mensaje de éxito
+                }
+            }
+            catch (Exception ex)
+            {
+                respuesta.Codigo = -1;
+                respuesta.Mensaje = $"Error al agendar la cita: {ex.Message}";
+                if (ex.InnerException != null)
+                {
+                    respuesta.Mensaje += $" - InnerException: {ex.InnerException.Message}";
+                }
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, respuesta);
+            }
+        }
+
+
         //Parte Administrativa 
     }
 }

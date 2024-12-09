@@ -1,0 +1,350 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout_Pages.cshtml";
+    ViewData["Title"] = "AgendarCita";
+    ViewData["HideNavbar"] = "true";
+    ViewData["HideFooter"] = "true";
+} 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Thames Dental</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Thames_Dental_Web.styles.css" asp-append-version="true" />
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700" rel="stylesheet">
+
+    <link rel="stylesheet" href="~/css/Pages/open-iconic-bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/Pages/animate.css">
+    <link rel="stylesheet" href="~/css/Pages/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/css/Pages/owl.theme.default.min.css">
+    <link rel="stylesheet" href="~/css/Pages/magnific-popup.css">
+    <link rel="stylesheet" href="~/css/Pages/aos.css">
+    <link rel="stylesheet" href="~/css/Pages/ionicons.min.css">
+    <link rel="stylesheet" href="~/css/Pages/bootstrap-datepicker.css">
+    <link rel="stylesheet" href="~/css/Pages/jquery.timepicker.css">
+    <link rel="stylesheet" href="~/css/Pages/flaticon.css">
+    <link rel="stylesheet" href="~/css/Pages/icomoon.css">
+    <link rel="stylesheet" href="~/css/Pages/style.css">
+
+    <style>
+        /* General */
+        .container {
+            max-width: 900px;
+        }
+
+        .vh-100 {
+            height: 100vh;
+        }
+
+        .color-5 {
+            background: linear-gradient(to right, #5783bc, steelblue);
+            color: whitesmoke;
+        }
+
+        .shadow {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: whitesmoke;
+        }
+
+        .form-control {
+            border-radius: 4px;
+        }
+
+        .btn-primary {
+            background-color: #5CBFD8;
+            border-color: #5CBFD8;
+            color: white;
+            font-size: 16px;
+        }
+
+            .btn-primary:hover {
+                background-color: #4BAFC9;
+                border-color: #4BAFC9;
+            }
+    </style>
+
+    <style>
+
+        .btn-reservar {
+            background-color: whitesmoke; /* Fondo blanco */
+            border: none; /* Elimina bordes */
+            color: steelblue; /* Texto azul */
+            font-weight: bold; /* Resalta el texto */
+            padding: 5px 5px; /* Espaciado interno */
+            border-radius: 5px; /* Bordes redondeados */
+            display: inline-block; /* Asegura que el botón respete su tamaño */
+            width: 20%; /* Ocupa todo el ancho del contenedor */
+            text-align: center; /* Centra el texto */
+            box-sizing: border-box; /* Asegura que padding no expanda el tamaño */
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Animaciones */
+        }
+
+            .btn-reservar:hover {
+                background-color: #f0f0f0; /* Fondo más oscuro en hover */
+                transform: scale(1.05); /* Agrandamiento suave */
+                cursor: pointer;
+            }
+
+
+
+
+
+        .color-4 {
+            background: linear-gradient(to right, #5783bc, steelblue); /* Gradiente celeste claro */
+            color: whitesmoke
+        }
+
+        .color-5 {
+            background: linear-gradient(to right, steelblue, #5783bc ); /* Gradiente celeste claro */
+            color: whitesmoke
+        }
+
+        .color-6 {
+            background: linear-gradient(to right, steelblue, #5783bc ); /* Gradiente celeste claro */
+            color: whitesmoke
+        }
+
+        .phone-number, .openinghours {
+            font-weight: bold; /* Para resaltar estos textos */
+        }
+
+        h3, h6 {
+            color: whitesmoke; /* Encabezados más oscuros */
+        }
+
+        .btn-primary {
+            background-color: #5CBFD8; /* Botón más claro */
+            border-color: #5CBFD8;
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background-color: #4BAFC9; /* Color más oscuro al pasar el mouse */
+                border-color: #4BAFC9;
+            }
+
+    </style>
+
+    <style>
+        /* Estilo para el select */
+        select {
+            background-color: #008cba; /* Cambia el color de fondo del select */
+            color: white; /* Cambia el color del texto en el select */
+            border: none;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 16px;
+            outline: none;
+        }
+
+            /* Estilo para el menú desplegable */
+            select option {
+                background-color: #008cba; /* Cambia el color de fondo de las opciones */
+                color: white; /* Cambia el color del texto en las opciones */
+            }
+
+                /* Opcional: Cambiar el estilo de hover en el menú desplegable */
+                select option:hover {
+                    background-color: #0077a3; /* Color de fondo al pasar el cursor */
+                }
+
+    </style>
+
+</head>
+
+<body>
+    <section class="ftco-intro">
+        <div class="container d-flex justify-content-center align-items-center vh-100">
+            <div class="row no-gutters">
+                <div class="col-md-8 color-5 p-4 rounded shadow">
+                    <h3 class="mb-2">Reserva tu cita</h3>
+                    <form asp-action="AAgendar" asp-controller="Cita" method="post" class="appointment-form" id="appointment-form">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <div class="select-wrap">
+                                        <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+                                        <select name="especialidad" id="especialidad" class="form-control">
+                                            <option value="">Especialidades</option>
+                                            <option value="Consulta General">Consulta General</option>
+                                            <option value="Peridoncia">Peridoncia</option>
+                                            <option value="Endodoncia">Endodoncia</option>
+                                            <option value="Cirujia Maxilofacial">Cirujia Maxilofacial</option>
+                                            <option value="Odontopediatria">Odontopediatria</option>
+                                            <option value="ATM">ATM</option>
+                                            <option value="Ortodoncia">Ortodoncia</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <div class="select-wrap">
+                                        <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+                                        <select name="Procedimiento" id="servicio" class="form-control">
+                                            <option value="">Servicios</option>
+                                            <option value="Limpieza dental">Limpieza dental</option>
+                                            <option value="Blanqueamiento">Blanqueamiento</option>
+                                            <option value="Ortodoncia">Ortodoncia</option>
+                                            <option value="Biopsia">Biopsia</option>
+                                            <option value="Corona">Corona</option>
+                                            <option value="Puente">Puente</option>
+                                            <option value="Implante">Implante</option>
+                                            <option value="Calzas">Calzas</option>
+                                            <option value="Cirujia de cordales">Cirujia de cordales</option>
+
+                                            <!-- Grupo de servicios para "Consulta General" -->
+                                            <option value="Consulta General" data-group="Consulta General">Consulta General</option>
+                                            <option value="Limpieza dental" data-group="Consulta General">Limpieza dental</option>
+                                            <option value="Blanqueamiento" data-group="Consulta General">Blanqueamiento</option>
+                                            <option value="Calzas" data-group="Consulta General">Calzas</option>
+                                            <option value="Corona" data-group="Consulta General">Corona</option>
+                                            <option value="Puentes" data-group="Consulta General">Puentes</option>
+                                            <option value="Implante" data-group="Consulta General">Implante</option>
+
+                                            <!-- Grupo de servicios para "Ortodoncia" -->
+                                            <option value="Consulta General" data-group="Ortodoncia">Consulta General</option>
+
+                                            <!-- Grupo de servicios para "Peridoncia" -->
+                                            <option value="Consulta General" data-group="Peridoncia">Consulta General</option>
+
+                                            <!-- Grupo de servicios para "Endodoncia" -->
+                                            <option value="Consulta General" data-group="Endodoncia">Consulta General</option>
+
+                                            <!-- Grupo de servicios para "Cirujia Maxilofacial" -->
+                                            <option value="Cirujia de cordales" data-group="Cirujia Maxilofacial">Cirujia de cordales</option>
+
+                                            <!-- Grupo de servicios para "Odontopediatria" -->
+                                            <option value="Consulta General" data-group="Odontopediatria">Consulta General</option>
+
+                                            <!-- Grupo de servicios para "ATM" -->
+                                            <option value="Biopsia" data-group="ATM">Biopsia</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <div class="icon"><span class="icon-user"></span></div>
+                                    <input type="text" class="form-control" name="NombreUsuario" placeholder="Nombre" required>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <div class="icon"><span class="icon-paper-plane"></span></div>
+                                    <input type="email" class="form-control" name="Email" placeholder="Email" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <input type="text" name="Fecha" class="form-control" id="fecha-cita" placeholder="Elige una fecha">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <select class="form-control" id="hora-cita" name="Hora" required>
+                                        <option value="">Selecciona una hora</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <input type="hidden" id="hidden-hora" name="Hora">
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <div class="icon"><span class="icon-phone2"></span></div>
+                                    <input type="tel" class="form-control" name="Telefono" placeholder="Teléfono" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-reservar">Reservar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var fechasNoDisponibles = ["2024-12-25", "2024-12-31"]; // Agrega las fechas específicas o pasadas
+
+            $('#fecha-cita').datepicker({
+                format: 'yyyy-mm-dd',
+                startDate: new Date(), // Impide seleccionar fechas pasadas
+                beforeShowDay: function (date) {
+                    var formattedDate = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+                    if (fechasNoDisponibles.includes(formattedDate)) {
+                        return { classes: 'text-danger', tooltip: 'Día no disponible' }; // Muestra en rojo
+                    }
+                    return true; // Permite la selección
+                }
+            });
+        });
+    </script>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var horaDropdown = document.getElementById('hora-cita');
+
+            $('#fecha-cita').on('changeDate', function () {
+                var fechaSeleccionada = $('#fecha-cita').datepicker('getDate');
+                var anio = fechaSeleccionada.getFullYear();
+                var mes = ('0' + (fechaSeleccionada.getMonth() + 1)).slice(-2);
+                var dia = ('0' + fechaSeleccionada.getDate()).slice(-2);
+                var fechaFormateada = `${anio}-${mes}-${dia}`; // Formato yyyy-MM-dd
+
+                console.log('Fecha seleccionada (formateada):', fechaFormateada);
+
+                fetch(`/Cita/ObtenerHorasOcupadas?fecha=${fechaFormateada}`)
+                    .then(response => response.json())
+                    .then(horasOcupadas => {
+                        console.log('Horas ocupadas obtenidas de la API:', horasOcupadas);
+
+                        var horaInicio = 7;
+                        var horaFin = 16; // 4:00 PM
+                        var intervalos = 30; // en minutos
+
+                        horaDropdown.innerHTML = '<option value="">Selecciona una hora</option>';
+
+                        for (var h = horaInicio; h < horaFin; h++) {
+                            for (var m = 0; m < 60; m += intervalos) {
+                                var horaStr = `${h < 10 ? '0' + h : h}:${m < 10 ? '0' + m : m}`;
+                                if (!horasOcupadas.includes(horaStr)) {
+                                    var option = document.createElement('option');
+                                    option.value = horaStr;
+                                    option.textContent = horaStr;
+                                    horaDropdown.appendChild(option);
+                                }
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error al obtener horas ocupadas:', error));
+            });
+        });
+
+
+    </script>
+
+</body>
+</html>
+
