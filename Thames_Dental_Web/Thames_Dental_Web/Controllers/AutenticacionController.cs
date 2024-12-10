@@ -92,6 +92,7 @@ namespace Thames_Dental_Web.Controllers
                         HttpContext.Session.SetString("NombreUsuario", datosContenido!.Nombre);
                         HttpContext.Session.SetString("TokenUsuario", datosContenido!.Token);
                         HttpContext.Session.SetString("RolID", datosContenido!.RolID.ToString());
+                        HttpContext.Session.SetString("NombreRol", datosContenido!.NombreRol);
 
                         return RedirectToAction("Index", "Pages");
                     }
