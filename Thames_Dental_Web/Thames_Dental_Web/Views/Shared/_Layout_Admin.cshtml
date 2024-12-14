@@ -70,13 +70,24 @@
                         </a>
                     </li>
 
+                    <!-- Usuarios -->
+                    <li class="menu-header small text-uppercase">
+                        <span class="menu-header-text">Usuarios</span>
+                    </li>
+                    <li class="menu-item">
+                        <a class="menu-link" asp-area="" asp-controller="Autenticacion" asp-action="ConsultarUsuarios">
+                            <i class="menu-icon tf-icons bx bxs-user-detail"></i>
+                            <div data-i18n="Administrar Usuarios">Administrar Usuarios</div>
+                        </a>
+                    </li>
+
                     <!-- Expediente del cliente -->
                     <li class="menu-header small text-uppercase">
-                        <span class="menu-header-text">Expediente del Cliente</span>
+                        <span class="menu-header-text">Expedientes</span>
                     </li>
                     <li class="menu-item">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                            <i class="menu-icon tf-icons bx bx-box"></i>
                             <div data-i18n="Expedientes">Expedientes</div>
                         </a>
                         <ul class="menu-sub">
@@ -116,11 +127,11 @@
 
                     <!-- Citas -->
                     <li class="menu-header small text-uppercase">
-                        <span class="menu-header-text">Administración de Citas</span>
+                        <span class="menu-header-text">Citas</span>
                     </li>
                     <li class="menu-item">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                            <i class="menu-icon tf-icons bx bx-clinic"></i>
                             <div data-i18n="Administración de Citas">Administración de Citas</div>
                         </a>
                         <ul class="menu-sub">
@@ -149,11 +160,11 @@
 
                     <!-- Inventario -->
                     <li class="menu-header small text-uppercase">
-                        <span class="menu-header-text">Inventario Thames Dental</span>
+                        <span class="menu-header-text">Inventarios</span>
                     </li>
                     <li class="menu-item">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                            <i class="menu-icon tf-icons bx bx-capsule"></i>
                             <div data-i18n="Inventario Thames Dental">Inventario Thames Dental</div>
                         </a>
                         <ul class="menu-sub">
@@ -286,27 +297,15 @@
                     </div>
                     <!-- / Content -->
                     <!-- Footer -->
-                    <footer class="content-footer footer bg-footer-theme">
-                        <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
-                            <div class="mb-2 mb-md-0">
-                                ©
-                                <script>
-                                    document.write(new Date().getFullYear());
-                                </script>
-                                , made with ❤️ by
-                                <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
-                            </div>
-                            <div>
-                                <a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a>
-                                <a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More Themes</a>
-
-                                <a href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
-                                   target="_blank"
-                                   class="footer-link me-4">Documentation</a>
-
-                                <a href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
-                                   target="_blank"
-                                   class="footer-link me-4">Support</a>
+                    <footer class="container-fluid bg-dark text-light pt-4 pb-2">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <p>
+                                        Copyright &copy; <script>document.write(new Date().getFullYear());</script> Thames Dental | Todos los derechos reservados.<br />
+                                        <small style="font-size: 10px; color: #999;">Template hecho por <a href="https://themeselection.com" target="_blank" style="color: #999;">ThemeSelection</a>.</small>
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </footer>

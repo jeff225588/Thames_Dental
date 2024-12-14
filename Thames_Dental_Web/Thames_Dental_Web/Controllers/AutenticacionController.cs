@@ -184,6 +184,80 @@ namespace Thames_Dental_Web.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult ConsultarUsuarios()
+        {
+            ObtenerUsuarios();
+            ObtenerRoles();
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ConsultarUsuarios(UsuarioModel model)
+        {
+            using (var client = _http.CreateClient())
+            {
+                string url = _conf.GetSection("Variables:RutaApi").Value + "Autenticacion/ActualizarUsuario";
+
+                JsonContent datos = JsonContent.Create(model);
+
+                var response = client.PostAsync(url, datos).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
+
+                    if (result != null && result.Codigo == 0)
+                    {
+                        ObtenerUsuarios();
+                        ObtenerRoles();
+                        ViewBag.Mensaje = result!.Mensaje;
+                        return View();
+                    }
+                    else
+                    {
+                        ObtenerUsuarios();
+                        ObtenerRoles();
+                        ViewBag.Mensaje = result!.Mensaje;
+                        return View();
+                    }
+                }
+            }
+            return View();
+        }
+
+        private void ObtenerUsuarios()
+        {
+            using (var client = _http.CreateClient())
+            {
+                string url = _conf.GetSection("Variables:RutaApi").Value + "Autenticacion/ConsultarUsuarios";
+
+                var response = client.GetAsync(url).Result;
+                var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
+
+                if (result != null && result.Codigo == 0)
+                {
+                    ViewBag.ListaUsuarios = JsonSerializer.Deserialize<List<UsuarioModel>>((JsonElement)result.Contenido!);
+                }
+            }
+        }
+
+        private void ObtenerRoles()
+        {
+            using (var client = _http.CreateClient())
+            {
+                string url = _conf.GetSection("Variables:RutaApi").Value + "Autenticacion/ConsultarRoles";
+
+                var response = client.GetAsync(url).Result;
+                var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
+
+                if (result != null && result.Codigo == 0)
+                {
+                    ViewBag.ListaRoles = JsonSerializer.Deserialize<List<RolModel>>((JsonElement)result.Contenido!);
+                }
+            }
+        }
+
         public IActionResult NotFound404()
         {
             return View();
