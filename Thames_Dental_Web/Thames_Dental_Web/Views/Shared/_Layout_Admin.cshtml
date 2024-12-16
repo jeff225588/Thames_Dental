@@ -64,9 +64,9 @@
                 <ul class="menu-inner py-1">
                     <!-- Dashboard -->
                     <li class="menu-item active">
-                        <a href="index.html" class="menu-link">
+                        <a class="menu-link" asp-area="" asp-controller="Pages" asp-action="Index">
                             <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                            <div data-i18n="Analytics">Dashboard</div>
+                            <div data-i18n="Analytics">Inicio</div>
                         </a>
                     </li>
 
@@ -212,8 +212,8 @@
                                 <i class="bx bx-search fs-4 lh-0"></i>
                                 <input type="text"
                                        class="form-control border-0 shadow-none"
-                                       placeholder="Search..."
-                                       aria-label="Search..." />
+                                       placeholder="Buscar..."
+                                       aria-label="Buscar..." />
                             </div>
                         </div>
                         <!-- /Search -->
@@ -237,8 +237,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <span class="fw-semibold d-block">John Doe</span>
-                                                    <small class="text-muted">Admin</small>
+                                                    <span class="fw-semibold d-block">@Context.Session.GetString("NombreUsuario")</span>
+                                                    <small class="text-muted">@Context.Session.GetString("NombreRol")</small>
                                                 </div>
                                             </div>
                                         </a>
@@ -247,33 +247,18 @@
                                         <div class="dropdown-divider"></div>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item" asp-area="" asp-controller="Pages" asp-action="Index">
                                             <i class="bx bx-user me-2"></i>
-                                            <span class="align-middle">My Profile</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            <i class="bx bx-cog me-2"></i>
-                                            <span class="align-middle">Settings</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            <span class="d-flex align-items-center align-middle">
-                                                <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
-                                                <span class="flex-grow-1 align-middle">Billing</span>
-                                                <span class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
-                                            </span>
+                                            <span class="align-middle">Inicio</span>
                                         </a>
                                     </li>
                                     <li>
                                         <div class="dropdown-divider"></div>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="auth-login-basic.html">
+                                        <a class="dropdown-item" asp-area="" asp-controller="Autenticacion" asp-action="CerrarSesion">
                                             <i class="bx bx-power-off me-2"></i>
-                                            <span class="align-middle">Log Out</span>
+                                            <span class="align-middle">Cerrar Sesión</span>
                                         </a>
                                     </li>
                                 </ul>
