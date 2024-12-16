@@ -184,6 +184,7 @@ namespace Thames_Dental_Web.Controllers
             }
         }
 
+        [AdminFilter]
         [HttpGet]
         public IActionResult ConsultarUsuarios()
         {
@@ -192,6 +193,7 @@ namespace Thames_Dental_Web.Controllers
             return View();
         }
 
+        [AdminFilter]
         [HttpPost]
         public IActionResult ConsultarUsuarios(UsuarioModel model)
         {
@@ -226,6 +228,7 @@ namespace Thames_Dental_Web.Controllers
             return View();
         }
 
+        [AdminFilter]
         private void ObtenerUsuarios()
         {
             using (var client = _http.CreateClient())
@@ -242,6 +245,7 @@ namespace Thames_Dental_Web.Controllers
             }
         }
 
+        [AdminFilter]
         private void ObtenerRoles()
         {
             using (var client = _http.CreateClient())
@@ -259,13 +263,6 @@ namespace Thames_Dental_Web.Controllers
         }
 
         public IActionResult NotFound404()
-        {
-            return View();
-        }
-
-        [AdminFilter]
-        [HttpGet]
-        public IActionResult TestFilter()
         {
             return View();
         }
