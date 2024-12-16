@@ -211,7 +211,7 @@ namespace Thames_Dental_Web.Controllers
                     {
                         ObtenerUsuarios();
                         ObtenerRoles();
-                        ViewBag.Mensaje = result!.Mensaje;
+                        ViewBag.MensajeActuizarUsuarioExito = result!.Mensaje;
                         return View();
                     }
                     else
