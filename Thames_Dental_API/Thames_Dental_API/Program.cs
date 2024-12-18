@@ -6,6 +6,19 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Agregar servicios de CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost",
+        policy =>
+        {
+            policy.WithOrigins("https://localhost:7028") // Cambia esta URL al frontend correcto
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials(); // Permitir cookies/autenticación si es necesario
+        });
+});
+
 // Add services to the container.
 
 builder.Services.AddControllers().AddJsonOptions(x => { x.JsonSerializerOptions.PropertyNamingPolicy = null; });
@@ -51,6 +64,9 @@ builder.Logging.AddConsole();
 
 var app = builder.Build();
 
+// Configurar el middleware CORS
+app.UseCors("AllowLocalhost"); // Siempre antes de Authentication/Authorization
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -72,6 +88,7 @@ app.Use(async (context, next) =>
 });
 
 app.UseHttpsRedirection();
+//app.UseAuthentication(); // Si estás utilizando autenticación JWT
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

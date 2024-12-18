@@ -3,282 +3,237 @@
 @{
     Layout = "~/Views/Shared/_Layout_Admin.cshtml";
     ViewData["Title"] = "Citas Administración";
+    ViewData["HideNavbar"] = "true";
+    ViewData["HideFooter"] = "true";
 }
 
-<body>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css">
+<!-- Incluye SweetAlert2 y Bootstrap desde un CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <style>
-        /* Inline CSS for button styling and alignment */
-        .table-actions-container {
-            display: flex;
-            flex-direction: column; /* Stack buttons vertically */
-            gap: 10px; /* Space between buttons */
-            align-items: stretch; /* Make all buttons the same width */
+<style>
+    .table-actions-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    .btn.action-button {
+        color: white;
+        font-weight: bold;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 14px;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+    }
+
+        .btn.action-button.cancelar {
+            background-color: darkred;
+            border-color: darkred;
         }
 
-        .btn.action-button {
-            color: white;
-            font-weight: bold;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 14px;
-            border: none;
-            cursor: pointer;
-            width: 100%; /* Ensure all buttons have the same width */
+        .btn.action-button.reprogramar {
+            background-color: #008cba;
+            border-color: #008cba;
         }
 
-            .btn.action-button.cancelar {
-                background-color: darkred;
-                border-color: darkred;
-            }
-
-            .btn.action-button.reprogramar {
-                background-color: #008cba;
-                border-color: #008cba;
-            }
-
-            .btn.action-button.aceptar {
-                background-color: forestgreen;
-                border-color: forestgreen;
-            }
-
-        .table-actions-container form {
-            margin: 0; /* Remove extra margin for form elements */
-            display: inline-block; /* Ensure forms are inline-block for alignment */
+        .btn.action-button.aceptar {
+            background-color: forestgreen;
+            border-color: forestgreen;
         }
 
-        /* Botón Editar */
         .btn.action-button.editar {
-            background-color: #ff9900; /* Naranja */
+            background-color: #ff9900;
             border-color: #ff9900;
         }
 
-            /* Hover para el botón Editar */
             .btn.action-button.editar:hover {
-                background-color: #e68a00; /* Naranja más oscuro */
+                background-color: #e68a00;
                 border-color: #e68a00;
             }
 
-        h2, h1, h3, h4, h5, h6 {
-            text-decoration: none !important; /* Elimina subrayados forzados */
+    h2, h1, h3, h4, h5, h6 {
+        text-decoration: none !important; /* Elimina subrayados forzados */
+    }
+
+    a {
+        text-decoration: none !important; /* Elimina subrayados en enlaces */
+    }
+
+        a:hover {
+            text-decoration: underline; /* Solo subraya cuando pases el mouse */
         }
 
-        a {
-            text-decoration: none !important; /* Elimina subrayados en enlaces */
-        }
-
-            a:hover {
-                text-decoration: underline; /* Solo subraya cuando pases el mouse */
-            }
+</style>
 
 
-    </style>
+<!-- Reschedule Modal --> 
+<div class="modal fade" id="rescheduleModal" tabindex="-1" aria-labelledby="rescheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="rescheduleForm" method="post" asp-action="ReprogramarCita" asp-controller="Cita">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rescheduleModalLabel">Reprogramar Cita</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="Id" id="appointmentId" />
 
-
-
-
-    <!-- Reschedule Modal -->
-    <div class="modal fade" id="rescheduleModal" tabindex="-1" aria-labelledby="rescheduleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form id="rescheduleForm" method="post" asp-action="ReprogramarCita" asp-controller="Cita">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="rescheduleModalLabel">Reprogramar Cita</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="mb-3">
+                        <label for="newDate" class="form-label">Nueva Fecha</label>
+                        <input type="date" class="form-control" id="newDate" name="Fecha" required />
                     </div>
-                    <div class="modal-body">
-                        <input type="hidden" name="Id" id="appointmentId" />
 
-                        <div class="mb-3">
-                            <label for="newDate" class="form-label">Nueva Fecha</label>
-                            <input type="date" class="form-control" id="newDate" name="Fecha" required />
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="newTime" class="form-label">Nueva Hora</label>
-                            <input type="time" class="form-control" id="newTime" name="Hora" required />
-                        </div>
+                    <div class="mb-3">
+                        <label for="newTime" class="form-label">Nueva Hora</label>
+                        <input type="time" class="form-control" id="newTime" name="Hora" required />
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
-
-    <!-- Modal para editar la duración -->
-    <div class="modal fade" id="editDurationModal" tabindex="-1" aria-labelledby="editDurationModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
+<!-- Modal para Editar Duración -->
+<div class="modal fade" id="editDurationModal" tabindex="-1" aria-labelledby="editDurationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editDurationModalLabel">Editar Duración</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
                 <form id="editDurationForm" method="post" asp-action="EditarDuracion" asp-controller="Cita">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editDurationModalLabel">Editar Duración</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="hidden" name="Id" id="editDurationId" />
-                        <div class="mb-3">
-                            <label for="newDuration" class="form-label">Nueva Duración (minutos)</label>
-                            <input type="number" class="form-control" id="newDuration" name="Duracion" min="1" required />
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    <input type="hidden" id="citaId" name="Id" />
+                    <div class="mb-3">
+                        <label for="duracion" class="form-label">Duración (minutos)</label>
+                        <input type="number" id="duracion" name="Duracion" class="form-control" min="1" required />
                     </div>
                 </form>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" form="editDurationForm" class="btn btn-primary">Guardar Cambios</button>
+            </div>
         </div>
     </div>
+</div>
 
-    <div class="container-fluid mt-5 mb-5">
-        <h2 class="text-center mb-4" style="color: #008cba;">Ver todas las citas Activas</h2>
+<div class="container-fluid mt-5 mb-5">
+    <h2 class="text-center mb-4" style="color: #008cba;">Ver todas las citas Activas</h2>
 
-        <!-- Barra de búsqueda y botón -->
-        <div class="d-flex justify-content-between mb-3">
-            <input type="text"
-                   id="searchBar"
-                   class="form-control"
-                   placeholder="Buscar cita por nombre, email, especialidad..."
-                   style="width: 70%;"
-                   onkeyup="searchTable()" />
+    <!-- Barra de búsqueda y botón -->
+    <div class="d-flex justify-content-between mb-3">
+        <input type="text" id="searchBar" class="form-control" placeholder="Buscar cita por nombre, email, especialidad..." style="width: 70%;" onkeyup="searchTable()" />
+        <a href="@Url.Action("FormularioAgendar", "Cita")" class="btn btn-primary">Agendar Cita</a>
+    </div>
 
-
-            <a href="@Url.Action("FormularioAgendar", "Cita")" class="btn btn-primary">
-                Agendar Cita
-            </a>
-
-        </div>
-
-        <div class="table-responsive">
-            <table class="table table-bordered" id="appointmentsTable">
-                <thead class="table-light">
+    <div class="table-responsive">
+        <table class="table table-bordered" id="appointmentsTable">
+            <thead class="table-light">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Especialidad</th>
+                    <th>Especialista</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Procedimiento</th>
+                    <th>Duración</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cita in Model)
+                {
                     <tr>
-                        <th>Nombre</th>
-                        <th>Email</th>
-                        <th>Especialidad</th>
-                        <th>Especialista</th>
-                        <th>Fecha</th>
-                        <th>Hora</th>
-                        <th>Procedimiento</th>
-                        <th>Duración</th>
-                        <th>Acciones</th>
+                        <td>@cita.NombreUsuario</td>
+                        <td>@cita.Email</td>
+                        <td>@cita.Especialidad</td>
+                        <td>@cita.Especialista</td>
+                        <td>@cita.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td>@cita.Hora</td>
+                        <td>@cita.Procedimiento</td>
+                        <td>@cita.Duracion minutos</td>
+                        <td class="table-actions-container">
+                            <!-- Cancelar -->
+                            <form id="cancelar-form-@cita.Id" asp-controller="Cita" asp-action="CancelarCita" method="post">
+                                <input type="hidden" name="id" value="@cita.Id" />
+                                <button type="button" class="btn action-button cancelar" onclick="confirmarCancelacion(@cita.Id)">
+                                    Cancelar
+                                </button>
+                            </form>
+
+                            <!-- Reprogramar -->
+                            <button class="btn action-button reprogramar" onclick="openRescheduleModal(@cita.Id, '@cita.Fecha', '@cita.Hora')">
+                                Reprogramar
+                            </button>
+
+                            <!-- Aceptar -->
+                            <form asp-action="AceptarCita" method="post">
+                                <input type="hidden" name="id" value="@cita.Id" />
+                                <button type="submit" class="btn action-button aceptar">
+                                    Aceptar
+                                </button>
+                            </form>
+
+                            <!-- Editar Duración -->
+                            <button class="btn action-button editar" onclick="openEditDurationModal(@cita.Id, @cita.Duracion)">
+                                Editar
+                            </button>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var cita in Model)
-                    {
-                        <tr>
-                            <td>@cita.NombreUsuario</td>
-                            <td>@cita.Email</td>
-                            <td>@cita.Especialidad</td>
-                            <td>@cita.Especialista</td>
-                            <td>@cita.Fecha.ToString("dd/MM/yyyy")</td>
-                            <td>@cita.Hora</td>
-                            <td>@cita.Procedimiento</td>
-                            <td>@cita.Duracion minutos</td>
-                            <td class="table-actions-container">
-                                <!-- Cancelar Button -->
-                                <form id="cancelar-form-@cita.Id" asp-controller="Cita" asp-action="CancelarCita" method="post">
-                                    <input type="hidden" name="id" value="@cita.Id" />
-                                    <button type="button" class="btn action-button cancelar" onclick="confirmarCancelacion(@cita.Id)">
-                                        Cancelar
-                                    </button>
-                                </form>
-
-                                <!-- Reprogramar Button -->
-                                <button class="btn action-button reprogramar" onclick="openRescheduleModal(@cita.Id, '@cita.Fecha', '@cita.Hora')">
-                                    Reprogramar
-                                </button>
-
-                                <!-- Aceptar Button -->
-                                <form asp-action="AceptarCita" method="post">
-                                    <input type="hidden" name="id" value="@cita.Id" />
-                                    <button type="submit" class="btn action-button aceptar">
-                                        Aceptar
-                                    </button>
-                                </form>
-
-                                <!-- Botón Editar Duración -->
-                                <button class="btn action-button editar" onclick="openEditDurationModal(@cita.Id, '@cita.Duracion')">
-                                    Editar
-                                </button>
-
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <script>
-        function openEditDurationModal(id, duracion) {
-            console.log("Abrir modal para editar duración:", id, duracion);
-            document.getElementById('editDurationId').value = id;
-            document.getElementById('newDuration').value = duracion;
-
-            var editDurationModal = new bootstrap.Modal(document.getElementById('editDurationModal'));
-            editDurationModal.show();
-        }
-    </script>
-
-    <script>
-        function searchTable() {
-            // Obtiene el texto ingresado en la barra de búsqueda
-            const input = document.getElementById("searchBar").value.toLowerCase();
-            // Selecciona todas las filas del cuerpo de la tabla
-            const rows = document.querySelectorAll("#appointmentsTable tbody tr");
-
-            rows.forEach(row => {
-                // Obtiene todo el texto de las celdas en la fila actual
-                const cells = row.querySelectorAll("td");
-                const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(" ");
-
-                // Muestra u oculta la fila dependiendo de si contiene el texto buscado
-                if (rowText.includes(input)) {
-                    row.style.display = ""; // Muestra la fila
-                } else {
-                    row.style.display = "none"; // Oculta la fila
                 }
-            });
-        }
-    </script>
+            </tbody>
+        </table>
+    </div>
+</div>
 
-</body>
-
-<!-- SweetAlert2 CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-
-<!-- SweetAlert2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
 <script>
+    function openEditDurationModal(citaId, currentDuration) {
+        console.log("Abriendo modal con ID:", citaId, "y duración actual:", currentDuration);
+        document.getElementById("citaId").value = citaId;
+        document.getElementById("duracion").value = currentDuration;
+        const modal = new bootstrap.Modal(document.getElementById("editDurationModal"));
+        modal.show();
+    }
+
+    function searchTable() {
+        const input = document.getElementById("searchBar").value.toLowerCase();
+        const rows = document.querySelectorAll("#appointmentsTable tbody tr");
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll("td");
+            const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(" ");
+            row.style.display = rowText.includes(input) ? "" : "none";
+        });
+    }
+
+    function confirmarCancelacion(id) {
+        if (confirm("¿Estás seguro de que deseas cancelar esta cita?")) {
+            document.getElementById(`cancelar-form-${id}`).submit();
+        }
+    }
+
     function openRescheduleModal(id, fecha, hora) {
         document.getElementById('appointmentId').value = id;
         document.getElementById('newDate').value = fecha;
         document.getElementById('newTime').value = hora;
 
-        // Show the modal
-        var rescheduleModal = new bootstrap.Modal(document.getElementById('rescheduleModal'));
-        rescheduleModal.show();
-    }
-
-    function confirmarCancelacion(id) {
-        console.log("Id de la cita a cancelar:", id);
-        if (confirm("¿Estás seguro de que deseas cancelar esta cita?")) {
-            document.getElementById(`cancelar-form-${id}`).submit();
-        }
+        const modal = new bootstrap.Modal(document.getElementById('rescheduleModal'));
+        modal.show();
     }
 </script>
 
-@if (TempData["SweetAlertMessage"] != null && TempData["SweetAlertType"] != null)
+@if (TempData["SweetAlertMessage"] != null)
 {
     <script>
         Swal.fire({
@@ -287,7 +242,6 @@
         });
     </script>
 }
-
 
 
 

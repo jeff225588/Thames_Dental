@@ -303,6 +303,7 @@
     </script>
 
     <script>
+        const rutaApi = "https://localhost:7275/api/";
 
         document.addEventListener('DOMContentLoaded', function () {
             var horaDropdown = document.getElementById('hora-cita');
@@ -312,37 +313,32 @@
                 var anio = fechaSeleccionada.getFullYear();
                 var mes = ('0' + (fechaSeleccionada.getMonth() + 1)).slice(-2);
                 var dia = ('0' + fechaSeleccionada.getDate()).slice(-2);
-                var fechaFormateada = `${anio}-${mes}-${dia}`; // Formato yyyy-MM-dd
+                var fechaFormateada = `${anio}-${mes}-${dia}`;
 
-                console.log('Fecha seleccionada (formateada):', fechaFormateada);
+                console.log('Fecha seleccionada:', fechaFormateada);
 
-                fetch(`/Cita/ObtenerHorasOcupadas?fecha=${fechaFormateada}`)
-                    .then(response => response.json())
-                    .then(horasOcupadas => {
-                        console.log('Horas ocupadas obtenidas de la API:', horasOcupadas);
+                var url = `${rutaApi}Cita/ObtenerHorasDisponibles?fecha=${fechaFormateada}&duracion=60`;
+                console.log('URL solicitada:', url);
 
-                        var horaInicio = 7;
-                        var horaFin = 16; // 4:00 PM
-                        var intervalos = 30; // en minutos
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                        return response.json();
+                    })
+                    .then(horasDisponibles => {
+                        console.log('Horas disponibles obtenidas:', horasDisponibles);
 
                         horaDropdown.innerHTML = '<option value="">Selecciona una hora</option>';
-
-                        for (var h = horaInicio; h < horaFin; h++) {
-                            for (var m = 0; m < 60; m += intervalos) {
-                                var horaStr = `${h < 10 ? '0' + h : h}:${m < 10 ? '0' + m : m}`;
-                                if (!horasOcupadas.includes(horaStr)) {
-                                    var option = document.createElement('option');
-                                    option.value = horaStr;
-                                    option.textContent = horaStr;
-                                    horaDropdown.appendChild(option);
-                                }
-                            }
-                        }
+                        horasDisponibles.forEach(hora => {
+                            var option = document.createElement('option');
+                            option.value = hora;
+                            option.textContent = hora;
+                            horaDropdown.appendChild(option);
+                        });
                     })
-                    .catch(error => console.error('Error al obtener horas ocupadas:', error));
+                    .catch(error => console.error('Error al obtener horas disponibles:', error));
             });
         });
-
 
     </script>
 

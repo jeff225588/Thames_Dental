@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Data;
 using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Thames_Dental_Web.Models;
@@ -132,6 +134,7 @@ namespace Thames_Dental_Web.Controllers
 
             return RedirectToAction("Index", "Pages");
         }
+
 
 
 
@@ -476,11 +479,54 @@ namespace Thames_Dental_Web.Controllers
             return RedirectToAction("CitasActivas");
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> EditarDuracion(int Id, int Duracion)
+        {
+            Console.WriteLine($"Enviando solicitud para editar la duración de la cita con Id: {Id}");
+
+            try
+            {
+                // Preparar el contenido JSON para la solicitud
+                var content = new StringContent(
+                    JsonSerializer.Serialize(new { id = Id, duracion = Duracion }),
+                    Encoding.UTF8,
+                    "application/json"
+                );
+
+                // Realizar la solicitud al API
+                var response = await _client.PutAsync($"Cita/EditarDuracion", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SweetAlertMessage"] = "Duración actualizada exitosamente.";
+                    TempData["SweetAlertType"] = "success";
+                }
+                else
+                {
+                    TempData["SweetAlertMessage"] = "Error al actualizar la duración.";
+                    TempData["SweetAlertType"] = "error";
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al editar la duración: {ex.Message}");
+                TempData["SweetAlertMessage"] = $"Error interno: {ex.Message}";
+                TempData["SweetAlertType"] = "error";
+            }
+
+            return RedirectToAction("CitasActivas");
+        }
+
+
+
         //Parte Administrativa
 
 
 
     }
 }
+
+
 
 
