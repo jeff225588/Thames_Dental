@@ -84,13 +84,17 @@
 
                     <div class="mb-3">
                         <label for="newDate" class="form-label">Nueva Fecha</label>
-                        <input type="date" class="form-control" id="newDate" name="Fecha" required />
+                        <input type="date" class="form-control" id="newDate" name="Fecha" required onchange="loadAvailableHours()" />
                     </div>
 
                     <div class="mb-3">
                         <label for="newTime" class="form-label">Nueva Hora</label>
-                        <input type="time" class="form-control" id="newTime" name="Hora" required />
+                        <select class="form-control" id="newTime" name="Hora" required>
+                            <option value="">Selecciona una hora</option>
+                        </select>
                     </div>
+
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -224,14 +228,58 @@
     }
 
     function openRescheduleModal(id, fecha, hora) {
+        // Asignar valores iniciales
         document.getElementById('appointmentId').value = id;
         document.getElementById('newDate').value = fecha;
-        document.getElementById('newTime').value = hora;
 
+        const horaDropdown = document.getElementById('newTime');
+        horaDropdown.innerHTML = '<option value="">Selecciona una hora</option>'; // Limpiar dropdown de horas previas
+
+        // Llamar a loadAvailableHours para cargar las horas disponibles
+        loadAvailableHours();
+
+        // Mostrar el modal
         const modal = new bootstrap.Modal(document.getElementById('rescheduleModal'));
         modal.show();
     }
+
+
 </script>
+
+<script>
+        const rutaApi = "https://localhost:7275/api/";
+
+    async function loadAvailableHours() {
+        const fechaInput = document.getElementById('newDate').value;
+        const horaDropdown = document.getElementById('newTime');
+        const duration = 60; // Duración predeterminada
+
+        if (!fechaInput) return;
+
+        const url = `${rutaApi}Cita/ObtenerHorasDisponibles?fecha=${fechaInput}&duracion=${duration}`;
+        console.log('URL solicitada:', url);
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+            const horasDisponibles = await response.json();
+            console.log('Horas disponibles obtenidas:', horasDisponibles);
+
+            // Limpiar dropdown y agregar nuevas opciones
+            horaDropdown.innerHTML = '<option value="">Selecciona una hora</option>';
+            horasDisponibles.forEach(hora => {
+                const option = document.createElement('option');
+                option.value = hora;
+                option.textContent = hora;
+                horaDropdown.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error al obtener horas disponibles:', error);
+        }
+    }
+</script>
+
+
 
 @if (TempData["SweetAlertMessage"] != null)
 {

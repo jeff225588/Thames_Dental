@@ -305,34 +305,75 @@ namespace Thames_Dental_API.Controllers
 
 
         [HttpPost("ReprogramarCita")]
-        public async Task<IActionResult> ReprogramarCita(int id, DateTime fecha, TimeSpan hora)
+        public async Task<IActionResult> ReprogramarCita(int id, DateTime fecha, TimeSpan hora, int duracion)
         {
+            if (id <= 0 || fecha == DateTime.MinValue || duracion <= 0)
+            {
+                return BadRequest(new Respuesta { Codigo = -1, Mensaje = "Datos de la cita no válidos." });
+            }
+
             var connectionString = _conf.GetSection("ConnectionStrings:DefaultConnection").Value;
+            var respuesta = new Respuesta();
 
             try
             {
                 using (var connection = new SqlConnection(connectionString))
                 {
-                    var query = "UPDATE Citas SET Fecha = @Fecha, Hora = @Hora WHERE Id = @Id";
-                    var affectedRows = await connection.ExecuteAsync(query, new { Fecha = fecha, Hora = hora, Id = id });
+                    await connection.OpenAsync();
 
-                    if (affectedRows > 0)
+                    // Calcular la hora de fin
+                    var horaFinNueva = hora.Add(TimeSpan.FromMinutes(duracion));
+
+                    // Verificar conflictos con citas existentes
+                    var parametrosVerificar = new
                     {
-                        return Ok("Cita reprogramada correctamente.");
-                    }
-                    else
+                        CitaId = id, // Excluir la cita actual del conflicto
+                        Fecha = fecha,
+                        HoraInicioNueva = hora,
+                        HoraFinNueva = horaFinNueva
+                    };
+
+                    var consultaExistente = await connection.QueryFirstOrDefaultAsync<int>(
+                        "VerificarCitaExistenteReprogramar",
+                        parametrosVerificar,
+                        commandType: CommandType.StoredProcedure);
+
+                    if (consultaExistente > 0)
                     {
-                        return NotFound("Cita no encontrada.");
+                        respuesta.Codigo = -1;
+                        respuesta.Mensaje = "El especialista ya tiene una cita en este horario.";
+                        return Ok(respuesta);
                     }
+
+                    // Proceder con la actualización
+                    var parametrosActualizar = new
+                    {
+                        Id = id,
+                        Fecha = fecha,
+                        Hora = hora,
+                        Duracion = duracion
+                    };
+
+                    await connection.ExecuteAsync(
+                        "ReprogramarCita",
+                        parametrosActualizar,
+                        commandType: CommandType.StoredProcedure);
+
+                    respuesta.Codigo = 0;
+                    respuesta.Mensaje = "Cita reprogramada correctamente.";
+                    return Ok(respuesta);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al reprogramar la cita: {ex.Message}");
-                return StatusCode(500, $"Error al reprogramar la cita: {ex.Message}");
+                Console.WriteLine($"Error en ReprogramarCita: {ex.Message}");
+                respuesta.Codigo = -1;
+                respuesta.Mensaje = $"Error al reprogramar la cita: {ex.Message}";
+                return StatusCode(500, respuesta);
             }
-
         }
+
+
 
         [HttpPost("ConfirmarCita")]
         public async Task<IActionResult> ConfirmarCita(int id)
