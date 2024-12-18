@@ -8,16 +8,14 @@ namespace Thames_Dental_Web.Filters
         // Verifica si el rol del usuario es el adecuado antes de ejecutar la acción
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            var rolUsuario = filterContext.HttpContext.Session.GetString("RolID");
+            var rolUsuario = filterContext.HttpContext.Session.GetString("NombreRol");
 
-            // Compara si el rol del usuario es "1" (el rol admin en este caso)
-            if (rolUsuario != null && rolUsuario == "3")
+            if (rolUsuario != null && (rolUsuario == "Admin" || rolUsuario == "Empleado"))
             {
-                base.OnActionExecuting(filterContext); // Procede con la acción si es admin
+                base.OnActionExecuting(filterContext);
             }
             else
             {
-                // Redirige a la página principal si el rol no es "1"
                 filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary {
                     { "controller","Autenticacion"},
                     { "action", "NotFound404" }

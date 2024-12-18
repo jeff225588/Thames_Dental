@@ -1,0 +1,217 @@
+﻿@model UsuarioModel
+
+@{
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+    ViewData["Title"] = "Consultar Usuarios";
+
+    var listaUsuarios = ViewBag.listaUsuarios as List<UsuarioModel>;
+    var listaRoles = ViewBag.listaRoles as List<RolModel>;
+}
+
+<section class="mt-5">
+    <h2 class="mb-5 text-center" style="color: #008cba;">Consulta de Usuarios</h2>
+    @if (ViewBag.Mensaje != null)
+    {
+        <div class="alert alert-danger text-center">@ViewBag.Mensaje</div>
+    }
+
+    @if (ViewBag.MensajeActuizarUsuarioExito != null)
+    {
+        <div class="alert alert-success text-center" id="mensajeExito">@ViewBag.MensajeActuizarUsuarioExito</div>
+    }
+    <table class="table table-striped">
+        <thead>
+            <tr class="table-dark">
+                <th scope="col text-white">ID Usuario</th>
+                <th scope="col">Identificación</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Email</th>
+                <th scope="col">Rol</th>
+                <th scope="col">Activo</th>
+                <th scope="col">Editar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (listaUsuarios != null && listaUsuarios.Any())
+            {
+                @foreach (var item in listaUsuarios)
+                {
+                    <tr>
+                        <td>@item.UsuarioId</td>
+                        <td>@item.Identificacion</td>
+                        <td>@item.Nombre</td>
+                        <td>@item.Email</td>
+                        <td>@item.NombreRol</td>
+                        <td>@item.Activo</td>
+                        <td>
+                            <a id="AbrirModal" href="#" class="btn" data-bs-toggle="modal" data-bs-target="#EditarUsuarioModal"
+                               data-idusuario="@item.UsuarioId"
+                               data-identificacion="@item.Identificacion"
+                               data-nombre="@item.Nombre"
+                               data-email="@item.Email"
+                               data-nombrerol="@item.NombreRol"
+                               data-activo="@item.Activo">
+                                <i class="bx bx-edit" style="font-size: 1.6em;"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5" class="text-center">No hay compras registradas.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
+
+<div class="modal fade" id="EditarUsuarioModal" tabindex="-1" aria-labelledby="EditarUsuarioModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="EditarUsuarioModalLabel">Editar Usuario</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @if (ViewBag.Mensaje != null)
+                {
+                    <div class="alert alert-danger text-center">@ViewBag.Mensaje</div>
+                }
+
+                @using (Html.BeginForm("ConsultarUsuarios", "Autenticacion"))
+                {
+                    <div class="mb-3">
+                        <label for="UsuarioId" class="col-form-label">ID Usuario</label>
+                        @Html.HiddenFor(m => m.UsuarioId)
+                        <p id="UsuarioIdText" class="form-control-plaintext fw-bold"></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Identificacion" class="col-form-label">Identificación</label>
+                        @Html.TextBoxFor(m => m.Identificacion, new
+                            {
+                                @class = "form-control",
+                                @id = "Identificacion",
+                                @autofocus = "autofocus",
+                                @required = "required"
+                            }
+                        )
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Nombre" class="col-form-label">Nombre Completo</label>
+                        @Html.TextBoxFor(m => m.Nombre, new
+                            {
+                                @class = "form-control",
+                                @id = "Nombre",
+                                @required = "required"
+                            }
+                        )
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Email" class="col-form-label">Correo electrónico</label>
+                        @Html.TextBoxFor(m => m.Email, new
+                            {
+                                @class = "form-control",
+                                @id = "Email",
+                                type = "email",
+                                @required = "required"
+                            }
+                        )
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="NombreRol" class="col-form-label">Rol</label>
+                        @if (ViewBag.ListaRoles != null && ((List<RolModel>)ViewBag.ListaRoles).Any())
+                        {
+                            @Html.DropDownListFor(
+                                m => m.NombreRol,
+                                new SelectList(ViewBag.ListaRoles, "NombreRol", "NombreRol"),
+                                new 
+                                { 
+                                    @class = "form-select", 
+                                    @id = "NombreRol", 
+                                    @required = "required" 
+                                }
+                            )
+                        }
+                        else
+                        {
+                            <p class="text-danger">No hay roles disponibles para seleccionar.</p>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Activo" class="form-check-label">Estado</label>
+                        @Html.DropDownListFor(
+                            m => m.Activo,
+                            new List<SelectListItem>
+                            {
+                                new SelectListItem { Text = "Activo", Value = "true" },
+                                new SelectListItem { Text = "Inactivo", Value = "false" }
+                            },
+                            new { @class = "form-select", @id = "Activo", @required = "required" }
+                        )
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary" id="btnActualizar">Actualizar</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById("EditarUsuarioModal");
+
+        modal.addEventListener("show.bs.modal", function (event) {
+            const button = event.relatedTarget; // Botón que abrió el modal
+
+            // Obtener datos del atributo data-*
+            const usuarioId = button.getAttribute("data-idusuario");
+            const identificacion = button.getAttribute("data-identificacion");
+            const nombre = button.getAttribute("data-nombre");
+            const email = button.getAttribute("data-email");
+            const nombreRol = button.getAttribute("data-nombrerol");
+            const activo = button.getAttribute("data-activo");
+
+            // Asignar valores a los inputs del modal
+            document.getElementById("UsuarioId").value = usuarioId;
+            document.getElementById("UsuarioIdText").textContent = usuarioId;
+            document.getElementById("Identificacion").value = identificacion;
+            document.getElementById("Nombre").value = nombre;
+            document.getElementById("Email").value = email;
+            document.getElementById("NombreRol").value = nombreRol;
+            document.getElementById("Activo").value = activo === "True" ? "true" : "false";
+        });
+    });
+
+    document.getElementById("btnActualizar").addEventListener("click", function (event) {
+        // Mostrar el mensaje de confirmación
+        const confirmacion = confirm("¿Estás seguro de que deseas actualizar este registro?");
+
+        // Si el usuario cancela, prevenir la acción predeterminada del botón
+        if (!confirmacion) {
+            event.preventDefault();
+        }
+    });
+
+    // Verificar si el mensaje está presente
+    window.onload = function() {
+        var mensaje = document.getElementById("mensajeExito");
+
+        // Si hay mensaje, se oculta después de 3 segundos
+        if (mensaje) {
+            setTimeout(function () {
+                mensaje.style.display = "none"; // Ocultar el mensaje
+            }, 3000); // 3 segundos
+        }
+    };
+
+</script>

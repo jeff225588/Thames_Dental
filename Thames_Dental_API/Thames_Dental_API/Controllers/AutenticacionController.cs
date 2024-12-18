@@ -291,5 +291,87 @@ namespace Thames_Dental_API.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("ConsultarUsuarios")]
+        public IActionResult ConsultarUsuarios()
+        {
+            using (var context = new SqlConnection(_conf.GetSection("ConnectionStrings:DefaultConnection").Value))
+            {
+                var respuesta = new Respuesta();
+                var result = context.Query<UsuarioModel>("ConsultarUsuarios", new { });
+
+                if (result.Any())
+                {
+                    respuesta.Codigo = 0;
+                    respuesta.Contenido = result;
+                }
+                else
+                {
+                    respuesta.Codigo = -1;
+                    respuesta.Mensaje = "No hay usuarios registrados en este momento";
+                }
+
+                return Ok(respuesta);
+            }
+        }
+
+        [HttpPost]
+        [Route("ActualizarUsuario")]
+        public IActionResult ActualizarUsuario(UsuarioModel model)
+        {
+            using (var context = new SqlConnection(_conf.GetSection("ConnectionStrings:DefaultConnection").Value))
+            {
+                var respuesta = new Respuesta();
+
+                try
+                {
+                    var result = context.Execute("ActualizarUsuario", new { 
+                        model.UsuarioId, model.Identificacion, model.Nombre, model.Email, model.NombreRol, model.Activo 
+                    });
+
+                    if (result > 0)
+                    {
+                        respuesta.Codigo = 0;
+                        respuesta.Mensaje = "Usuario actualizado correctamente";
+                    }
+                    else
+                    {
+                        respuesta.Codigo = -1;
+                        respuesta.Mensaje = "Error: El usuario no se pudo actualizar correctamente.";
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    respuesta.Codigo = -1;
+                    respuesta.Mensaje = "Error: " + ex.Message;
+                }
+
+                return Ok(respuesta);
+            }
+        }
+
+        [HttpGet]
+        [Route("ConsultarRoles")]
+        public IActionResult ConsultarRoles()
+        {
+            using (var context = new SqlConnection(_conf.GetSection("ConnectionStrings:DefaultConnection").Value))
+            {
+                var respuesta = new Respuesta();
+                var result = context.Query<RolModel>("ConsultarRoles", new { });
+
+                if (result.Any())
+                {
+                    respuesta.Codigo = 0;
+                    respuesta.Contenido = result;
+                }
+                else
+                {
+                    respuesta.Codigo = -1;
+                    respuesta.Mensaje = "No hay roles registrados en este momento";
+                }
+
+                return Ok(respuesta);
+            }
+        }
     }
 }

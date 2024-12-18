@@ -45,10 +45,10 @@
             <div class="collapse navbar-collapse" id="ftco-nav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item cta">
-                        @if (Context.Session.GetString("NombreUsuario") == "Admin")
+                        @if (Context.Session.GetString("NombreRol") == "Admin" || Context.Session.GetString("NombreRol") == "Empleado")
                         {
                             <a class="nav-link" asp-area="" asp-controller="Expedientes" asp-action="Expediente" style="background: #FFA500">
-                                <span>Admin</span>
+                                <span>Administrar</span>
                             </a>
                         }
                     </li>

@@ -92,6 +92,7 @@ namespace Thames_Dental_Web.Controllers
                         HttpContext.Session.SetString("NombreUsuario", datosContenido!.Nombre);
                         HttpContext.Session.SetString("TokenUsuario", datosContenido!.Token);
                         HttpContext.Session.SetString("RolID", datosContenido!.RolID.ToString());
+                        HttpContext.Session.SetString("NombreRol", datosContenido!.NombreRol);
 
                         return RedirectToAction("Index", "Pages");
                     }
@@ -183,14 +184,85 @@ namespace Thames_Dental_Web.Controllers
             }
         }
 
-        public IActionResult NotFound404()
+        [AdminFilter]
+        [HttpGet]
+        public IActionResult ConsultarUsuarios()
         {
+            ObtenerUsuarios();
+            ObtenerRoles();
             return View();
         }
 
         [AdminFilter]
-        [HttpGet]
-        public IActionResult TestFilter()
+        [HttpPost]
+        public IActionResult ConsultarUsuarios(UsuarioModel model)
+        {
+            using (var client = _http.CreateClient())
+            {
+                string url = _conf.GetSection("Variables:RutaApi").Value + "Autenticacion/ActualizarUsuario";
+
+                JsonContent datos = JsonContent.Create(model);
+
+                var response = client.PostAsync(url, datos).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
+
+                    if (result != null && result.Codigo == 0)
+                    {
+                        ObtenerUsuarios();
+                        ObtenerRoles();
+                        ViewBag.MensajeActuizarUsuarioExito = result!.Mensaje;
+                        return View();
+                    }
+                    else
+                    {
+                        ObtenerUsuarios();
+                        ObtenerRoles();
+                        ViewBag.Mensaje = result!.Mensaje;
+                        return View();
+                    }
+                }
+            }
+            return View();
+        }
+
+        [AdminFilter]
+        private void ObtenerUsuarios()
+        {
+            using (var client = _http.CreateClient())
+            {
+                string url = _conf.GetSection("Variables:RutaApi").Value + "Autenticacion/ConsultarUsuarios";
+
+                var response = client.GetAsync(url).Result;
+                var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
+
+                if (result != null && result.Codigo == 0)
+                {
+                    ViewBag.ListaUsuarios = JsonSerializer.Deserialize<List<UsuarioModel>>((JsonElement)result.Contenido!);
+                }
+            }
+        }
+
+        [AdminFilter]
+        private void ObtenerRoles()
+        {
+            using (var client = _http.CreateClient())
+            {
+                string url = _conf.GetSection("Variables:RutaApi").Value + "Autenticacion/ConsultarRoles";
+
+                var response = client.GetAsync(url).Result;
+                var result = response.Content.ReadFromJsonAsync<Respuesta>().Result;
+
+                if (result != null && result.Codigo == 0)
+                {
+                    ViewBag.ListaRoles = JsonSerializer.Deserialize<List<RolModel>>((JsonElement)result.Contenido!);
+                }
+            }
+        }
+
+        public IActionResult NotFound404()
         {
             return View();
         }
