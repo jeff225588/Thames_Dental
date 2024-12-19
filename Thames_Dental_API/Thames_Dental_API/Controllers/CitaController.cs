@@ -9,6 +9,7 @@ using System.Data;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.ColorSpaces;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Diagnostics;
 
 namespace Thames_Dental_API.Controllers
 {
@@ -305,11 +306,22 @@ namespace Thames_Dental_API.Controllers
 
 
         [HttpPost("ReprogramarCita")]
-        public async Task<IActionResult> ReprogramarCita(int id, DateTime fecha, TimeSpan hora, int duracion)
+        public async Task<IActionResult> ReprogramarCita([FromBody] ReprogramarCitaRequest request)
         {
-            if (id <= 0 || fecha == DateTime.MinValue || duracion <= 0)
+            // Utiliza las propiedades del objeto 'request' en lugar de variables individuales
+            Debug.WriteLine($"ReprogramarCita - Parámetros recibidos: ID={request.Id}, Fecha={request.Fecha}, Hora={request.Hora}, Duracion={request.Duracion}");
+
+            // Validar el modelo recibido
+            if (!ModelState.IsValid)
             {
-                return BadRequest(new Respuesta { Codigo = -1, Mensaje = "Datos de la cita no válidos." });
+                var errores = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                return BadRequest(new { Codigo = -1, Mensaje = "Datos inválidos.", Errores = errores });
+            }
+
+            // Validación adicional
+            if (request.Id <= 0 || request.Fecha == DateTime.MinValue || request.Duracion <= 0)
+            {
+                return BadRequest(new { Codigo = -1, Mensaje = "Datos de la cita no válidos." });
             }
 
             var connectionString = _conf.GetSection("ConnectionStrings:DefaultConnection").Value;
@@ -322,14 +334,14 @@ namespace Thames_Dental_API.Controllers
                     await connection.OpenAsync();
 
                     // Calcular la hora de fin
-                    var horaFinNueva = hora.Add(TimeSpan.FromMinutes(duracion));
+                    var horaFinNueva = request.Hora.Add(TimeSpan.FromMinutes(request.Duracion));
 
                     // Verificar conflictos con citas existentes
                     var parametrosVerificar = new
                     {
-                        CitaId = id, // Excluir la cita actual del conflicto
-                        Fecha = fecha,
-                        HoraInicioNueva = hora,
+                        CitaId = request.Id, // Excluir la cita actual del conflicto
+                        Fecha = request.Fecha,
+                        HoraInicioNueva = request.Hora,
                         HoraFinNueva = horaFinNueva
                     };
 
@@ -348,10 +360,10 @@ namespace Thames_Dental_API.Controllers
                     // Proceder con la actualización
                     var parametrosActualizar = new
                     {
-                        Id = id,
-                        Fecha = fecha,
-                        Hora = hora,
-                        Duracion = duracion
+                        Id = request.Id,
+                        Fecha = request.Fecha,
+                        Hora = request.Hora,
+                        Duracion = request.Duracion
                     };
 
                     await connection.ExecuteAsync(
@@ -372,6 +384,7 @@ namespace Thames_Dental_API.Controllers
                 return StatusCode(500, respuesta);
             }
         }
+
 
 
 

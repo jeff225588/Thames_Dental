@@ -98,7 +98,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    <button type="button" class="btn btn-primary" onclick="submitReschedule()">Guardar Cambios</button>
                 </div>
             </form>
         </div>
@@ -176,7 +176,7 @@
                             </form>
 
                             <!-- Reprogramar -->
-                            <button class="btn action-button reprogramar" onclick="openRescheduleModal(@cita.Id, '@cita.Fecha', '@cita.Hora')">
+                            <button class="btn action-button reprogramar" onclick="openRescheduleModal(@cita.Id, '@cita.Fecha.ToString("yyyy-MM-dd")', '@cita.Hora', @cita.Duracion)">
                                 Reprogramar
                             </button>
 
@@ -223,17 +223,50 @@
 
     function confirmarCancelacion(id) {
         if (confirm("¿Estás seguro de que deseas cancelar esta cita?")) {
-            document.getElementById(`cancelar-form-${id}`).submit();
+            const form = document.getElementById(`cancelar-form-${id}`);
+            if (form) {
+                form.submit();
+            } else {
+                console.error(`No se encontró el formulario con ID: cancelar-form-${id}`);
+            }
         }
     }
 
-    function openRescheduleModal(id, fecha, hora) {
-        // Asignar valores iniciales
-        document.getElementById('appointmentId').value = id;
-        document.getElementById('newDate').value = fecha;
 
+
+
+</script>
+
+<script>
+    let selectedCitaId = null;
+    let selectedDuracion = 60; // Valor predeterminado para la duración
+
+    // Función para abrir el modal de reprogramación
+    function openRescheduleModal(id, fecha, hora, duracion) {
+        const appointmentIdElement = document.getElementById('appointmentId');
+        const newDateElement = document.getElementById('newDate');
         const horaDropdown = document.getElementById('newTime');
-        horaDropdown.innerHTML = '<option value="">Selecciona una hora</option>'; // Limpiar dropdown de horas previas
+
+        // Verificar que los elementos existen
+        if (!appointmentIdElement || !newDateElement || !horaDropdown) {
+            console.error("Error: No se encontraron los elementos necesarios en el DOM.");
+            Swal.fire('Error', 'Ocurrió un error al intentar abrir el modal. Por favor, recarga la página.', 'error');
+            return;
+        }
+
+        // Guardar ID de la cita seleccionada
+        selectedCitaId = id;
+        // Guardar la duración recibida
+        selectedDuracion = duracion > 0 ? duracion : 60;  // Si `duracion` es 0 o undefined, usar 60 como predeterminado
+        console.log("Duración seleccionada para la cita:", selectedDuracion);
+
+        // Asignar valores iniciales
+        appointmentIdElement.value = id;
+        newDateElement.value = fecha;
+        console.log("Fecha asignada al campo:", newDateElement.value);
+
+        // Limpiar el dropdown de horas previas
+        horaDropdown.innerHTML = '<option value="">Selecciona una hora</option>';
 
         // Llamar a loadAvailableHours para cargar las horas disponibles
         loadAvailableHours();
@@ -243,20 +276,20 @@
         modal.show();
     }
 
+    const rutaApi = "https://localhost:7275/api/";
 
-</script>
-
-<script>
-        const rutaApi = "https://localhost:7275/api/";
-
+    // Función para cargar las horas disponibles para la reprogramación
     async function loadAvailableHours() {
         const fechaInput = document.getElementById('newDate').value;
+        console.log("Fecha seleccionada:", fechaInput); // Verifica el valor
         const horaDropdown = document.getElementById('newTime');
-        const duration = 60; // Duración predeterminada
 
-        if (!fechaInput) return;
+        if (!fechaInput) {
+            Swal.fire('Error', 'La fecha es requerida para cargar las horas disponibles.', 'error');
+            return;
+        }
 
-        const url = `${rutaApi}Cita/ObtenerHorasDisponibles?fecha=${fechaInput}&duracion=${duration}`;
+        const url = `${rutaApi}Cita/ObtenerHorasDisponibles?fecha=${fechaInput}&duracion=${selectedDuracion}`;
         console.log('URL solicitada:', url);
 
         try {
@@ -275,8 +308,59 @@
             });
         } catch (error) {
             console.error('Error al obtener horas disponibles:', error);
+            Swal.fire('Error', 'No se pudieron cargar las horas disponibles. Intenta nuevamente.', 'error');
         }
     }
+
+    // Función para enviar la solicitud de reprogramación
+    async function submitReschedule() {
+        const fecha = document.getElementById('newDate').value;
+        const hora = document.getElementById('newTime').value;
+
+        console.log("Datos enviados al servidor en submitReschedule:", {
+            id: selectedCitaId,
+            fecha: fecha,
+            hora: hora,
+            duracion: selectedDuracion
+        });
+
+        if (!fecha || !hora) {
+            Swal.fire('Error', 'Por favor selecciona una fecha y una hora válidas.', 'error');
+            return;
+        }
+
+        // Estructurar los datos según el modelo `ReprogramarCitaRequest`
+        const body = {
+            id: selectedCitaId,
+            fecha: fecha,
+            hora: hora,
+            duracion: selectedDuracion
+        };
+
+        try {
+            const response = await fetch(`${rutaApi}Cita/ReprogramarCita`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body) // Enviar JSON
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.Codigo === 0) {
+                    Swal.fire('Éxito', result.Mensaje, 'success').then(() => location.reload());
+                } else {
+                    Swal.fire('Error', result.Mensaje, 'error');
+                }
+            } else {
+                const error = await response.json();
+                Swal.fire('Error', error.Mensaje || 'Ocurrió un error.', 'error');
+            }
+        } catch (err) {
+            console.error('Error al enviar la solicitud:', err);
+            Swal.fire('Error', 'Error al conectar con el servidor.', 'error');
+        }
+    }
+
 </script>
 
 
