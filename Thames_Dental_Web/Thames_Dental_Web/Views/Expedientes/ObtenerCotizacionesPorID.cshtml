@@ -46,6 +46,7 @@
         <button class="btn btn-primary" onclick="location.href='@Url.Action("AgregarCotizacion", "Expedientes", new { clienteID = Model != null && Model.Count > 0 ? Model[0].ClienteID : ViewBag.ClienteID })'">
             Agregar Cotización
         </button>
-        <button class="btn btn-secondary" onclick="window.history.back();">Salir</button>
+        <button class="btn btn-secondary" onclick="location.href='@Url.Action("VerCliente", "Expedientes", new { clienteID = ViewBag.ClienteID })'">Salir</button>
+
     </div>
 </div>

@@ -93,6 +93,6 @@
 
     <div class="text-center mt-4">
         <button class="btn btn-primary" style="background-color: #008cba; border-color: #008cba;" onclick="location.href='@Url.Action("AgregarHistorialClinicoPorId", "Expedientes", new { clienteID = Model.ClienteID })'">Expediente Clínico</button>
-        <button class="btn btn-secondary" onclick="window.history.back()">Volver</button>
+        <button class="btn btn-secondary" onclick="location.href='@Url.Action("VerCliente", "Expedientes", new { clienteID = Model.ClienteID })'">Salir</button>
     </div>
 </div>

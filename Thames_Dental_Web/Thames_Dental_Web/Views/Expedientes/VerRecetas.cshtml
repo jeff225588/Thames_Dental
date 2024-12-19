@@ -12,7 +12,7 @@
     <div class="mb-4 text-center">
         <a href="@Url.Action("AgregarRecetaporid", "Expedientes", new { ClienteID = Model.ClienteID })"
            class="btn btn-info btn-symmetric text-nowrap">Agregar Receta</a>
-        <button class="btn btn-secondary btn-symmetric text-nowrap" onclick="history.back();">Volver</button>
+        <button class="btn btn-secondary" onclick="location.href='@Url.Action("VerCliente", "Expedientes", new { clienteID = Model.ClienteID })'">Salir</button>
     </div>
 
     @if (Model.Recetas != null && Model.Recetas.Any())

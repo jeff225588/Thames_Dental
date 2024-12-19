@@ -955,11 +955,13 @@ namespace Thames_Dental_Web.Controllers
                             return RedirectToAction("AgregarCotizacion", new { clienteID = clienteId });
                         }
 
+                        ViewBag.ClienteID = clienteId; // Pasar clienteId a la vista
                         return View(cotizaciones);
                     }
                     else
                     {
                         ViewBag.ErrorMessage = "Error al obtener las cotizaciones del cliente.";
+                        ViewBag.ClienteID = clienteId; // Pasar clienteId a la vista incluso en caso de error
                         return View(new List<CotizacionModel>());
                     }
                 }
@@ -967,9 +969,11 @@ namespace Thames_Dental_Web.Controllers
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = "Error inesperado: " + ex.Message;
+                ViewBag.ClienteID = clienteId; // Pasar clienteId para casos de excepción
                 return View(new List<CotizacionModel>());
             }
         }
+
 
 
 
