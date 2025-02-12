@@ -29,30 +29,46 @@
                     {
                         <div class="mb-3">
                             <label for="Identificacion" class="form-label">Identificación</label>
-                            @Html.TextBoxFor(m => m.Identificacion, new { @class = "form-control", @id = "Identificacion", 
-                                @placeholder = "Introduzca su identificación", @autofocus = "autofocus", @required = "required" }
+                            @Html.TextBoxFor(m => m.Identificacion, new { @class = "form-control", @id = "Identificacion",
+                                    type = "number",
+                                    @placeholder = "Introduzca su identificación",
+                                    @autofocus = "autofocus",
+                                    @required = "required",
+                                    @min = "100000000",
+                                    @max = "99999999999"
+                                }
                             )
                         </div>
 
                         <div class="mb-3">
                             <label for="Nombre" class="form-label">Nombre Completo</label>
-                            @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", @id = "Nombre", 
-                                @placeholder = "Introduzca su nombre completo", @required = "required" }
+                            @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", @id = "Nombre",
+                                    @placeholder = "Introduzca su nombre completo",
+                                    @required = "required"
+                                }
                             )
                         </div>
 
                         <div class="mb-3">
                             <label for="Email" class="form-label">Correo electrónico</label>
-                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @id = "Email", 
-                                type = "email", @placeholder = "Introduzca su correo electrónico", @required = "required" }
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @id = "Email",
+                                    type = "email",
+                                    @placeholder = "Introduzca su correo electrónico",
+                                    @required = "required"
+                                }
                             )
                         </div>
 
                         <div class="mb-3 form-password-toggle">
                             <label for="Contrasena" class="form-label">Contraseña</label>
                             <div class="input-group input-group-merge">
-                                @Html.TextBoxFor(m => m.Contrasena, new { @class = "form-control", @id = "Contrasena", 
-                                    type = "password", @placeholder = "Introduzca su contraseña", @aria_describedby = "password", @required = "required" }
+                                @Html.TextBoxFor(m => m.Contrasena, new { @class = "form-control", @id = "Contrasena",
+                                        type = "password",
+                                        @placeholder = "Introduzca su contraseña",
+                                        @aria_describedby = "password",
+                                        @required = "required",
+                                        @minlength = "8"
+                                    }
                                 )
                                 <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                             </div>
