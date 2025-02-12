@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
+using Thames_Dental_Web.Filters;
 
 
 namespace Inventario.Controllers
 {
+    [AdminFilter]
     public class InventarioController : Controller
     {
         private readonly IHttpClientFactory _http;

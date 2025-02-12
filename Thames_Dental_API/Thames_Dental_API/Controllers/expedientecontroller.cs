@@ -55,6 +55,7 @@ namespace Thames_Dental_API.Controllers
                 parameters.Add("@TelefonoEmergencia", cliente.TelefonoEmergencia);
                 parameters.Add("@FechaIngreso", cliente.FechaIngreso);
                 parameters.Add("@Notas", cliente.Notas);
+                parameters.Add("@Estado", cliente.Estado);
 
                 // Llamar al procedimiento almacenado utilizando Dapper
                 await connection.ExecuteAsync("sp_AgregarCliente", parameters, commandType: CommandType.StoredProcedure);

@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Thames_Dental_Web.Filters;
 using Thames_Dental_Web.Models;
 
 namespace Thames_Dental_Web.Controllers
 {
+    [AdminFilter]
     public class AdminController : Controller
     {
         public IActionResult Dashboard()

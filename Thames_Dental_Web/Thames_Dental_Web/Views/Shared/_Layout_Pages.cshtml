@@ -69,10 +69,8 @@
                     </li>
                     @if (Context.Session.GetString("NombreUsuario") != null)
                     {
-                        <li class="nav-item cta @(ViewContext.RouteData.Values["action"]?.ToString() == "Contacto" ? "active" : "")">
-                            <a class="nav-link" asp-area="" asp-controller="Pages" asp-action="Contacto" data-bs-toggle="modal" data-bs-target="#modalRequest">
-                                <span>Agendar Cita</span>
-                            </a>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Autenticacion" asp-action="CambiarContrasena">Cambiar contraseña</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Autenticacion" asp-action="CerrarSesion">Cerrar Sesión</a>
