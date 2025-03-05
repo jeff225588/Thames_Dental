@@ -22,7 +22,7 @@
         public DateTime FechaIngreso { get; set; }
         public string Notas { get; set; } = string.Empty;
 
-        public bool Estado { get; set; }
+        public bool Estado { get; set; } = true;
 
 
         public bool nuevoEstado { get; set; }

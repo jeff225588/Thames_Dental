@@ -1,27 +1,26 @@
 ﻿@model Thames_Dental_Web.Models.ClientModel
 @{
-
     Layout = "~/Views/Shared/_Layout_Admin.cshtml";
     ViewData["Title"] = "Expediente del Cliente";
 }
 
 <div class="container mt-5 mb-5">
     <h2 class="text-center mb-4" style="color: #008cba;">Expediente del Cliente</h2>
-    <form asp-action="Expediente" method="post">
+    <form id="expedienteForm" asp-action="Expediente" method="post">
         <div class="row g-3 mb-3">
             <div class="col-md-4">
                 <label for="Nombre" class="form-label">Nombre</label>
-                <input asp-for="Nombre" class="form-control" placeholder="Nombre" />
+                <input asp-for="Nombre" class="form-control" id="Nombre" placeholder="Nombre" />
                 <span asp-validation-for="Nombre" class="text-danger"></span>
             </div>
             <div class="col-md-4">
                 <label for="PrimerApellido" class="form-label">Primer Apellido</label>
-                <input asp-for="PrimerApellido" class="form-control" placeholder="Primer Apellido" />
+                <input asp-for="PrimerApellido" class="form-control" id="PrimerApellido" placeholder="Primer Apellido" />
                 <span asp-validation-for="PrimerApellido" class="text-danger"></span>
             </div>
             <div class="col-md-4">
                 <label for="SegundoApellido" class="form-label">Segundo Apellido</label>
-                <input asp-for="SegundoApellido" class="form-control" placeholder="Segundo Apellido" />
+                <input asp-for="SegundoApellido" class="form-control" id="SegundoApellido" placeholder="Segundo Apellido" />
                 <span asp-validation-for="SegundoApellido" class="text-danger"></span>
             </div>
         </div>
@@ -29,7 +28,7 @@
         <div class="row g-3 mb-3">
             <div class="col-md-4">
                 <label for="TipoIdentificacion" class="form-label">Tipo de Identificación</label>
-                <select asp-for="TipoIdentificacion" class="form-select">
+                <select asp-for="TipoIdentificacion" class="form-select" id="TipoIdentificacion">
                     <option value="">Seleccione...</option>
                     <option value="Físico">Físico</option>
                     <option value="Jurídico">Jurídico</option>
@@ -38,16 +37,15 @@
             </div>
             <div class="col-md-4">
                 <label for="Identificacion" class="form-label">Identificación</label>
-                <input asp-for="Identificacion" class="form-control" placeholder="Número de Identificación" />
+                <input asp-for="Identificacion" class="form-control" id="Identificacion" placeholder="Número de Identificación" />
                 <span asp-validation-for="Identificacion" class="text-danger"></span>
             </div>
             <div class="col-md-4">
                 <label for="TelefonoPrincipal" class="form-label">Teléfono Principal</label>
-                <input asp-for="TelefonoPrincipal" class="form-control" placeholder="Teléfono Principal" />
+                <input asp-for="TelefonoPrincipal" class="form-control" id="TelefonoPrincipal" placeholder="Teléfono Principal" />
                 <span asp-validation-for="TelefonoPrincipal" class="text-danger"></span>
             </div>
         </div>
-
         <div class="row g-3 mb-3">
             <div class="col-md-4">
                 <label for="Correo" class="form-label">Correo Electrónico</label>
@@ -126,7 +124,63 @@
         </div>
 
         <div class="text-center">
-            <button type="submit" class="btn btn-primary" style="background-color: #008cba; border-color: #008cba;">Guardar</button>
+            <button type="submit" class="btn btn-primary" style="background-color: #008cba; border-color: #008cba;">
+                Guardar
+            </button>
         </div>
     </form>
 </div>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("expedienteForm").addEventListener("submit", function (event) {
+            event.preventDefault(); // Evita el envío predeterminado
+
+            let form = this;
+            let formData = new FormData(form);
+            let submitButton = form.querySelector("button[type='submit']");
+            submitButton.disabled = true; // Deshabilita el botón mientras se procesa
+
+            fetch(form.action, {
+                method: "POST",
+                body: formData
+            })
+                .then(response => {
+                    let contentType = response.headers.get("content-type");
+                    if (!response.ok) {
+                        throw new Error("Error al guardar el expediente.");
+                    }
+                    if (contentType && contentType.includes("application/json")) {
+                        return response.json();
+                    } else {
+                        return response.text(); // En caso de respuesta HTML
+                    }
+                })
+                .then(data => {
+                    Swal.fire({
+                        title: "¡Éxito!",
+                        text: "El expediente se ha guardado correctamente.",
+                        icon: "success",
+                        confirmButtonText: "Aceptar"
+                    }).then(() => {
+                        form.reset(); // Limpia el formulario
+                        window.location.reload(); // Recarga la página o redirige si es necesario
+                    });
+                })
+                .catch(error => {
+                    Swal.fire({
+                        title: "Error",
+                        text: "Hubo un problema al guardar el expediente.",
+                        icon: "error",
+                        confirmButtonText: "Aceptar"
+                    });
+                })
+                .finally(() => {
+                    submitButton.disabled = false; // Rehabilita el botón después del proceso
+                });
+        });
+    });
+</script>
