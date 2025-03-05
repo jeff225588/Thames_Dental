@@ -586,60 +586,57 @@ namespace Thames_Dental_Web.Controllers
                 return BadRequest("El ClienteID no es válido.");
             }
 
-            // Crear una instancia del modelo ClientModel y asignar el ClienteID
-            var clientModel = new ClientModel
+            var model = new AgregarAutorizadoViewModel
             {
-                ClienteID = ClienteID,
-                // También puedes inicializar otras propiedades según sea necesario
+                ClienteID = ClienteID
             };
 
-            return View(clientModel);
+            return View(model);
         }
 
-
+        // Acción POST para agregar un autorizado
         [HttpPost]
-        public async Task<IActionResult> AgregarAutorizadoporid(Autorizado autorizadoRequest)
+        public async Task<IActionResult> AgregarAutorizadoporid(AgregarAutorizadoViewModel model)
         {
-            // Validación de los datos de entrada (ClienteID y Nombre)
-            if (autorizadoRequest.ClienteID <= 0 || string.IsNullOrEmpty(autorizadoRequest.Nombre))
+            // Validar que el ClienteID y el Nombre sean válidos
+            if (model.ClienteID <= 0 || string.IsNullOrEmpty(model.Nombre))
             {
-                TempData["ErrorMessage"] = "El ClienteID o Nombre no son válidos.";
-                // Redirigir al formulario con el ClienteID, para que pueda corregir los datos
-                return RedirectToAction("AgregarAutorizadoporid", new { ClienteID = autorizadoRequest.ClienteID });
+                model.ErrorMessage = "El ClienteID o Nombre no son válidos.";
+                return View(model);
             }
 
             try
             {
+                // Crear cliente HTTP para realizar la solicitud POST a la API
                 using (var client = _http.CreateClient())
                 {
                     string url = _conf.GetSection("Variables:RutaApi").Value + "Expediente/AgregarAutorizadoporid";
-                    var response = await client.PostAsJsonAsync(url, autorizadoRequest);
 
-                    // Si la respuesta es exitosa, mostramos un mensaje de éxito
+                    var response = await client.PostAsJsonAsync(url, model);
+
                     if (response.IsSuccessStatusCode)
                     {
-                        TempData["SuccessMessage"] = "Autorizado agregado con éxito.";
-                        // Redirigir a la vista de VerAutorizados
-                        return RedirectToAction("VerAutorizados", new { clienteID = autorizadoRequest.ClienteID });
+                        var successMessage = await response.Content.ReadAsStringAsync();
+                        model.SuccessMessage = "Autorizado agregado con éxito.";
+
+                        // Redirigir a la página "VerAutorizados" después de guardar
+                        return RedirectToAction("VerAutorizados", "Expedientes", new { clienteID = model.ClienteID });
                     }
                     else
                     {
-                        // Si hay error, mostramos el mensaje de error
                         var errorMessage = await response.Content.ReadAsStringAsync();
-                        TempData["ErrorMessage"] = "Error al agregar el autorizado: " + errorMessage;
-                        // Redirigir de nuevo al formulario para corregir el error
-                        return RedirectToAction("AgregarAutorizadoporid", new { ClienteID = autorizadoRequest.ClienteID });
+                        model.ErrorMessage = "Error al agregar el autorizado: " + errorMessage;
                     }
                 }
             }
             catch (Exception ex)
             {
-                // Si hay un error inesperado, mostrar el mensaje correspondiente
-                TempData["ErrorMessage"] = "Error inesperado: " + ex.Message;
-                // Redirigir al formulario con el ClienteID para mostrar el error
-                return RedirectToAction("AgregarAutorizadoporid", new { ClienteID = autorizadoRequest.ClienteID });
+                model.ErrorMessage = "Error inesperado: " + ex.Message;
             }
+
+            return View(model);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> VerHistorialClinicoporid(int clienteID)

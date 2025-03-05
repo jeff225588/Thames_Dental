@@ -223,6 +223,18 @@
         public int ClienteID { get; set; }
         public string TextoCotizacion { get; set; }
     }
+
+
+    public class AgregarAutorizadoViewModel
+    {
+        public int ClienteID { get; set; }
+        public string Nombre { get; set; }
+        public string TelefonoEmergencia { get; set; }
+
+        public string SuccessMessage { get; set; }
+        public string ErrorMessage { get; set; }
+    }
 }
+
 
 

@@ -515,14 +515,12 @@ namespace Thames_Dental_API.Controllers
                         "sp_AgregarAutorizadoporid", parameters, commandType: CommandType.StoredProcedure
                     );
 
-                    // Verificar si el resultado contiene "correctamente"
                     if (result != null && result.Contains("correctamente"))
                     {
                         return Ok(result); // Mensaje de éxito
                     }
                     else
                     {
-                        // Si no contiene "correctamente", lo tratamos como un error y devolvemos un BadRequest con el mensaje de error.
                         return BadRequest("Error al agregar el autorizado: " + result); // Mensaje de error
                     }
                 }
@@ -532,6 +530,7 @@ namespace Thames_Dental_API.Controllers
                 return StatusCode(500, $"Error interno: {ex.Message}"); // Error de servidor interno
             }
         }
+
 
 
         [HttpGet("ObtenerHistorialClinicoPorClienteID/{clienteId}")]

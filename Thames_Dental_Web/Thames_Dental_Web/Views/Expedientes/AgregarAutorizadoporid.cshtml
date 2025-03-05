@@ -1,4 +1,4 @@
-﻿@model Thames_Dental_Web.Models.ClientModel
+﻿@model Thames_Dental_Web.Models.AgregarAutorizadoViewModel
 
 @{
     Layout = "~/Views/Shared/_Layout_Admin.cshtml";
@@ -8,8 +8,23 @@
 <div class="container mt-5">
     <h2>Agregar Autorizado</h2>
 
+    <!-- Mostrar mensajes de éxito y error si existen -->
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success">
+            @Model.SuccessMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">
+            @Model.ErrorMessage
+        </div>
+    }
+
     <!-- Formulario para agregar autorizado -->
-    <form asp-action="AgregarAutorizadoporid" method="post">
+    <form asp-action="AgregarAutorizadoporid" method="post" id="formAgregarAutorizado">
         <input type="hidden" asp-for="ClienteID" />
 
         <div class="form-group">
@@ -24,76 +39,31 @@
             <span asp-validation-for="TelefonoEmergencia" class="text-danger"></span>
         </div>
 
-        <!-- Botones con estilos uniformes -->
         <div class="text-center mt-4">
             <button type="submit" class="btn btn-primary btn-symmetric">Guardar</button>
-            <button class="btn btn-secondary" onclick="location.href='@Url.Action("VerCliente", "Expedientes", new { clienteID = Model.ClienteID })'">Salir</button>
+            <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("VerCliente", "Expedientes", new { clienteID = Model.ClienteID })'">Salir</button>
         </div>
     </form>
 </div>
 
-@section Scripts {
-    <!-- SweetAlert -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script type="text/javascript">
-        document.addEventListener("DOMContentLoaded", function () {
-            // Mostrar mensaje de éxito
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <text>
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Éxito',
-                        text: '@TempData["SuccessMessage"]',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            // Redirigir a la página de VerAutorizados después de la confirmación
-                            window.location.href = '@Url.Action("VerAutorizados", "Expedientes", new { clienteID = Model.ClienteID })';
-                        }
-                    });
-            </text>
-        }
 
-                // Mostrar mensaje de error
-        @if (TempData["ErrorMessage"] != null && TempData["SuccessMessage"] == null)
-        {
-            <text>
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: '@TempData["ErrorMessage"]',
-                        confirmButtonText: 'OK'
-                    });
-            </text>
-        }
-                });
-    </script>
-
-    <!-- Activar la validación en el lado del cliente si la necesitas -->
-    <partial name="_ValidationScriptsPartial" />
-}
-
-<!-- Estilos CSS -->
 <style>
     :root {
-        --primary-color: #007bff; /* Azul */
-        --secondary-color: #6c757d; /* Gris */
-        --background-color: #f8f9fa; /* Fondo claro */
-        --button-hover-color: #0056b3; /* Hover de botón azul */
+        --primary-color: #007bff;
+        --secondary-color: #6c757d;
+        --background-color: #f8f9fa;
+        --button-hover-color: #0056b3;
     }
 
-    /* Botones simétricos */
     .btn-symmetric {
-        min-width: 160px; /* Asegura el ancho uniforme */
-        height: 45px; /* Altura uniforme */
-        margin: 0 10px; /* Espaciado entre botones */
-        font-size: 16px; /* Tamaño del texto */
+        min-width: 160px;
+        height: 45px;
+        margin: 0 10px;
+        font-size: 16px;
         text-align: center;
     }
 
-    /* Estilo del botón primario (Guardar) */
     .btn-primary {
         background-color: var(--primary-color);
         color: #fff;
@@ -104,7 +74,6 @@
             background-color: var(--button-hover-color);
         }
 
-    /* Fondo y estilos generales */
     body {
         background-color: var(--background-color);
     }
