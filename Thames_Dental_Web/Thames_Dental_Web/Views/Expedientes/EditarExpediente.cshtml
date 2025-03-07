@@ -1,32 +1,29 @@
 ﻿@model Thames_Dental_Web.Models.ClientModel
 
-
 @{
-
     Layout = "~/Views/Shared/_Layout_Admin.cshtml";
     ViewData["Title"] = "Expediente del Cliente";
 }
 
-
 <div class="container mt-5 mb-5">
     <h2 class="text-center mb-4" style="color: #008cba;">Editar Expediente del Cliente</h2>
-    <form asp-controller="Expedientes" asp-action="EditarExpediente" method="post">
+    <form asp-controller="Expedientes" asp-action="EditarExpediente" method="post" id="editarExpedienteForm">
         <input type="hidden" asp-for="ClienteID" />
 
         <div class="row g-3 mb-3">
             <div class="col-md-4">
                 <label for="Nombre" class="form-label">Nombre</label>
-                <input asp-for="Nombre" class="form-control" placeholder="Nombre" />
+                <input asp-for="Nombre" class="form-control" placeholder="Nombre" required />
                 <span asp-validation-for="Nombre" class="text-danger"></span>
             </div>
             <div class="col-md-4">
                 <label for="PrimerApellido" class="form-label">Primer Apellido</label>
-                <input asp-for="PrimerApellido" class="form-control" placeholder="Primer Apellido" />
+                <input asp-for="PrimerApellido" class="form-control" placeholder="Primer Apellido" required />
                 <span asp-validation-for="PrimerApellido" class="text-danger"></span>
             </div>
             <div class="col-md-4">
                 <label for="SegundoApellido" class="form-label">Segundo Apellido</label>
-                <input asp-for="SegundoApellido" class="form-control" placeholder="Segundo Apellido" />
+                <input asp-for="SegundoApellido" class="form-control" placeholder="Segundo Apellido" required />
                 <span asp-validation-for="SegundoApellido" class="text-danger"></span>
             </div>
         </div>
@@ -34,7 +31,7 @@
         <div class="row g-3 mb-3">
             <div class="col-md-4">
                 <label for="TipoIdentificacion" class="form-label">Tipo de Identificación</label>
-                <select asp-for="TipoIdentificacion" class="form-select">
+                <select asp-for="TipoIdentificacion" class="form-select" required>
                     <option value="">Seleccione...</option>
                     <option value="Físico">Físico</option>
                     <option value="Jurídico">Jurídico</option>
@@ -43,12 +40,12 @@
             </div>
             <div class="col-md-4">
                 <label for="Identificacion" class="form-label">Identificación</label>
-                <input asp-for="Identificacion" class="form-control" placeholder="Número de Identificación" />
+                <input asp-for="Identificacion" class="form-control" placeholder="Número de Identificación" required />
                 <span asp-validation-for="Identificacion" class="text-danger"></span>
             </div>
             <div class="col-md-4">
                 <label for="TelefonoPrincipal" class="form-label">Teléfono Principal</label>
-                <input asp-for="TelefonoPrincipal" class="form-control" placeholder="Teléfono Principal" />
+                <input asp-for="TelefonoPrincipal" class="form-control" placeholder="Teléfono Principal" maxlength="8" required pattern="\d{8}" title="El teléfono debe contener solo 8 dígitos." />
                 <span asp-validation-for="TelefonoPrincipal" class="text-danger"></span>
             </div>
         </div>
@@ -56,12 +53,12 @@
         <div class="row g-3 mb-3">
             <div class="col-md-4">
                 <label for="CorreoElectronico" class="form-label">Correo Electrónico</label>
-                <input asp-for="CorreoElectronico" class="form-control" placeholder="Correo Electrónico" />
+                <input asp-for="CorreoElectronico" class="form-control" placeholder="Correo Electrónico" required type="email" />
                 <span asp-validation-for="CorreoElectronico" class="text-danger"></span>
             </div>
             <div class="col-md-4">
                 <label for="Pais" class="form-label">País</label>
-                <select asp-for="Pais" class="form-select">
+                <select asp-for="Pais" class="form-select" required>
                     <option value="Costa Rica">Costa Rica</option>
                     <option value="Otro">Otro</option>
                 </select>
@@ -69,26 +66,26 @@
             </div>
             <div class="col-md-4">
                 <label for="Ciudad" class="form-label">Ciudad</label>
-                <input asp-for="Ciudad" class="form-control" placeholder="Ciudad" />
+                <input asp-for="Ciudad" class="form-control" placeholder="Ciudad" required />
                 <span asp-validation-for="Ciudad" class="text-danger"></span>
             </div>
         </div>
 
         <div class="col-md-12 mb-3">
             <label for="DireccionExacta" class="form-label">Dirección Exacta</label>
-            <input asp-for="DireccionExacta" class="form-control" placeholder="Dirección Exacta" />
+            <input asp-for="DireccionExacta" class="form-control" placeholder="Dirección Exacta" required />
             <span asp-validation-for="DireccionExacta" class="text-danger"></span>
         </div>
 
         <div class="row g-3 mb-3">
             <div class="col-md-4">
                 <label for="FechaNacimiento" class="form-label">Fecha de Nacimiento</label>
-                <input asp-for="FechaNacimiento" class="form-control" type="date" />
+                <input asp-for="FechaNacimiento" class="form-control" type="date" required />
                 <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
             </div>
             <div class="col-md-4">
                 <label for="Genero" class="form-label">Género</label>
-                <select asp-for="Genero" class="form-select">
+                <select asp-for="Genero" class="form-select" required>
                     <option value="Indefinido">Indefinido</option>
                     <option value="Masculino">Masculino</option>
                     <option value="Femenino">Femenino</option>
@@ -97,7 +94,7 @@
             </div>
             <div class="col-md-4">
                 <label for="Ocupacion" class="form-label">Ocupación</label>
-                <input asp-for="Ocupacion" class="form-control" placeholder="Ocupación" />
+                <input asp-for="Ocupacion" class="form-control" placeholder="Ocupación" required />
                 <span asp-validation-for="Ocupacion" class="text-danger"></span>
             </div>
         </div>
@@ -105,12 +102,12 @@
         <div class="row g-3 mb-3">
             <div class="col-md-6">
                 <label for="ContactoEmergencia" class="form-label">Contacto de Emergencia</label>
-                <input asp-for="ContactoEmergencia" class="form-control" placeholder="Contacto de Emergencia" />
+                <input asp-for="ContactoEmergencia" class="form-control" placeholder="Contacto de Emergencia" required />
                 <span asp-validation-for="ContactoEmergencia" class="text-danger"></span>
             </div>
             <div class="col-md-6">
                 <label for="TelefonoEmergencia" class="form-label">Teléfono Contacto Emergencia</label>
-                <input asp-for="TelefonoEmergencia" class="form-control" placeholder="Teléfono Contacto Emergencia" />
+                <input asp-for="TelefonoEmergencia" class="form-control" placeholder="Teléfono Contacto Emergencia" required pattern="\d{8}" title="El teléfono de emergencia debe contener solo 8 dígitos." />
                 <span asp-validation-for="TelefonoEmergencia" class="text-danger"></span>
             </div>
         </div>
@@ -118,12 +115,12 @@
         <div class="row g-3 mb-3">
             <div class="col-md-6">
                 <label for="FechaIngreso" class="form-label">Fecha de Ingreso</label>
-                <input asp-for="FechaIngreso" class="form-control" type="date" />
+                <input asp-for="FechaIngreso" class="form-control" type="date" required />
                 <span asp-validation-for="FechaIngreso" class="text-danger"></span>
             </div>
             <div class="col-md-6">
                 <label for="Notas" class="form-label">Notas</label>
-                <textarea asp-for="Notas" class="form-control" rows="3" placeholder="Notas adicionales"></textarea>
+                <textarea asp-for="Notas" class="form-control" rows="3" placeholder="Notas adicionales" required></textarea>
                 <span asp-validation-for="Notas" class="text-danger"></span>
             </div>
         </div>
@@ -134,3 +131,19 @@
         </div>
     </form>
 </div>
+
+<script>
+    // Pre-llenar el tipo de identificación al editar
+    document.addEventListener("DOMContentLoaded", function () {
+        const tipoIdentificacion = '@Model.TipoIdentificacion';
+        if (tipoIdentificacion) {
+            document.querySelector('select[name="TipoIdentificacion"]').value = tipoIdentificacion;
+        }
+
+        // Show success alert after form submission
+        const queryString = window.location.search;
+        if (queryString.includes("success=true")) {
+            alert("Expediente agregado con éxito.");
+        }
+    });
+</script>

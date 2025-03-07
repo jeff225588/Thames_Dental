@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Reflection;
+using System.Text;
 using Thames_Dental_Web.Filters;
 using Thames_Dental_Web.Models;
 
@@ -147,18 +149,19 @@ namespace Thames_Dental_Web.Controllers
 
 
         [HttpPost]
-        public IActionResult EditarExpediente(ClientModel model)
+        public async Task<IActionResult> EditarExpediente(ClientModel model)
         {
             using (var client = _http.CreateClient())
             {
-                // Construir la URL para llamar al método EditarExpediente en el API
+                // Construir la URL del API
                 string url = _conf.GetSection("Variables:RutaApi").Value + "Expediente/EditarExpediente";
 
-                // Crear el contenido JSON a partir del modelo para enviarlo en el cuerpo de la solicitud
-                JsonContent datos = JsonContent.Create(model);
+                // Serializar el objeto a JSON manualmente
+                var json = JsonConvert.SerializeObject(model);
+                var datos = new StringContent(json, Encoding.UTF8, "application/json");
 
-                // Realizar una solicitud POST a la URL especificada con el contenido JSON
-                var response = client.PostAsync(url, datos).Result;
+                // Hacer la solicitud POST correctamente
+                var response = await client.PostAsync(url, datos);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -166,10 +169,11 @@ namespace Thames_Dental_Web.Controllers
                 }
                 else
                 {
-                    ViewBag.Message = "Error al actualizar el expediente.";
+                    string errorResponse = await response.Content.ReadAsStringAsync();
+                    ViewBag.Message = "Error al actualizar el expediente: " + errorResponse;
                 }
 
-                return RedirectToAction("ListaExpedientes"); // Redirigir a la vista de lista de expedientes
+                return RedirectToAction("ListaExpedientes");
             }
         }
 

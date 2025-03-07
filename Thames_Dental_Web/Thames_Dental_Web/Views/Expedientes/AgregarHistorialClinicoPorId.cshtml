@@ -56,8 +56,8 @@
 
                 <form asp-action="AgregarHistorialClinicoPorId" method="post">
                     <!-- Id del Paciente (Ya no solicitamos la cédula, se toma directamente del modelo) -->
-                    <input type="hidden" asp-for="ClienteID" />>
-                    !-- Tipo de Sangre -->
+                    <input type="hidden" asp-for="ClienteID" />
+                    
                     <div class="mb-3">
                         <label for="TipoSangre" class="form-label">Tipo de Sangre</label>
                         <select id="TipoSangre" name="TipoSangre" class="form-select" required>

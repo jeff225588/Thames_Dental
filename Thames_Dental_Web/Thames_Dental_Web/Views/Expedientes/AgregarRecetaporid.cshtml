@@ -11,33 +11,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agregar Receta</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         /* Estilos personalizados */
         body {
             background-color: #f7f7f7;
+            font-family: Arial, sans-serif;
         }
 
         .container {
             background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: auto;
         }
 
         h2 {
             color: #2b6777; /* Color del encabezado */
+            text-align: center;
+            margin-bottom: 20px;
         }
 
         .btn-primary {
-            background-color: #52ab98; /* Color secundario */
+            background-color: #52ab98; /* Color del botón */
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            width: 100%;
+        }
+
+            .btn-primary:hover {
+                background-color: #478f7a;
+            }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+            .form-control:focus {
+                border-color: #52ab98;
+                box-shadow: 0 0 5px rgba(82, 171, 152, 0.5);
+            }
+
+        .alert {
+            display: none;
+            margin-top: 15px;
         }
     </style>
 </head>
 <body>
 
     <div class="container mt-4">
-        <h2>Agregar Receta para el Cliente @Model.ClienteID</h2>
+        <h2>Agregar Receta </h2>
 
         <!-- Formulario para agregar recetas -->
         <form id="formAgregarReceta" method="post" action="@Url.Action("AgregarRecetaporid", "Expedientes")">
@@ -54,6 +85,11 @@
                 <input type="text" class="form-control" name="Instrucciones" value="@Model.Instrucciones" required />
             </div>
 
+            <!-- Mensaje de error -->
+            <div class="alert alert-danger" id="error-message">
+                Todos los campos son requeridos.
+            </div>
+
             <button type="submit" class="btn btn-primary">Agregar Receta</button>
         </form>
     </div>
@@ -67,31 +103,30 @@
         $('#formAgregarReceta').on('submit', function (event) {
             event.preventDefault(); // Prevenir envío estándar
 
+            // Validación de campos
+            var medicamento = $('textarea[name="Medicamento"]').val().trim();
+            var instrucciones = $('input[name="Instrucciones"]').val().trim();
+
+            if (!medicamento || !instrucciones) {
+                // Mostrar mensaje de error si hay campos vacíos
+                $('#error-message').show();
+                return;
+            } else {
+                $('#error-message').hide();
+            }
+
             // Enviar la solicitud de manera asíncrona con AJAX
             $.ajax({
                 url: '@Url.Action("AgregarRecetaporid", "Expedientes")',
                 type: 'POST',
                 data: $(this).serialize(),
                 success: function (response) {
-                    // Mostrar la alerta de éxito con SweetAlert
-                    Swal.fire({
-                        title: 'Receta agregada',
-                        text: 'La receta ha sido agregada con éxito.',
-                        icon: 'success',
-                        showConfirmButton: false,
-                        timer: 2000
-                    }).then(() => {
-                        // Redirigir a la vista de VerRecetas tras el mensaje
-                        window.location.href = '@Url.Action("VerRecetas", "Expedientes", new { clienteID = Model.ClienteID })';
-                    });
+                    // Redirigir a la vista de VerRecetas tras el mensaje
+                    window.location.href = '@Url.Action("VerRecetas", "Expedientes", new { clienteID = Model.ClienteID })';
                 },
                 error: function () {
-                    // Mostrar un mensaje de error si ocurre un fallo
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Hubo un problema al agregar la receta. Inténtalo nuevamente.',
-                        icon: 'error'
-                    });
+                    // Mostrar mensaje de error si ocurre un fallo
+                    alert("Hubo un problema al agregar la receta. Inténtalo nuevamente.");
                 }
             });
         });
