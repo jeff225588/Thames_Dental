@@ -9,10 +9,10 @@
 
 <h2>Agregar Inventario</h2>
 
-@if (ViewBag.Message != null)
+@if (TempData["Message"] != null)
 {
-    <div class="alert @(ViewBag.Message.Contains("exitosamente") ? "alert-success" : "alert-danger")">
-        @ViewBag.Message
+    <div class="alert @(TempData["Message"].ToString().Contains("exitosamente") ? "alert-success" : "alert-danger")">
+        @TempData["Message"]
     </div>
 }
 
@@ -31,7 +31,7 @@
 
     <div class="form-group">
         <label asp-for="Cantidad" class="control-label"></label>
-        <input asp-for="Cantidad" type="number" class="form-control" />
+        <input asp-for="Cantidad" type="number" class="form-control" min="1"/>
         <span asp-validation-for="Cantidad" class="text-danger"></span>
     </div>
 
@@ -41,9 +41,9 @@
         <span asp-validation-for="Proveedor" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
+    <div class="form-group"> 
         <label asp-for="PrecioUnitario" class="control-label"></label>
-        <input asp-for="PrecioUnitario" class="form-control" />
+        <input asp-for="PrecioUnitario" class="form-control" min="1" />
         <span asp-validation-for="PrecioUnitario" class="text-danger"></span>
     </div>
 

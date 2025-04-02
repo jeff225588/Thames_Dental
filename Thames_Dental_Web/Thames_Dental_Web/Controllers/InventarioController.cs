@@ -42,14 +42,14 @@ namespace Inventario.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
-                    ViewBag.Message = "Inventario agregado exitosamente.";
+                    TempData["Message"] = "Inventario agregado exitosamente.";
                 }
                 else
                 {
-                    ViewBag.Message = "Error al guardar el inventario.";
+                    TempData["Message"] = "Error al guardar el inventario.";
                 }
 
-                return View(); // Recargas la misma vista
+                return RedirectToAction("Inventario"); // Recargas la misma vista
             }
 
 
@@ -268,74 +268,99 @@ namespace Inventario.Controllers
 
 
 
+        //[HttpGet]
+        //public async Task<IActionResult> GenerarReporteInventario()
+        //{
+        //    using (var client = _http.CreateClient())
+        //    {
+        //        string url = _conf.GetSection("Variables:RutaApi").Value + "Inventario/ListarInventario";
+        //        var response = await client.GetAsync(url);
+
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            var inventario = await response.Content.ReadFromJsonAsync<List<InventarioModel>>();
+
+        //            PdfDocument documento = new PdfDocument();
+        //            documento.Info.Title = "Reporte de Inventario";
+
+        //            PdfPage pagina = documento.AddPage();
+        //            XGraphics gfx = XGraphics.FromPdfPage(pagina);
+
+
+        //            XFont fuenteTitulo = new XFont("Times New Roman", 22, XFontStyle.Bold);
+        //            gfx.DrawString("Reporte de Inventario", fuenteTitulo, XBrushes.Black, new XRect(0, 80, pagina.Width, 40), XStringFormats.TopCenter);
+
+        //            XFont fuenteTexto = new XFont("Times New Roman", 12, XFontStyle.Regular);
+        //            int posY = 120;
+
+        //            gfx.DrawString("ID", fuenteTexto, XBrushes.Black, new XPoint(30, posY));
+        //            gfx.DrawString("Nombre", fuenteTexto, XBrushes.Black, new XPoint(70, posY));
+        //            gfx.DrawString("Cantidad", fuenteTexto, XBrushes.Black, new XPoint(250, posY));
+        //            gfx.DrawString("Proveedor", fuenteTexto, XBrushes.Black, new XPoint(350, posY));
+        //            gfx.DrawString("Precio Unitario", fuenteTexto, XBrushes.Black, new XPoint(470, posY));
+        //            gfx.DrawString("Fecha Ingreso", fuenteTexto, XBrushes.Black, new XPoint(600, posY));
+
+        //            posY += 20;
+
+        //            foreach (var item in inventario)
+        //            {
+        //                string nombreTruncado = item.Nombre.Length > 25 ? item.Nombre.Substring(0, 22) + "..." : item.Nombre;
+
+        //                gfx.DrawString(item.IdInventario.ToString(), fuenteTexto, XBrushes.Black, new XPoint(30, posY));
+        //                gfx.DrawString(nombreTruncado, fuenteTexto, XBrushes.Black, new XPoint(70, posY));
+        //                gfx.DrawString(item.Cantidad.ToString(), fuenteTexto, XBrushes.Black, new XPoint(250, posY));
+        //                gfx.DrawString(item.Proveedor, fuenteTexto, XBrushes.Black, new XPoint(350, posY));
+        //                gfx.DrawString(item.PrecioUnitario.ToString("C", new System.Globalization.CultureInfo("es-CR")), fuenteTexto, XBrushes.Black, new XPoint(470, posY));
+        //                gfx.DrawString(item.FechaIngreso.ToShortDateString(), fuenteTexto, XBrushes.Black, new XPoint(600, posY));
+
+        //                posY += 20;
+
+        //                if (posY > pagina.Height - 40)
+        //                {
+        //                    pagina = documento.AddPage();
+        //                    gfx = XGraphics.FromPdfPage(pagina);
+        //                    posY = 40;
+
+        //                    gfx.DrawString("ID", fuenteTexto, XBrushes.Black, new XPoint(30, posY));
+        //                    gfx.DrawString("Nombre", fuenteTexto, XBrushes.Black, new XPoint(70, posY));
+        //                    gfx.DrawString("Cantidad", fuenteTexto, XBrushes.Black, new XPoint(250, posY));
+        //                    gfx.DrawString("Proveedor", fuenteTexto, XBrushes.Black, new XPoint(350, posY));
+        //                    gfx.DrawString("Precio Unitario", fuenteTexto, XBrushes.Black, new XPoint(470, posY));
+        //                    gfx.DrawString("Fecha Ingreso", fuenteTexto, XBrushes.Black, new XPoint(600, posY));
+        //                    posY += 20;
+        //                }
+        //            }
+
+        //            using (MemoryStream stream = new MemoryStream())
+        //            {
+        //                documento.Save(stream, false);
+        //                return File(stream.ToArray(), "application/pdf", "ReporteInventario.pdf");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            var error = await response.Content.ReadAsStringAsync();
+        //            ViewBag.Message = $"Error al generar el reporte: {error}";
+        //            return RedirectToAction("ListarInventario");
+        //        }
+        //    }
+        //}
+
+
+
+
         [HttpGet]
         public async Task<IActionResult> GenerarReporteInventario()
         {
             using (var client = _http.CreateClient())
             {
-                string url = _conf.GetSection("Variables:RutaApi").Value + "Inventario/ListarInventario";
+                string url = _conf.GetSection("Variables:RutaApi").Value + "Inventario/GenerarReportePDF";
                 var response = await client.GetAsync(url);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var inventario = await response.Content.ReadFromJsonAsync<List<InventarioModel>>();
-
-                    PdfDocument documento = new PdfDocument();
-                    documento.Info.Title = "Reporte de Inventario";
-
-                    PdfPage pagina = documento.AddPage();
-                    XGraphics gfx = XGraphics.FromPdfPage(pagina);
-
-
-                    XFont fuenteTitulo = new XFont("Times New Roman", 22, XFontStyle.Bold);
-                    gfx.DrawString("Reporte de Inventario", fuenteTitulo, XBrushes.Black, new XRect(0, 80, pagina.Width, 40), XStringFormats.TopCenter);
-
-                    XFont fuenteTexto = new XFont("Times New Roman", 12, XFontStyle.Regular);
-                    int posY = 120;
-
-                    gfx.DrawString("ID", fuenteTexto, XBrushes.Black, new XPoint(30, posY));
-                    gfx.DrawString("Nombre", fuenteTexto, XBrushes.Black, new XPoint(70, posY));
-                    gfx.DrawString("Cantidad", fuenteTexto, XBrushes.Black, new XPoint(250, posY));
-                    gfx.DrawString("Proveedor", fuenteTexto, XBrushes.Black, new XPoint(350, posY));
-                    gfx.DrawString("Precio Unitario", fuenteTexto, XBrushes.Black, new XPoint(470, posY));
-                    gfx.DrawString("Fecha Ingreso", fuenteTexto, XBrushes.Black, new XPoint(600, posY));
-
-                    posY += 20;
-
-                    foreach (var item in inventario)
-                    {
-                        string nombreTruncado = item.Nombre.Length > 25 ? item.Nombre.Substring(0, 22) + "..." : item.Nombre;
-
-                        gfx.DrawString(item.IdInventario.ToString(), fuenteTexto, XBrushes.Black, new XPoint(30, posY));
-                        gfx.DrawString(nombreTruncado, fuenteTexto, XBrushes.Black, new XPoint(70, posY));
-                        gfx.DrawString(item.Cantidad.ToString(), fuenteTexto, XBrushes.Black, new XPoint(250, posY));
-                        gfx.DrawString(item.Proveedor, fuenteTexto, XBrushes.Black, new XPoint(350, posY));
-                        gfx.DrawString(item.PrecioUnitario.ToString("C", new System.Globalization.CultureInfo("es-CR")), fuenteTexto, XBrushes.Black, new XPoint(470, posY));
-                        gfx.DrawString(item.FechaIngreso.ToShortDateString(), fuenteTexto, XBrushes.Black, new XPoint(600, posY));
-
-                        posY += 20;
-
-                        if (posY > pagina.Height - 40)
-                        {
-                            pagina = documento.AddPage();
-                            gfx = XGraphics.FromPdfPage(pagina);
-                            posY = 40;
-
-                            gfx.DrawString("ID", fuenteTexto, XBrushes.Black, new XPoint(30, posY));
-                            gfx.DrawString("Nombre", fuenteTexto, XBrushes.Black, new XPoint(70, posY));
-                            gfx.DrawString("Cantidad", fuenteTexto, XBrushes.Black, new XPoint(250, posY));
-                            gfx.DrawString("Proveedor", fuenteTexto, XBrushes.Black, new XPoint(350, posY));
-                            gfx.DrawString("Precio Unitario", fuenteTexto, XBrushes.Black, new XPoint(470, posY));
-                            gfx.DrawString("Fecha Ingreso", fuenteTexto, XBrushes.Black, new XPoint(600, posY));
-                            posY += 20;
-                        }
-                    }
-
-                    using (MemoryStream stream = new MemoryStream())
-                    {
-                        documento.Save(stream, false);
-                        return File(stream.ToArray(), "application/pdf", "ReporteInventario.pdf");
-                    }
+                    byte[] pdfBytes = await response.Content.ReadAsByteArrayAsync();
+                    return File(pdfBytes, "application/pdf", "ReporteInventario.pdf");
                 }
                 else
                 {
@@ -345,16 +370,6 @@ namespace Inventario.Controllers
                 }
             }
         }
-
-
-
-
-
-
-
-
-
-
 
 
 
