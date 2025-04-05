@@ -43,9 +43,40 @@ namespace Thames_Dental_Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ObtenerHorasOcupadas(string fecha)
+        public async Task<IActionResult> ObtenerHorasDisponibles(string fecha, int duracion)
         {
-            var response = await _client.GetAsync($"Cita/ObtenerHorasOcupadas?fecha={fecha}");
+            try
+            {
+                // Llamar al API que obtiene las horas disponibles
+                var response = await _client.GetAsync($"Cita/ObtenerHorasDisponibles?fecha={fecha}&duracion={duracion}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var horasDisponibles = await response.Content.ReadFromJsonAsync<List<TimeSpan>>();
+
+                    // Convertir TimeSpan a formato "HH:mm"
+                    var horasFormato = horasDisponibles.Select(hora => hora.ToString(@"hh\:mm")).ToList();
+
+                    return Json(horasFormato);
+                }
+                else
+                {
+                    Console.WriteLine($"Error en API: {response.ReasonPhrase}");
+                    return Json(new List<string>()); // Devuelve lista vacía si hay error
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en ObtenerHorasDisponibles: {ex.Message}");
+                return StatusCode(500, "Error interno del servidor");
+            }
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> ObtenerHorasOcupadas(string fecha, string duracion)
+        {
+            var response = await _client.GetAsync($"Cita/ObtenerHorasOcupadas?fecha={fecha}&duracion={duracion}");
             if (response.IsSuccessStatusCode)
             {
                 var horasOcupadas = await response.Content.ReadFromJsonAsync<List<string>>();
