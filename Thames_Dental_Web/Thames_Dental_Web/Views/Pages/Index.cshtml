@@ -237,13 +237,21 @@
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     <div class="icon"><span class="icon-user"></span></div>
-                                    <input type="text" class="form-control" name="NombreUsuario" placeholder="Nombre" required>
+
+                                    <input type="text" class="form-control" name="NombreUsuario"
+                                           value="@Context.Session.GetString("NombreUsuario")"
+                                           placeholder="Nombre Completo" required>
+                                
                                 </div>
                             </div>
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     <div class="icon"><span class="icon-paper-plane"></span></div>
-                                    <input type="email" class="form-control" name="Email" placeholder="Email" required>
+
+                                    <input type="text" class="form-control" name="Email"
+                                           value="@Context.Session.GetString("EmailUsuario")"
+                                           placeholder="Email" required>
+
                                 </div>
                             </div>
                         </div>
