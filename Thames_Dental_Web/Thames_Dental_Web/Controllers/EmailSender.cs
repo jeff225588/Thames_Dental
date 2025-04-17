@@ -84,7 +84,7 @@ public class EmailSender : IEmailSender
         $@"
         <html>
         <body style='font-family: Arial, sans-serif;'>
-            <31 style='color: #007bff;'>Cita Reprogramada</h3>
+            <h3 style='color: #007bff;'>Cita Reprogramada</h3>
             <p><strong>Estimado(a) {nombre},</strong></p>
             <p>Tu cita ha sido reprogramada! Los detalles de tu cita son: </p>
                     <ul>

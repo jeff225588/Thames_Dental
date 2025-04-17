@@ -42,6 +42,7 @@ namespace Thames_Dental_Web.Controllers
             return RedirectToAction("Index", "Pages");
         }
 
+
         [HttpGet]
         public async Task<IActionResult> ObtenerHorasDisponibles(string fecha, int duracion)
         {
@@ -285,61 +286,76 @@ namespace Thames_Dental_Web.Controllers
 
         // Método para manejar la reprogramación de citas
         [HttpPost]
-        public async Task<IActionResult> ReprogramarCita(int id, DateTime fecha, TimeSpan hora)
+        public async Task<IActionResult> ReprogramarCita(int id, DateTime fecha, TimeSpan hora, int duracion)
         {
             try
             {
-                // Obtener detalles de la cita antes de reprogramar
                 var citaResponse = await _client.GetAsync($"Cita/ObtenerCita?id={id}");
                 if (!citaResponse.IsSuccessStatusCode)
                 {
                     TempData["SweetAlertMessage"] = "No se pudo obtener la información de la cita.";
                     TempData["SweetAlertType"] = "error";
-                    return RedirectToAction("AdministrarCitas");
+                    return RedirectToAction("CitasActivas");
                 }
 
                 var model = await citaResponse.Content.ReadFromJsonAsync<CitaModel>();
 
-                // Enviar solicitud para reprogramar la cita
-                var response = await _client.PostAsync($"Cita/ReprogramarCita?id={id}&fecha={fecha:yyyy-MM-dd}&hora={hora}", null);
+                var request = new ReprogramarCitaRequest
+                {
+                    Id = id,
+                    Fecha = fecha,
+                    Hora = hora,
+                    Duracion = duracion
+                };
+
+                var content = new StringContent(
+                    JsonSerializer.Serialize(request),
+                    Encoding.UTF8,
+                    "application/json"
+);
+                var response = await _client.PostAsync("Cita/ReprogramarCita", content);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    TempData["SweetAlertMessage"] = "Cita reprogramada correctamente.";
-                    TempData["SweetAlertType"] = "success";
+                    var resultado = await response.Content.ReadFromJsonAsync<Respuesta>();
 
-                    // Actualizar la fecha y hora en el modelo
-                    model.Fecha = fecha;
-                    model.Hora = hora;
+                    TempData["SweetAlertType"] = resultado.Codigo == 0 ? "success" : "error";
+                    TempData["SweetAlertMessage"] = resultado.Mensaje;
 
-                    // Enviar correo de notificación de reprogramación
-                    await _emailSender.SendEmailAsync(
-                        model.Email,
-                        "Reprogramación de Cita - Thames Dental",
-                        model.NombreUsuario,
-                        model.Fecha.ToString("dd/MM/yyyy"),
-                        model.Hora.ToString(@"hh\:mm"),
-                        model.Especialidad,
-                        model.Procedimiento,
-                        model.Especialista,
-                        isReschedule: true
-                    );
+                    if (resultado.Codigo == 0)
+                    {
+                        model.Fecha = fecha;
+                        model.Hora = hora;
+
+                        await _emailSender.SendEmailAsync(
+                            model.Email,
+                            "Reprogramación de Cita - Thames Dental",
+                            model.NombreUsuario,
+                            model.Fecha.ToString("dd/MM/yyyy"),
+                            model.Hora.ToString(@"hh\:mm"),
+                            model.Especialidad,
+                            model.Procedimiento,
+                            model.Especialista,
+                            isReschedule: true
+                        );
+                    }
                 }
                 else
                 {
-                    TempData["SweetAlertMessage"] = $"Error al reprogramar la cita. Detalles: {response.ReasonPhrase}";
                     TempData["SweetAlertType"] = "error";
+                    TempData["SweetAlertMessage"] = $"Error al reprogramar la cita. Detalles: {response.ReasonPhrase}";
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al reprogramar la cita: {ex.Message}");
-                TempData["SweetAlertMessage"] = "Error al reprogramar la cita en el servidor.";
                 TempData["SweetAlertType"] = "error";
+                TempData["SweetAlertMessage"] = "Error al reprogramar la cita en el servidor.";
+                Console.WriteLine($"Error al reprogramar la cita: {ex.Message}");
             }
 
-            return RedirectToAction("CitasActivas"); 
+            return RedirectToAction("CitasActivas");
         }
+
 
         [HttpPost]
         public async Task<IActionResult> AceptarCita(int id)

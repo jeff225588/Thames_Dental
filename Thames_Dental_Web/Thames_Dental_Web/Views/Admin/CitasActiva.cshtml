@@ -80,7 +80,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="Id" id="appointmentId" />
+                    <input type="hidden" name="id" id="appointmentId" />
+                    <input type="hidden" name="duracion" id="duracionHidden" />
 
                     <div class="mb-3">
                         <label for="newDate" class="form-label">Nueva Fecha</label>
@@ -98,7 +99,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" onclick="submitReschedule()">Guardar Cambios</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                 </div>
             </form>
         </div>
@@ -239,49 +240,39 @@
 
 <script>
     let selectedCitaId = null;
-    let selectedDuracion = 60; // Valor predeterminado para la duración
+    let selectedDuracion = 60; // Valor predeterminado
 
     // Función para abrir el modal de reprogramación
     function openRescheduleModal(id, fecha, hora, duracion) {
+        selectedCitaId = id;
+        selectedDuracion = duracion > 0 ? duracion : 60;
+
         const appointmentIdElement = document.getElementById('appointmentId');
+        const duracionElement = document.getElementById('duracionHidden');
         const newDateElement = document.getElementById('newDate');
         const horaDropdown = document.getElementById('newTime');
 
-        // Verificar que los elementos existen
-        if (!appointmentIdElement || !newDateElement || !horaDropdown) {
-            console.error("Error: No se encontraron los elementos necesarios en el DOM.");
-            Swal.fire('Error', 'Ocurrió un error al intentar abrir el modal. Por favor, recarga la página.', 'error');
+        if (!appointmentIdElement || !newDateElement || !horaDropdown || !duracionElement) {
+            console.error("Error: Elementos del DOM no encontrados.");
+            Swal.fire('Error', 'Ocurrió un problema al abrir el formulario.', 'error');
             return;
         }
 
-        // Guardar ID de la cita seleccionada
-        selectedCitaId = id;
-        // Guardar la duración recibida
-        selectedDuracion = duracion > 0 ? duracion : 60;  // Si `duracion` es 0 o undefined, usar 60 como predeterminado
-        console.log("Duración seleccionada para la cita:", selectedDuracion);
-
-        // Asignar valores iniciales
         appointmentIdElement.value = id;
+        duracionElement.value = selectedDuracion;
         newDateElement.value = fecha;
-        console.log("Fecha asignada al campo:", newDateElement.value);
 
-        // Limpiar el dropdown de horas previas
         horaDropdown.innerHTML = '<option value="">Selecciona una hora</option>';
 
-        // Llamar a loadAvailableHours para cargar las horas disponibles
         loadAvailableHours();
 
-        // Mostrar el modal
         const modal = new bootstrap.Modal(document.getElementById('rescheduleModal'));
         modal.show();
     }
 
-    const rutaApi = "https://localhost:7275/api/";
-
-    // Función para cargar las horas disponibles para la reprogramación
+    // Función para cargar horas disponibles desde el controlador MVC
     async function loadAvailableHours() {
         const fechaInput = document.getElementById('newDate').value;
-        console.log("Fecha seleccionada:", fechaInput); // Verifica el valor
         const horaDropdown = document.getElementById('newTime');
 
         if (!fechaInput) {
@@ -289,16 +280,15 @@
             return;
         }
 
-        const url = `${rutaApi}Cita/ObtenerHorasDisponibles?fecha=${fechaInput}&duracion=${selectedDuracion}`;
-        console.log('URL solicitada:', url);
+        const url = `/Cita/ObtenerHorasDisponibles?fecha=${fechaInput}&duracion=${selectedDuracion}`;
+        console.log('Consultando horas disponibles desde:', url);
 
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
-            const horasDisponibles = await response.json();
-            console.log('Horas disponibles obtenidas:', horasDisponibles);
 
-            // Limpiar dropdown y agregar nuevas opciones
+            const horasDisponibles = await response.json();
+
             horaDropdown.innerHTML = '<option value="">Selecciona una hora</option>';
             horasDisponibles.forEach(hora => {
                 const option = document.createElement('option');
@@ -307,61 +297,12 @@
                 horaDropdown.appendChild(option);
             });
         } catch (error) {
-            console.error('Error al obtener horas disponibles:', error);
-            Swal.fire('Error', 'No se pudieron cargar las horas disponibles. Intenta nuevamente.', 'error');
+            console.error('Error al obtener horas:', error);
+            Swal.fire('Error', 'No se pudieron cargar las horas disponibles.', 'error');
         }
     }
-
-    // Función para enviar la solicitud de reprogramación
-    async function submitReschedule() {
-        const fecha = document.getElementById('newDate').value;
-        const hora = document.getElementById('newTime').value;
-
-        console.log("Datos enviados al servidor en submitReschedule:", {
-            id: selectedCitaId,
-            fecha: fecha,
-            hora: hora,
-            duracion: selectedDuracion
-        });
-
-        if (!fecha || !hora) {
-            Swal.fire('Error', 'Por favor selecciona una fecha y una hora válidas.', 'error');
-            return;
-        }
-
-        // Estructurar los datos según el modelo `ReprogramarCitaRequest`
-        const body = {
-            id: selectedCitaId,
-            fecha: fecha,
-            hora: hora,
-            duracion: selectedDuracion
-        };
-
-        try {
-            const response = await fetch(`${rutaApi}Cita/ReprogramarCita`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body) // Enviar JSON
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                if (result.Codigo === 0) {
-                    Swal.fire('Éxito', result.Mensaje, 'success').then(() => location.reload());
-                } else {
-                    Swal.fire('Error', result.Mensaje, 'error');
-                }
-            } else {
-                const error = await response.json();
-                Swal.fire('Error', error.Mensaje || 'Ocurrió un error.', 'error');
-            }
-        } catch (err) {
-            console.error('Error al enviar la solicitud:', err);
-            Swal.fire('Error', 'Error al conectar con el servidor.', 'error');
-        }
-    }
-
 </script>
+
 
 
 
