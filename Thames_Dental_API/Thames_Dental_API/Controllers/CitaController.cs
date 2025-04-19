@@ -381,7 +381,13 @@ namespace Thames_Dental_API.Controllers
                 Console.WriteLine($"Error en ReprogramarCita: {ex.Message}");
                 respuesta.Codigo = -1;
                 respuesta.Mensaje = $"Error al reprogramar la cita: {ex.Message}";
-                return StatusCode(500, respuesta);
+                return StatusCode(500, new
+                {
+                    Codigo = -1,
+                    Mensaje = "Error al reprogramar la cita",
+                    ErrorDetalle = ex.Message
+                });
+
             }
         }
 
@@ -461,7 +467,7 @@ namespace Thames_Dental_API.Controllers
         [HttpPost("AAgendar")]
         public async Task<IActionResult> AAgendar(Cita model)
         {
-             
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(new Respuesta { Codigo = -1, Mensaje = "Datos de la cita no validos." });
@@ -510,16 +516,27 @@ namespace Thames_Dental_API.Controllers
             }
         }
 
+
+
+
         [HttpPut("EditarDuracion")]
         public async Task<IActionResult> EditarDuracion([FromBody] EditarDuracionRequest request)
         {
+            Debug.WriteLine($"ID: {request.Id}, Duración: {request.Duracion}, Especialidad: {request.Especialidad}, Procedimiento: {request.Procedimiento}");
             var connectionString = _conf.GetSection("ConnectionStrings:DefaultConnection").Value;
 
             try
             {
                 using (var connection = new SqlConnection(connectionString))
                 {
-                    var parameters = new { Id = request.Id, Duracion = request.Duracion };
+                    var parameters = new
+                    {
+                        Id = request.Id,
+                        Duracion = request.Duracion,
+                        Especialidad = request.Especialidad,
+                        Procedimiento = request.Procedimiento
+                    };
+
                     var result = await connection.ExecuteScalarAsync<int>(
                         "EditarDuracionCita",
                         parameters,
@@ -531,7 +548,7 @@ namespace Thames_Dental_API.Controllers
                         return NotFound(new { success = false, message = "La cita no existe." });
                     }
 
-                    return Ok(new { success = true, message = "Duración actualizada exitosamente." });
+                    return Ok(new { success = true, message = "Cita actualizada exitosamente." });
                 }
             }
             catch (Exception ex)
@@ -541,10 +558,14 @@ namespace Thames_Dental_API.Controllers
         }
     }
 
-    public class EditarDuracionRequest
+        public class EditarDuracionRequest
     {
         public int Id { get; set; }
         public int Duracion { get; set; }
+
+        public string Especialidad  { get; set; } = string.Empty;
+        public string Procedimiento { get; set; } = string.Empty;
+
     }
 
 

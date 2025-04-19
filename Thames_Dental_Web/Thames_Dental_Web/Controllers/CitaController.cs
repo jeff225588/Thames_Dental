@@ -349,7 +349,7 @@ namespace Thames_Dental_Web.Controllers
             catch (Exception ex)
             {
                 TempData["SweetAlertType"] = "error";
-                TempData["SweetAlertMessage"] = "Error al reprogramar la cita en el servidor.";
+                TempData["SweetAlertMessage"] = "Error al reprogramar la cita en el servidor.Detalles: {ex.Message} {(ex.InnerException != null ? \" | Inner: \" + ex.InnerException.Message : \"\")}";
                 Console.WriteLine($"Error al reprogramar la cita: {ex.Message}");
             }
 
@@ -528,43 +528,49 @@ namespace Thames_Dental_Web.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> EditarDuracion(int Id, int Duracion)
+        public async Task<IActionResult> EditarDuracionDesdeFormulario(int Id, int Duracion, string Especialidad, string Procedimiento)
         {
-            Console.WriteLine($"Enviando solicitud para editar la duración de la cita con Id: {Id}");
-
             try
             {
-                // Preparar el contenido JSON para la solicitud
                 var content = new StringContent(
-                    JsonSerializer.Serialize(new { id = Id, duracion = Duracion }),
+                    JsonSerializer.Serialize(new
+                    {
+                        id = Id,
+                        duracion = Duracion,
+                        especialidad = Especialidad,
+                        procedimiento = Procedimiento
+                    }),
                     Encoding.UTF8,
                     "application/json"
                 );
 
-                // Realizar la solicitud al API
-                var response = await _client.PutAsync($"Cita/EditarDuracion", content);
+                // Llamar a la API
+                var response = await _client.PutAsync("Cita/EditarDuracion", content);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    TempData["SweetAlertMessage"] = "Duración actualizada exitosamente.";
+                    TempData["SweetAlertMessage"] = "Cita actualizada exitosamente.";
                     TempData["SweetAlertType"] = "success";
                 }
                 else
                 {
-                    TempData["SweetAlertMessage"] = "Error al actualizar la duración.";
+                    // 🔍 Agregar estas dos líneas para ver qué devolvió el API
+                    var errorMsg = await response.Content.ReadAsStringAsync();
+                    System.Diagnostics.Debug.WriteLine("🧨 Error Response: " + errorMsg);
+
+                    TempData["SweetAlertMessage"] = "Error al actualizar la cita." ;
+
                     TempData["SweetAlertType"] = "error";
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al editar la duración: {ex.Message}");
                 TempData["SweetAlertMessage"] = $"Error interno: {ex.Message}";
                 TempData["SweetAlertType"] = "error";
             }
 
             return RedirectToAction("CitasActivas");
         }
-
 
 
         //Parte Administrativa

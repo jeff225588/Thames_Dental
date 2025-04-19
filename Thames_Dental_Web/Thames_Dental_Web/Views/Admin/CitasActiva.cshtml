@@ -110,26 +110,64 @@
 <div class="modal fade" id="editDurationModal" tabindex="-1" aria-labelledby="editDurationModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editDurationModalLabel">Editar Duración</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editDurationForm" method="post" asp-action="EditarDuracion" asp-controller="Cita">
+            <form id="editDurationForm" method="post" asp-action="EditarDuracionDesdeFormulario" asp-controller="Cita">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editDurationModalLabel">Editar Cita</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
                     <input type="hidden" id="citaId" name="Id" />
+
                     <div class="mb-3">
                         <label for="duracion" class="form-label">Duración (minutos)</label>
                         <input type="number" id="duracion" name="Duracion" class="form-control" min="1" required />
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="submit" form="editDurationForm" class="btn btn-primary">Guardar Cambios</button>
-            </div>
+
+                    <div class="mb-3">
+                        <label for="especialidad" class="form-label">Especialidad</label>
+                        <select id="especialidad" name="Especialidad" class="form-select" required>
+                            <option value="">Especialidades</option>
+                            <option value="Consulta General">Consulta General</option>
+                            <option value="Peridoncia">Peridoncia</option>
+                            <option value="Endodoncia">Endodoncia</option>
+                            <option value="Cirujia Maxilofacial">Cirujia Maxilofacial</option>
+                            <option value="Odontopediatria">Odontopediatria</option>
+                            <option value="ATM">ATM</option>
+                            <option value="Ortodoncia">Ortodoncia</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="procedimiento" class="form-label">Procedimiento</label>
+                        <select id="procedimiento" name="Procedimiento" class="form-select" required>
+                            <option value="">Seleccione un procedimiento</option>
+                            <option value="Consulta General" data-group="Consulta General">Consulta General</option>
+                            <option value="Limpieza dental" data-group="Consulta General">Limpieza dental</option>
+                            <option value="Blanqueamiento" data-group="Consulta General">Blanqueamiento</option>
+                            <option value="Calzas" data-group="Consulta General">Calzas</option>
+                            <option value="Corona" data-group="Consulta General">Corona</option>
+                            <option value="Puentes" data-group="Consulta General">Puentes</option>
+                            <option value="Implante" data-group="Consulta General">Implante</option>
+                            <option value="Consulta General" data-group="Ortodoncia">Consulta General</option>
+                            <option value="Consulta General" data-group="Peridoncia">Consulta General</option>
+                            <option value="Consulta General" data-group="Endodoncia">Consulta General</option>
+                            <option value="Cirujia de cordales" data-group="Cirujia Maxilofacial">Cirujia de cordales</option>
+                            <option value="Consulta General" data-group="Odontopediatria">Consulta General</option>
+                            <option value="Biopsia" data-group="ATM">Biopsia</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
 
 <div class="container-fluid mt-5 mb-5">
     <h2 class="text-center mb-4" style="color: #008cba;">Ver todas las citas Activas</h2>
@@ -137,7 +175,7 @@
     <!-- Barra de búsqueda y botón -->
     <div class="d-flex justify-content-between mb-3">
         <input type="text" id="searchBar" class="form-control" placeholder="Buscar cita por nombre, email, especialidad..." style="width: 70%;" onkeyup="searchTable()" />
-        <a href="@Url.Action("FormularioAgendar", "Cita")" class="btn btn-primary">Agendar Cita</a>
+        
     </div>
 
     <div class="table-responsive">
@@ -190,9 +228,14 @@
                             </form>
 
                             <!-- Editar Duración -->
-                            <button class="btn action-button editar" onclick="openEditDurationModal(@cita.Id, @cita.Duracion)">
+                            <button class="btn action-button editar"
+                                    onclick="openEditDurationModal(@cita.Id, @cita.Duracion, '@cita.Especialidad', '@cita.Procedimiento')">
                                 Editar
                             </button>
+
+
+
+
                         </td>
                     </tr>
                 }
@@ -203,13 +246,6 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
 <script>
-    function openEditDurationModal(citaId, currentDuration) {
-        console.log("Abriendo modal con ID:", citaId, "y duración actual:", currentDuration);
-        document.getElementById("citaId").value = citaId;
-        document.getElementById("duracion").value = currentDuration;
-        const modal = new bootstrap.Modal(document.getElementById("editDurationModal"));
-        modal.show();
-    }
 
     function searchTable() {
         const input = document.getElementById("searchBar").value.toLowerCase();
@@ -303,6 +339,45 @@
     }
 </script>
 
+<script>
+    const allProcedimientos = Array.from(document.querySelectorAll("#procedimiento option"));
+
+    document.getElementById("especialidad").addEventListener("change", function () {
+        const selected = this.value;
+        const procedimientoSelect = document.getElementById("procedimiento");
+        procedimientoSelect.innerHTML = '<option value="">Seleccione un procedimiento</option>';
+
+        allProcedimientos.forEach(opt => {
+            if (opt.dataset.group === selected) {
+                procedimientoSelect.appendChild(opt.cloneNode(true));
+            }
+        });
+    });
+
+    function openEditDurationModal(id, duracion, especialidad = "", procedimiento = "") {
+        document.getElementById("citaId").value = id;
+        document.getElementById("duracion").value = duracion;
+        document.getElementById("especialidad").value = especialidad;
+
+        // Disparar el cambio para filtrar procedimientos
+        const changeEvent = new Event("change");
+        document.getElementById("especialidad").dispatchEvent(changeEvent);
+
+        // Esperar un poco para que se generen las opciones
+        setTimeout(() => {
+            const procedimientoSelect = document.getElementById("procedimiento");
+            for (let opt of procedimientoSelect.options) {
+                if (opt.value === procedimiento) {
+                    procedimientoSelect.value = procedimiento;
+                    break;
+                }
+            }
+        }, 100);
+
+        const modal = new bootstrap.Modal(document.getElementById("editDurationModal"));
+        modal.show();
+    }
+</script>
 
 
 
