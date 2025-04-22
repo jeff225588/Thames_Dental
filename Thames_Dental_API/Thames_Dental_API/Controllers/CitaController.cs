@@ -378,14 +378,16 @@ namespace Thames_Dental_API.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error en ReprogramarCita: {ex.Message}");
-                respuesta.Codigo = -1;
-                respuesta.Mensaje = $"Error al reprogramar la cita: {ex.Message}";
+                // Imprimir en consola para debugging en tiempo real
+                Console.WriteLine($"❌ Error en ReprogramarCita: {ex.Message}");
+
+                // Devolver el error como JSON estructurado con detalles útiles
                 return StatusCode(500, new
                 {
-                    Codigo = -1,
-                    Mensaje = "Error al reprogramar la cita",
-                    ErrorDetalle = ex.Message
+                    success = false,
+                    message = "Error interno del servidor.",
+                    details = ex.Message,
+                    inner = ex.InnerException?.Message
                 });
 
             }

@@ -342,15 +342,29 @@ namespace Thames_Dental_Web.Controllers
                 }
                 else
                 {
+                    var errorMsg = await response.Content.ReadAsStringAsync();
                     TempData["SweetAlertType"] = "error";
-                    TempData["SweetAlertMessage"] = $"Error al reprogramar la cita. Detalles: {response.ReasonPhrase}";
+                    TempData["SweetAlertMessage"] = $"Error al reprogramar la cita. Detalles: {errorMsg}";
                 }
             }
             catch (Exception ex)
             {
+                /*
                 TempData["SweetAlertType"] = "error";
                 TempData["SweetAlertMessage"] = "Error al reprogramar la cita en el servidor.Detalles: {ex.Message} {(ex.InnerException != null ? \" | Inner: \" + ex.InnerException.Message : \"\")}";
-                Console.WriteLine($"Error al reprogramar la cita: {ex.Message}");
+                Console.WriteLine($"Error al reprogramar la cita: {ex.Message}"); */
+
+                var errorMsg = ex.Message;
+
+                if (ex.InnerException != null)
+                {
+                    errorMsg += $" | Inner: {ex.InnerException.Message}";
+                }
+
+                TempData["SweetAlertType"] = "error";
+                TempData["SweetAlertMessage"] = $"Error al reprogramar la cita. Detalles: {errorMsg}";
+
+                Console.WriteLine($" Error al reprogramar la cita: {errorMsg}");
             }
 
             return RedirectToAction("CitasActivas");
